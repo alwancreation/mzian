@@ -26,7 +26,7 @@ jobs:
     name: Code quality
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -49,7 +49,10 @@ jobs:
       - name: Code style (PHP CS Fixer)
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
       - name: Static analysis (PHPStan)
-        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+        run: |
+          # The Symfony extension reads the compiled test container.
+          php bin/console cache:warmup --env=test
+          vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
       - name: Symfony lints
         run: |
@@ -63,7 +66,7 @@ jobs:
     name: PHPUnit
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -103,7 +106,7 @@ jobs:
       APP_ENV: dev
       DATABASE_URL: mysql://root:ci-root@127.0.0.1:3306/mzian?serverVersion=8.4.0&charset=utf8mb4
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -137,8 +140,8 @@ jobs:
     name: Front-end build
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -151,7 +154,7 @@ jobs:
     name: Secret scan
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Committed env files contain no secret
@@ -159,4 +162,4 @@ jobs:
       - name: Gitleaks (whole history)
         run: |
           docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 \
-            git /repo --config /repo/.gitleaks.toml --redact --no-banner --exit-code 1
+            git /repo --config /repo/.gitleaks.toml --gitleaks-ignore-path /repo/.gitleaksignore --redact --no-banner --exit-code 1

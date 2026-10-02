@@ -30,7 +30,7 @@ jobs:
     name: Build, smoke test and publish
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: docker/setup-buildx-action@v3
 
@@ -76,9 +76,9 @@ jobs:
 
       - name: The image refuses to start with development secrets
         run: |
-          if docker run --rm -e APP_ENV=prod -e APP_SECRET=dev-only-insecure-app-secret-change-me \
-               -e MZIAN_ENCRYPTION_KEY=ZGV2LW9ubHktaW5zZWN1cmUta2V5LTMyLWJ5dGVzISE= -e MZIAN_WEBHOOK_SECRET=dev-only-webhook-secret \
-               mzian-php:ci php bin/console mzian:security:check; then
+          # The committed development values (.env.dev) must be refused in production.
+          if docker run --rm --env-file .env.dev -e APP_ENV=prod --entrypoint php \
+               mzian-php:ci bin/console mzian:security:check; then
             echo "::error::The production image accepted development secrets."; exit 1
           fi
 

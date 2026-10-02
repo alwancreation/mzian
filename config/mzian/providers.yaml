@@ -139,7 +139,7 @@ providers:
       base_url: "https://api.github.com"
       private: true
       env: { token: GITHUB_TOKEN, organization: GITHUB_ORGANIZATION }
-    capabilities: [create_repository, push, webhooks]
+    capabilities: [create_repository, push]
 
   # ------------------------------------------------------------------ Deployment
   - code: local_apps

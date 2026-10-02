@@ -10,7 +10,7 @@ description = "Development/test-only keys, labelled insecure and refused in prod
 condition = "AND"
 paths = ['''^\.env\.(dev|test)$''']
 regexTarget = "line"
-regexes = ['''(?m)^(APP_SECRET|MZIAN_ENCRYPTION_KEY|MZIAN_WEBHOOK_SECRET|STRIPE_WEBHOOK_SECRET|GITHUB_WEBHOOK_SECRET)=''']
+regexes = ['''(?m)^(APP_SECRET|MZIAN_ENCRYPTION_KEY|MZIAN_WEBHOOK_SECRET|STRIPE_WEBHOOK_SECRET)=''']
 
 [[allowlists]]
 description = "Payment idempotency keys in tests (pay-<order number>-<n>), not secrets"

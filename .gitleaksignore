@@ -1,0 +1,3 @@
+# Known false positive: the development-only key of .env.dev (refused in production
+# by mzian:security:check) was inlined in a workflow, since replaced by --env-file.
+9548199358b40db904699aecce4bf166f4d5ff30:.github/workflows/build.yml:generic-api-key:80
