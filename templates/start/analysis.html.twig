@@ -37,26 +37,28 @@
             {% endif %}
 
             {% block analysis_pricing %}
-                {% if proposal %}
-                    {% set b = proposal.breakdown %}
+                {% set order = project ? project.order : null %}
+                {% if quote %}
+                    {% set snapshot = quote.pricingSnapshot %}
+                    {% set domain = snapshot.domain|default({mode: 'none', name: null, requested: null}) %}
                     <section class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="proposal-price">
                         <div class="flex flex-wrap items-end justify-between gap-3">
                             <div>
-                                <h2 id="proposal-price" class="font-semibold">{{ 'pricing.proposal.title'|trans }}</h2>
+                                <h2 id="proposal-price" class="font-semibold">{{ 'pricing.proposal.title'|trans }} <span class="text-xs font-normal text-slate-400">{{ 'quote.number'|trans({'%number%': quote.number}) }}</span></h2>
                                 <p class="text-sm text-slate-500">{{ 'pricing.proposal.one_time'|trans }}</p>
                             </div>
-                            <p class="text-4xl font-bold text-ink" data-testid="proposal-total">{{ b.sellingPrice|money(b.currency, false) }}</p>
+                            <p class="text-4xl font-bold text-ink" data-testid="proposal-total">{{ quote.sellingPrice|money(quote.currency, false) }}</p>
                         </div>
 
                         <table class="mt-5 w-full text-sm">
                             <caption class="sr-only">{{ 'pricing.proposal.details'|trans }}</caption>
                             <tbody class="divide-y divide-slate-100">
-                                {% for line in b.customerLines %}
-                                    <tr><td class="py-2 pe-3">{{ line.label }}</td><td class="whitespace-nowrap py-2 text-end font-medium">{{ line.price|money(b.currency) }}</td></tr>
+                                {% for item in quote.customerItems|filter(i => not i.recurring) %}
+                                    <tr><td class="py-2 pe-3">{{ item.label }}</td><td class="whitespace-nowrap py-2 text-end font-medium">{{ item.price|money(quote.currency) }}</td></tr>
                                 {% endfor %}
                             </tbody>
                             <tfoot>
-                                <tr class="border-t border-slate-200"><th scope="row" class="pt-3 text-start">{{ 'pricing.proposal.total'|trans }}</th><td class="pt-3 text-end text-lg font-bold">{{ b.sellingPrice|money(b.currency) }}</td></tr>
+                                <tr class="border-t border-slate-200"><th scope="row" class="pt-3 text-start">{{ 'pricing.proposal.total'|trans }}</th><td class="pt-3 text-end text-lg font-bold">{{ quote.sellingPrice|money(quote.currency) }}</td></tr>
                             </tfoot>
                         </table>
 
@@ -64,48 +66,60 @@
                             <div class="rounded-xl bg-slate-50 p-3">
                                 <dt class="text-slate-500">🌐 {{ 'pricing.proposal.domain'|trans }}</dt>
                                 <dd class="mt-1 font-medium">
-                                    {% if proposal.domainMode == 'own' %}{{ 'pricing.domain.own'|trans({'%domain%': proposal.domain ?? '—'}) }}
-                                    {% elseif proposal.domainMode == 'register' %}{{ 'pricing.domain.register'|trans({'%domain%': proposal.domain}) }}{% if proposal.alternativeDomain %}<span class="block text-xs font-normal text-amber-700">{{ 'pricing.domain.alternative'|trans({'%domain%': proposal.requestedDomain}) }}</span>{% endif %}
-                                    {% elseif proposal.domainMode == 'none' %}{{ 'pricing.domain.none'|trans }}
+                                    {% if domain.mode == 'own' %}{{ 'pricing.domain.own'|trans({'%domain%': domain.name ?? '—'}) }}
+                                    {% elseif domain.mode == 'register' %}{{ 'pricing.domain.register'|trans({'%domain%': domain.name}) }}{% if domain.requested and domain.requested != domain.name %}<span class="block text-xs font-normal text-amber-700">{{ 'pricing.domain.alternative'|trans({'%domain%': domain.requested}) }}</span>{% endif %}
+                                    {% elseif domain.mode == 'none' %}{{ 'pricing.domain.none'|trans }}
                                     {% else %}{{ 'pricing.domain.to_choose'|trans }}{% endif %}
                                 </dd>
                             </div>
-                            {% if proposal.hostingPlan %}
+                            {% if quote.hostingPlan %}
                                 <div class="rounded-xl bg-slate-50 p-3">
                                     <dt class="text-slate-500">☁️ {{ 'pricing.proposal.hosting'|trans }}</dt>
-                                    <dd class="mt-1 font-medium">{{ proposal.hostingPlan.name }}</dd>
+                                    <dd class="mt-1 font-medium">{{ quote.hostingPlan.name }}</dd>
                                 </div>
                             {% endif %}
                         </dl>
 
-                        {% if proposal.subscriptionPlan %}
+                        {% if quote.subscriptionPlan %}
                             <div class="mt-4 rounded-xl border border-brand-100 bg-brand-50/50 p-4 text-sm">
-                                <p class="font-semibold">{{ 'pricing.proposal.then'|trans({'%price%': proposal.subscriptionPlan.monthlyPrice|money(b.currency), '%plan%': proposal.subscriptionPlan.name(locale)}) }}</p>
-                                <p class="mt-1 text-slate-600">{{ proposal.subscriptionPlan.description(locale) }} {{ 'pricing.proposal.subscription_optional'|trans }}</p>
+                                <p class="font-semibold">{{ 'pricing.proposal.then'|trans({'%price%': quote.recurringMonthly|money(quote.currency), '%plan%': quote.subscriptionPlan.name(locale)}) }}</p>
+                                <p class="mt-1 text-slate-600">{{ quote.subscriptionPlan.description(locale) }} {{ 'pricing.proposal.subscription_optional'|trans }}</p>
                             </div>
                         {% endif %}
 
-                        {% for warning in proposal.warnings %}
+                        {% for warning in snapshot.warnings|default([]) %}
                             <div class="alert-info mt-4"><span>{{ warning|trans }}</span></div>
                         {% endfor %}
 
-                        <p class="mt-5 text-xs text-slate-500">{{ 'pricing.proposal.validity'|trans({'%days%': proposal.policy.quoteValidityDays}) }} {{ 'pricing.proposal.approval'|trans }}</p>
-
-                        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                            {% if route_exists('order_create.fr') %}
-                                <form method="post" action="{{ path('order_create', {token: requirement.token}) }}" class="sm:flex-1">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('order-' ~ requirement.token) }}">
-                                    <button type="submit" class="btn-primary btn-lg w-full">{{ 'pricing.proposal.order'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></button>
-                                </form>
+                        {% if order %}
+                            <div class="alert-success mt-6">
+                                <span>{{ 'quote.ordered'|trans({'%number%': order.number}) }}</span>
+                            </div>
+                            {% if app.user and order.customer.user == app.user %}
+                                <a href="{{ path('account_order', {number: order.number}) }}" class="btn-primary btn-lg mt-4 w-full">{{ 'quote.view_order'|trans }}</a>
                             {% endif %}
-                            <a href="{{ path('contact') }}" class="btn-secondary btn-lg sm:flex-1">{{ 'pricing.proposal.question'|trans }}</a>
-                        </div>
+                        {% elseif quote.expired %}
+                            <div class="alert-warning mt-6"><span>{{ 'quote.expired'|trans({'%date%': quote.validUntil|format_date('long', locale: locale)}) }}</span></div>
+                            <form method="post" action="{{ path('start_analyze', {token: requirement.token}) }}" class="mt-4">
+                                <input type="hidden" name="_token" value="{{ csrf_token('analyze-' ~ requirement.token) }}">
+                                <button class="btn-primary btn-lg w-full">{{ 'quote.refresh'|trans }}</button>
+                            </form>
+                        {% else %}
+                            <p class="mt-5 text-xs text-slate-500">{{ 'quote.valid_until'|trans({'%date%': quote.validUntil|format_date('long', locale: locale)}) }} {{ 'pricing.proposal.approval'|trans }}</p>
+                            <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                                <a href="{{ path('order_checkout', {token: quote.token}) }}" class="btn-primary btn-lg sm:flex-1" data-testid="order-button">{{ 'pricing.proposal.order'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></a>
+                                <a href="{{ path('contact') }}" class="btn-secondary btn-lg sm:flex-1">{{ 'pricing.proposal.question'|trans }}</a>
+                            </div>
+                        {% endif %}
                     </section>
+                {% elseif open %}
+                    <div class="alert-info mt-8"><span>{{ 'quote.unavailable'|trans }}</span></div>
+                    <a href="{{ path('contact') }}" class="btn-secondary mt-4">{{ 'pricing.proposal.question'|trans }}</a>
                 {% endif %}
             {% endblock %}
 
             <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-6 text-sm">
-                <a href="{{ path('start_question', {token: requirement.token}) }}" class="btn-ghost">✏️ {{ 'start.summary.edit'|trans }}</a>
+                {% if open %}<a href="{{ path('start_details', {token: requirement.token}) }}" class="btn-ghost">✏️ {{ 'start.summary.edit'|trans }}</a>{% else %}<span></span>{% endif %}
                 <span class="text-xs text-slate-400">{{ analysis.engine starts with 'ai:' ? 'analysis.engine_ai'|trans : 'analysis.engine_rules'|trans }}{% if analysis.fallbackUsed %} · {{ 'analysis.fallback'|trans }}{% endif %}</span>
             </div>
         </div>

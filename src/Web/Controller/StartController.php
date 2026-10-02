@@ -8,7 +8,7 @@ use App\Catalog\Questionnaire\InvalidAnswerException;
 use App\Catalog\Questionnaire\QuestionnaireEngine;
 use App\Catalog\Service\CatalogProvider;
 use App\Lead\Service\LeadService;
-use App\Pricing\ProposalBuilder;
+use App\Order\Service\QuoteService;
 use App\Requirement\Dto\DetailsData;
 use App\Requirement\Dto\LeadData;
 use App\Requirement\Entity\Requirement;
@@ -43,6 +43,7 @@ final class StartController extends AbstractController
         private readonly RequirementService $requirements,
         private readonly RequirementAccess $access,
         private readonly TranslatorInterface $translator,
+        private readonly QuoteService $quotes,
     ) {
     }
 
@@ -116,6 +117,9 @@ final class StartController extends AbstractController
     public function details(Request $request, #[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement): Response
     {
         $this->access->denyUnlessAccessible($requirement);
+        if (!$this->quotes->isOpen($requirement)) {
+            return $this->redirectToRoute('start_analysis', ['token' => $requirement->getToken()]);
+        }
         $data = new DetailsData();
         $data->businessName = $requirement->getBusinessName();
         $data->city = $requirement->getCity();
@@ -141,6 +145,9 @@ final class StartController extends AbstractController
     public function contact(Request $request, #[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, LeadService $leads, RateLimiterFactoryInterface $leadSubmissionLimiter): Response
     {
         $this->access->denyUnlessAccessible($requirement);
+        if (!$this->quotes->isOpen($requirement)) {
+            return $this->redirectToRoute('start_analysis', ['token' => $requirement->getToken()]);
+        }
         if (null === $requirement->getBusinessName()) {
             return $this->redirectToRoute('start_details', ['token' => $requirement->getToken()]);
         }
@@ -199,39 +206,43 @@ final class StartController extends AbstractController
         if (null === $requirement->getLead() || null === $requirement->getSector()) {
             return $this->redirectToRoute('start_summary', ['token' => $requirement->getToken()]);
         }
+        if (!$this->quotes->isOpen($requirement)) {
+            return $this->redirectToRoute('start_analysis', ['token' => $requirement->getToken()]);
+        }
         if (!$aiAnalysisLimiter->create($request->getClientIp() ?? 'unknown')->consume()->isAccepted()) {
             $this->addFlash('error', $this->translator->trans('error.too_many_requests'));
 
             return $this->redirectToRoute('start_summary', ['token' => $requirement->getToken()]);
         }
 
-        $analysis->analyze($requirement);
+        $result = $analysis->analyze($requirement);
+        try {
+            $this->quotes->issue($requirement, $result);
+        } catch (\DomainException) {
+            // Recommended solution no longer offered: the analysis page explains it, no price is shown.
+        }
 
         return $this->redirectToRoute('start_analysis', ['token' => $requirement->getToken()]);
     }
 
     #[Route(['fr' => '/fr/demarrer/{token}/solution', 'en' => '/en/start/{token}/solution', 'ar' => '/ar/start/{token}/solution'], name: 'start_analysis', requirements: ['token' => '[a-f0-9]{32}'], methods: ['GET'])]
-    public function analysis(#[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, RequirementAnalysisService $analysisService, ProposalBuilder $proposals): Response
+    public function analysis(#[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, RequirementAnalysisService $analysisService): Response
     {
         $this->access->denyUnlessAccessible($requirement);
         $analysis = $analysisService->storedAnalysis($requirement);
         if (null === $analysis) {
             return $this->redirectToRoute('start_summary', ['token' => $requirement->getToken()]);
         }
-        $solution = $this->catalog->solution($analysis->solution);
-
-        try {
-            $proposal = null !== $solution ? $proposals->build($requirement, $analysis) : null;
-        } catch (\DomainException) {
-            $proposal = null;
-        }
+        $project = $this->quotes->projectFor($requirement);
 
         return $this->render('start/analysis.html.twig', [
             'requirement' => $requirement,
             'analysis' => $analysis,
-            'solution' => $solution,
+            'solution' => $this->catalog->solution($analysis->solution),
             'sector' => $this->requirements->sector($requirement),
-            'proposal' => $proposal,
+            'project' => $project,
+            'quote' => $project?->getCurrentQuote(),
+            'open' => $this->quotes->isOpen($requirement),
         ]);
     }
 }

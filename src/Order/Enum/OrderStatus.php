@@ -11,6 +11,11 @@ enum OrderStatus: string
     case Cancelled = 'cancelled';
     case Refunded = 'refunded';
 
+    public function isPayable(): bool
+    {
+        return self::PendingPayment === $this;
+    }
+
     public function badge(): string
     {
         return match ($this) {

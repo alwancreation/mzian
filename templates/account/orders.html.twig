@@ -13,7 +13,7 @@
             <tbody>
             {% for order in orders %}
                 <tr>
-                    <td class="font-medium">{{ order.number }}</td>
+                    <td class="font-medium"><a class="text-brand-700 hover:underline" href="{{ path('account_order', {number: order.number}) }}">{{ order.number }}</a></td>
                     <td><a class="text-brand-700 hover:underline" href="{{ path('account_project', {reference: order.project.reference}) }}">{{ order.project.name }}</a></td>
                     <td>{{ order.createdAt|format_date('medium', locale: app.request.locale) }}</td>
                     <td>{{ order.total|money(order.currency) }}{% if order.recurringMonthly > 0 %}<span class="block text-xs text-slate-500">+ {{ order.recurringMonthly|money(order.currency) }} / {{ 'pricing.month'|trans }}</span>{% endif %}</td>

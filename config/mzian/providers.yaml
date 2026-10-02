@@ -77,3 +77,44 @@ providers:
       tld_prices: { ".com": 12, ".net": 14, ".org": 13, ".ma": 25, ".fr": 10, "default": 15 }
       nameservers: ["ns1.mock-registrar.test", "ns2.mock-registrar.test"]
     capabilities: [check_availability, register, configure_dns]
+
+  # ------------------------------------------------------------------ Payments
+  # Hosted checkouts only: Mzian never sees card data. Webhooks: POST /webhooks/payment/<code>
+  - code: mock_payment
+    type: payment
+    driver: mock
+    name: "Mock Payments (simulated checkout, no money)"
+    provisioning_method: mock
+    enabled_if_env: { MZIAN_PAYMENT_PROVIDER: mock }
+    default_if_env: { MZIAN_PAYMENT_PROVIDER: mock }
+    settings:
+      env: { webhook_secret: MZIAN_WEBHOOK_SECRET }
+    capabilities: [checkout, webhook, refund]
+  - code: stripe
+    type: payment
+    driver: stripe
+    name: "Stripe Checkout"
+    provisioning_method: api
+    enabled_if_env: { MZIAN_PAYMENT_PROVIDER: stripe }
+    default_if_env: { MZIAN_PAYMENT_PROVIDER: stripe }
+    settings:
+      base_url: "https://api.stripe.com/v1"
+      # Maximum age of a signed webhook (replay protection).
+      tolerance_seconds: 300
+      env: { api_key: STRIPE_SECRET_KEY, webhook_secret: STRIPE_WEBHOOK_SECRET }
+    capabilities: [checkout, webhook, refund]
+  - code: bank_transfer
+    type: payment
+    driver: manual
+    name: "Bank transfer (confirmed by an administrator)"
+    provisioning_method: manual
+    enabled_if_env: { MZIAN_PAYMENT_PROVIDER: manual }
+    default_if_env: { MZIAN_PAYMENT_PROVIDER: manual }
+    settings:
+      method: bank_transfer
+      # Shown to the customer with the order number as payment reference (Admin > Providers).
+      beneficiary: "Mzian.net"
+      bank_name: ""
+      iban: ""
+      bic: ""
+    capabilities: [offline]

@@ -1,0 +1,27 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'payment.mock.title'|trans }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block seo_links %}{% endblock %}
+
+{% block content %}
+<section class="bg-slate-100">
+    <div class="container-page flex min-h-[70vh] max-w-md items-center py-10">
+        <div class="card card-body w-full">
+            <span class="badge-amber">{{ 'payment.mock.badge'|trans }}</span>
+            <h1 class="mt-3 text-xl font-bold">{{ 'payment.mock.title'|trans }}</h1>
+            <p class="mt-1 text-sm text-slate-600">{{ 'payment.mock.help'|trans }}</p>
+            <dl class="mt-5 space-y-2 text-sm">
+                <div class="flex justify-between"><dt class="text-slate-500">{{ 'payment.mock.merchant'|trans }}</dt><dd class="font-medium">Mzian.net</dd></div>
+                <div class="flex justify-between"><dt class="text-slate-500">{{ 'order.number'|trans }}</dt><dd class="font-mono">{{ order.number }}</dd></div>
+                <div class="flex justify-between border-t border-slate-100 pt-2"><dt class="font-semibold">{{ 'order.total'|trans }}</dt><dd class="text-xl font-bold" data-testid="mock-amount">{{ payment.amount|money(payment.currency) }}</dd></div>
+            </dl>
+            <form method="post" class="mt-6 grid gap-3">
+                <input type="hidden" name="_token" value="{{ csrf_token('mock-pay-' ~ payment.idempotencyKey) }}">
+                <button type="submit" name="outcome" value="success" class="btn-success btn-lg w-full">{{ 'payment.mock.pay'|trans }}</button>
+                <button type="submit" name="outcome" value="failure" class="btn-ghost w-full">{{ 'payment.mock.decline'|trans }}</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

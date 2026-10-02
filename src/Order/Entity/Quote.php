@@ -9,6 +9,7 @@ use App\Catalog\Entity\Solution;
 use App\Hosting\Entity\HostingPlan;
 use App\Order\Enum\QuoteStatus;
 use App\Order\Repository\QuoteRepository;
+use App\Pricing\PriceLineType;
 use App\Project\Entity\Project;
 use App\Requirement\Entity\Requirement;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -310,6 +311,27 @@ class Quote
 
     public function addItem(QuoteItem $item): void
     {
-        $this->items->add($item);
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
+        }
+    }
+
+    /**
+     * The customer may change (or decline) the recurring plan before ordering:
+     * it never changes the one-time price.
+     */
+    public function changeSubscription(?SubscriptionPlan $plan, string $label = ''): void
+    {
+        if (QuoteStatus::Issued !== $this->status) {
+            throw new \LogicException(\sprintf('Quote %s is %s and can no longer be changed.', $this->number, $this->status->value));
+        }
+        foreach ($this->items->filter(static fn (QuoteItem $i) => $i->isRecurring())->toArray() as $item) {
+            $this->items->removeElement($item);
+        }
+        $this->subscriptionPlan = $plan;
+        $this->recurringMonthly = $plan?->getMonthlyPrice() ?? 0;
+        if (null !== $plan) {
+            new QuoteItem($this, 'subscription.'.$plan->getCode(), $label, PriceLineType::Subscription, 0, $plan->getMonthlyPrice(), true, true, 1000);
+        }
     }
 }

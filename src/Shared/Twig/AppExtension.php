@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Twig;
 
 use App\Shared\I18n\LocalizedText;
+use App\Shared\I18n\MoneyFormatter;
 use App\Shared\Routing\LocalizedRoute;
 use App\Shared\Settings\SettingsService;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,12 +39,8 @@ final readonly class AppExtension
     public function money(?int $amount, ?string $currency = null, bool $decimals = true): string
     {
         $currency ??= $this->platformCurrency();
-        $formatter = new \NumberFormatter($this->locale(), \NumberFormatter::CURRENCY);
-        if (!$decimals) {
-            $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
-        }
 
-        return (string) $formatter->formatCurrency(($amount ?? 0) / 100, $currency);
+        return MoneyFormatter::format($amount ?? 0, $currency, $this->locale(), $decimals);
     }
 
     /**
