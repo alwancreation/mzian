@@ -1,0 +1,86 @@
+{# Form theme mapping Symfony forms to the Mzian design system. #}
+{% use 'form_div_layout.html.twig' %}
+
+{%- block form_row -%}
+    {%- set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' form-row')|trim}) -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}{%- set widget_attr = {attr: {'aria-describedby': id ~ '_help'}} -%}{%- endif -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block checkbox_row -%}
+    <div class="form-row">
+        <label class="flex items-start gap-2 text-sm text-slate-700">
+            {{- form_widget(form) -}}
+            <span>{{ label is not same as(false) ? (translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain)) }}</span>
+        </label>
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block form_label -%}
+    {%- if label is not same as(false) -%}
+        {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-label')|trim}) -%}
+        {{- parent() -}}
+    {%- endif -%}
+{%- endblock form_label -%}
+
+{%- block form_widget_simple -%}
+    {%- if type is not defined or type not in ['checkbox', 'radio', 'hidden', 'file', 'range', 'color'] -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-input')|trim}) -%}
+    {%- endif -%}
+    {{- parent() -}}
+{%- endblock form_widget_simple -%}
+
+{%- block textarea_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-textarea')|trim}) -%}
+    {{- parent() -}}
+{%- endblock textarea_widget -%}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-select')|trim}) -%}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{%- block checkbox_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check mt-0.5')|trim}) -%}
+    {{- parent() -}}
+{%- endblock checkbox_widget -%}
+
+{%- block radio_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check')|trim}) -%}
+    {{- parent() -}}
+{%- endblock radio_widget -%}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }} class="grid gap-2">
+        {%- for child in form %}
+            <label class="choice">
+                {{- form_widget(child) -}}
+                <span class="text-sm font-medium">{{ child.vars.label|trans({}, choice_translation_domain) }}</span>
+            </label>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block form_help -%}
+    {%- if help is not empty -%}
+        <p id="{{ id }}_help" class="form-help">{{ translation_domain is same as(false) ? help : help|trans(help_translation_parameters, translation_domain) }}</p>
+    {%- endif -%}
+{%- endblock form_help -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="form-errors" role="alert">
+            {%- for error in errors -%}
+                <li>{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}

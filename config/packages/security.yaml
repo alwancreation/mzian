@@ -1,39 +1,75 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    role_hierarchy:
+        ROLE_CUSTOMER: [ROLE_USER]
+        ROLE_ADMIN: [ROLE_USER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        # ROLE_AGENT is deliberately NOT part of the admin hierarchy:
+        # agents never get the permissions of a human administrator.
+        ROLE_AGENT: [ROLE_USER]
+
     providers:
-        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Security\Entity\User
+                property: email
 
     firewalls:
         dev:
-            # Ensure dev tools and static assets are always allowed
-            pattern: ^/(_profiler|_wdt|assets|build)/
+            pattern: ^/(_profiler|_wdt|build|favicon)
             security: false
+
+        # Webhooks authenticate every request with a signature (see App\Shared\Webhook).
+        webhooks:
+            pattern: ^/webhooks/
+            stateless: true
+            security: false
+
+        api:
+            pattern: ^/api/
+            stateless: true
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+            access_token:
+                token_handler: App\Security\ApiTokenHandler
+                token_extractors: header
+
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+            form_login:
+                login_path: login
+                check_path: login
+                enable_csrf: true
+                default_target_path: account_dashboard
+                username_parameter: email
+                password_parameter: password
+            logout:
+                path: logout
+                target: root
+                enable_csrf: true
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 1209600
+                signature_properties: ['password', 'email']
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
 
-            # Activate different ways to authenticate:
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/(fr|en|ar)/(account|compte), roles: ROLE_CUSTOMER }
+        - { path: ^/api/v1/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/v1/(projects|quotes|orders|me), roles: IS_AUTHENTICATED }
 
 when@test:
     security:
         password_hashers:
-            # Password hashers are resource-intensive by design to ensure security.
-            # In tests, it's safe to reduce their cost to improve performance.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
-                cost: 4 # Lowest possible value for bcrypt
-                time_cost: 3 # Lowest possible value for argon
-                memory_cost: 10 # Lowest possible value for argon
+                cost: 4
+                time_cost: 3
+                memory_cost: 10

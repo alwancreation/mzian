@@ -1,0 +1,16 @@
+notification:
+  action: "فتح حسابي في مزيان"
+  welcome: { subject: "مرحبًا بك في مزيان", body: "حسابك جاهز. يمكنك تتبع مشاريعك من فضاء الزبون." }
+  order_received: { subject: "تم استلام الطلب %order%", body: "توصلنا بطلبك %order% لمشروع «%project%» (%amount%). أتمم الأداء لإطلاق المشروع." }
+  payment_confirmed: { subject: "تم تأكيد الأداء — %order%", body: "تم تأكيد أدائك بمبلغ %amount%. أُرسل مشروعك «%project%» إلى فريق مزيان للمصادقة." }
+  approval_required: { subject: "مصادقة مطلوبة: %project%", body: "المشروع %project% (%customer%) مؤدى وينتظر مصادقتك." }
+  project_started: { subject: "انطلق مشروعك «%project%»", body: "خبر سار: تمت المصادقة على مشروعك. يبدأ وكلاء مزيان الإنجاز ويمكنك تتبع التقدم مباشرة." }
+  changes_requested: { subject: "توضيحات مطلوبة لمشروع «%project%»", body: "يحتاج فريق مزيان إلى توضيحات قبل إطلاق مشروعك:\n%message%" }
+  project_rejected: { subject: "مشروعك «%project%»", body: "للأسف لا يمكننا إنجاز هذا المشروع:\n%message%\nسيتم استرجاع المبلغ المدفوع." }
+  development_completed: { subject: "انتهى التطوير — %project%", body: "انتهى تطوير تطبيقك. الاختبارات الآلية جارية." }
+  testing_completed: { subject: "نجحت الاختبارات — %project%", body: "نجحت الاختبارات الآلية لتطبيقك. يبدأ النشر الآن." }
+  project_deployed: { subject: "تطبيقك منشور — %project%", body: "تم نشر تطبيقك على العنوان %url%. مراقبة الجودة جارية." }
+  project_delivered: { subject: "تطبيقك من مزيان جاهز!", body: "تم تسليم تطبيقك «%project%».\n\nالموقع: %url%\nالإدارة: %admin_url%\n\nمعلومات الدخول متاحة بشكل آمن في فضاء الزبون." }
+  admin_attention_required: { subject: "إجراء مطلوب: %project%", body: "المشروع %project% يحتاج إلى تدخل: %reason%" }
+  contact_received: { subject: "رسالة جديدة من %name%", body: "كتب %name% (%email%):\n%message%" }
+  support_request: { subject: "طلب دعم — %customer%", body: "%customer% (%email%)، المشروع %project%:\n%message%" }

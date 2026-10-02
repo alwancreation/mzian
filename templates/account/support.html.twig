@@ -1,0 +1,30 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.support'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.support'|trans }}{% endblock %}
+
+{% block account_content %}
+<div class="grid gap-6 lg:grid-cols-3">
+    <form method="post" class="card card-body lg:col-span-2">
+        <h2 class="font-semibold">{{ 'support.title'|trans }}</h2>
+        <p class="mt-1 text-sm text-slate-600">{{ 'support.lead'|trans }}</p>
+        <div class="form-row mt-5">
+            <label class="form-label" for="support-project">{{ 'order.project'|trans }}</label>
+            <select class="form-select" id="support-project" name="project">
+                <option value="">—</option>
+                {% for project in projects %}<option value="{{ project.reference }}">{{ project.name }} ({{ project.reference }})</option>{% endfor %}
+            </select>
+        </div>
+        <div class="form-row">
+            <label class="form-label" for="support-message">{{ 'form.message'|trans }}</label>
+            <textarea class="form-textarea" id="support-message" name="message" rows="6" required minlength="10" maxlength="3000"></textarea>
+        </div>
+        <input type="hidden" name="_token" value="{{ csrf_token('support') }}">
+        <button class="btn-primary">{{ 'support.send'|trans }}</button>
+    </form>
+    <aside class="card card-body h-fit text-sm text-slate-600">
+        <p class="font-semibold text-ink">{{ 'support.hours.title'|trans }}</p>
+        <p class="mt-2">{{ 'support.hours.text'|trans }}</p>
+    </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.orders'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.orders'|trans }}{% endblock %}
+
+{% block account_content %}
+{% if orders is empty %}
+    {% include 'components/_empty.html.twig' with {icon: '🧾', title: 'account.empty.orders'|trans} %}
+{% else %}
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>{{ 'order.number'|trans }}</th><th>{{ 'order.project'|trans }}</th><th>{{ 'order.date'|trans }}</th><th>{{ 'order.total'|trans }}</th><th>{{ 'order.status'|trans }}</th></tr></thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td class="font-medium">{{ order.number }}</td>
+                    <td><a class="text-brand-700 hover:underline" href="{{ path('account_project', {reference: order.project.reference}) }}">{{ order.project.name }}</a></td>
+                    <td>{{ order.createdAt|format_date('medium', locale: app.request.locale) }}</td>
+                    <td>{{ order.total|money(order.currency) }}{% if order.recurringMonthly > 0 %}<span class="block text-xs text-slate-500">+ {{ order.recurringMonthly|money(order.currency) }} / {{ 'pricing.month'|trans }}</span>{% endif %}</td>
+                    <td><span class="{{ order.status.badge }}">{{ ('order.statuses.' ~ order.status.value)|trans }}</span></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+{% if subscriptions is not empty %}
+    <h2 class="mt-10 mb-4 text-lg font-semibold">{{ 'account.subscriptions'|trans }}</h2>
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>{{ 'subscription.plan'|trans }}</th><th>{{ 'subscription.price'|trans }}</th><th>{{ 'subscription.period_end'|trans }}</th><th>{{ 'order.status'|trans }}</th></tr></thead>
+            <tbody>
+            {% for subscription in subscriptions %}
+                <tr>
+                    <td class="font-medium">{{ subscription.plan.name(app.request.locale) }}</td>
+                    <td>{{ subscription.price|money(subscription.currency) }} / {{ ('pricing.' ~ subscription.interval.value)|trans }}</td>
+                    <td>{{ subscription.currentPeriodEnd ? subscription.currentPeriodEnd|format_date('medium', locale: app.request.locale) : '—' }}</td>
+                    <td><span class="badge-gray">{{ ('subscription.statuses.' ~ subscription.status.value)|trans }}</span></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

@@ -18,9 +18,11 @@ enum NotificationType: string
     case ProjectDelivered = 'project_delivered';
     case AdminAttentionRequired = 'admin_attention_required';
     case Welcome = 'welcome';
+    case ContactReceived = 'contact_received';
+    case SupportRequest = 'support_request';
 
     public function isForAdmins(): bool
     {
-        return \in_array($this, [self::ApprovalRequired, self::AdminAttentionRequired], true);
+        return \in_array($this, [self::ApprovalRequired, self::AdminAttentionRequired, self::ContactReceived, self::SupportRequest], true);
     }
 }

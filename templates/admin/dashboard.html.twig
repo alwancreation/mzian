@@ -1,0 +1,89 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Admin dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_actions %}
+    <form method="get" class="hidden sm:block">
+        <select name="days" class="form-select py-1.5 text-sm" data-autosubmit-select>
+            {% for d in [7, 30, 90, 365] %}<option value="{{ d }}" {{ d == days ? 'selected' }}>Last {{ d }} days</option>{% endfor %}
+        </select>
+    </form>
+{% endblock %}
+
+{% block admin_content %}
+{% set m = metrics %}
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="kpi"><p class="kpi-label">Revenue</p><p class="kpi-value">{{ m.revenue|money('USD') }}</p><p class="mt-1 text-xs text-slate-500">{{ m.paid_orders }} paid orders</p></div>
+    <div class="kpi"><p class="kpi-label">Expected margin</p><p class="kpi-value text-emerald-600">{{ m.expected_margin|money('USD') }}</p><p class="mt-1 text-xs text-slate-500">Actual after costs: {{ m.actual_margin|money('USD') }}</p></div>
+    <div class="kpi"><p class="kpi-label">Infrastructure cost</p><p class="kpi-value">{{ m.infrastructure_cost|money('USD') }}</p><p class="mt-1 text-xs text-slate-500">AI cost: {{ m.ai_cost|money('USD') }}</p></div>
+    <div class="kpi"><p class="kpi-label">Projects delivered</p><p class="kpi-value">{{ m.projects_delivered }}</p><p class="mt-1 text-xs text-slate-500">Avg delivery: {{ m.average_delivery_seconds|duration }}</p></div>
+    <div class="kpi"><p class="kpi-label">Visitors</p><p class="kpi-value">{{ m.visitors }}</p></div>
+    <div class="kpi"><p class="kpi-label">Leads</p><p class="kpi-value">{{ m.leads }}</p><p class="mt-1 text-xs text-slate-500">Conversion: {{ m.lead_conversion_rate is null ? '—' : m.lead_conversion_rate ~ ' %' }}</p></div>
+    <div class="kpi"><p class="kpi-label">Quotes / Orders</p><p class="kpi-value">{{ m.quotes }} / {{ m.orders }}</p><p class="mt-1 text-xs text-slate-500">Lead → order: {{ m.order_conversion_rate is null ? '—' : m.order_conversion_rate ~ ' %' }}</p></div>
+    <div class="kpi"><p class="kpi-label">Failure rate</p><p class="kpi-value {{ m.failure_rate and m.failure_rate > 10 ? 'text-rose-600' }}">{{ m.failure_rate is null ? '—' : m.failure_rate ~ ' %' }}</p></div>
+</div>
+
+<div class="mt-6 grid gap-6 xl:grid-cols-3">
+    <section class="card xl:col-span-2">
+        <div class="card-header"><h2 class="card-title">Funnel</h2><span class="text-xs text-slate-500">last {{ days }} days</span></div>
+        <div class="card-body space-y-3">
+            {% set max = max(funnel|map(f => f.count)|merge([1])) %}
+            {% for step in funnel %}
+                <div class="grid grid-cols-[7rem_1fr_3rem] items-center gap-3 text-sm">
+                    <span class="text-slate-600">{{ step.label }}</span>
+                    <div class="progress h-3"><div class="progress-bar" style="width: {{ (step.count * 100 / max)|round }}%"></div></div>
+                    <span class="text-end font-semibold">{{ step.count }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Needs attention</h2></div>
+        <ul class="divide-y divide-slate-100">
+            {% for project in needs_attention %}
+                <li class="flex items-center justify-between gap-3 px-5 py-3 text-sm">
+                    <div>
+                        {% if route_exists('admin_project') %}<a href="{{ path('admin_project', {id: project.id}) }}" class="font-medium hover:underline">{{ project.name }}</a>{% else %}<span class="font-medium">{{ project.name }}</span>{% endif %}
+                        <p class="text-xs text-slate-500">{{ project.reference }}</p>
+                    </div>
+                    <span class="{{ project.status.badge }}">{{ project.status.value }}</span>
+                </li>
+            {% else %}
+                <li class="px-5 py-6 text-sm text-slate-500">Nothing waiting for you. 🎉</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+
+<div class="mt-6 grid gap-6 xl:grid-cols-2">
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Agents at work</h2></div>
+        <ul class="divide-y divide-slate-100">
+            {% for project in in_progress %}
+                <li class="px-5 py-3 text-sm">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="font-medium">{{ project.name }}</span>
+                        <span class="{{ project.status.badge }}">{{ project.status.value }}</span>
+                    </div>
+                    <div class="progress mt-2"><div class="progress-bar" style="width: {{ project.progress }}%"></div></div>
+                </li>
+            {% else %}
+                <li class="px-5 py-6 text-sm text-slate-500">No automated work in progress.</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Recent activity</h2><a class="text-sm text-brand-700 hover:underline" href="{{ path('admin_list', {section: 'logs'}) }}">All logs</a></div>
+        <ul class="divide-y divide-slate-100 text-sm">
+            {% for log in recent_logs %}
+                <li class="flex items-center justify-between gap-3 px-5 py-2.5">
+                    <span><span class="{{ badge_class(log.actorType) }}">{{ log.actorType.value }}</span> <code class="text-xs">{{ log.action }}</code></span>
+                    <span class="text-xs text-slate-500">{{ log.createdAt|date('M d H:i') }}</span>
+                </li>
+            {% else %}
+                <li class="px-5 py-6 text-slate-500">No activity yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+notification:
+  action: "Open my Mzian account"
+  welcome: { subject: "Welcome to Mzian", body: "Your account is ready. You can follow your projects from your customer area." }
+  order_received: { subject: "Order %order% received", body: "We received your order %order% for \"%project%\" (%amount%). Complete the payment to launch the project." }
+  payment_confirmed: { subject: "Payment confirmed — %order%", body: "Your payment of %amount% is confirmed. Your project \"%project%\" has been sent to the Mzian team for approval." }
+  approval_required: { subject: "Approval required: %project%", body: "Project %project% (%customer%) is paid and waiting for your approval." }
+  project_started: { subject: "Your project \"%project%\" has started", body: "Good news: your project is approved. Mzian agents are starting the build, you can follow the progress in real time." }
+  changes_requested: { subject: "Details needed for \"%project%\"", body: "The Mzian team needs more details before launching your project:\n%message%" }
+  project_rejected: { subject: "Your project \"%project%\"", body: "Unfortunately we cannot build this project:\n%message%\nThe amount paid will be refunded." }
+  development_completed: { subject: "Development completed — %project%", body: "The development of your application is complete. Automated tests are running." }
+  testing_completed: { subject: "Tests passed — %project%", body: "The automated tests of your application passed. Publication is starting." }
+  project_deployed: { subject: "Your application is live — %project%", body: "Your application is deployed at %url%. Quality control is in progress." }
+  project_delivered: { subject: "Your Mzian application is ready!", body: "Your application \"%project%\" is delivered.\n\nWebsite: %url%\nAdministration: %admin_url%\n\nYour access details are available securely in your customer area." }
+  admin_attention_required: { subject: "Action required: %project%", body: "Project %project% needs your attention: %reason%" }
+  contact_received: { subject: "New message from %name%", body: "%name% (%email%) wrote:\n%message%" }
+  support_request: { subject: "Support request — %customer%", body: "%customer% (%email%), project %project%:\n%message%" }

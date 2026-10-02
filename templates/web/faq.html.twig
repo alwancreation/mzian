@@ -1,0 +1,41 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'faq.title'|trans }}{% endblock %}
+{% block meta_description %}{{ 'faq.lead'|trans }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faq_keys|map(key => {
+        '@type': 'Question',
+        'name': ('faq.items.' ~ key ~ '.q')|trans,
+        'acceptedAnswer': {'@type': 'Answer', 'text': ('faq.items.' ~ key ~ '.a')|trans}
+    })
+}|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}
+</script>
+{% endblock %}
+
+{% block content %}
+{% include 'components/_page_header.html.twig' with {eyebrow: 'nav.faq'|trans, title: 'faq.title'|trans, lead: 'faq.lead'|trans} %}
+<section class="section">
+    <div class="container-page max-w-3xl">
+        <div class="space-y-3">
+            {% for key in faq_keys %}
+                <details class="card group card-body" {{ loop.first ? 'open' }}>
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+                        {{ ('faq.items.' ~ key ~ '.q')|trans }}
+                        <span class="text-brand-600 transition group-open:rotate-45">+</span>
+                    </summary>
+                    <p class="mt-3 text-slate-600">{{ ('faq.items.' ~ key ~ '.a')|trans }}</p>
+                </details>
+            {% endfor %}
+        </div>
+        <div class="mt-10 card card-body flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p class="font-medium">{{ 'faq.more_questions'|trans }}</p>
+            <a href="{{ path('contact') }}" class="btn-secondary">{{ 'nav.contact'|trans }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

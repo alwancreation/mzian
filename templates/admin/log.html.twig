@@ -1,0 +1,26 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Audit log #{{ log.id }}{% endblock %}
+{% block page_title %}Audit log #{{ log.id }}{% endblock %}
+
+{% block admin_content %}
+<div class="grid gap-6 lg:grid-cols-3">
+    <dl class="card card-body space-y-3 text-sm">
+        <div><dt class="text-slate-500">When</dt><dd class="font-medium">{{ log.createdAt|date('Y-m-d H:i:s') }}</dd></div>
+        <div><dt class="text-slate-500">Who</dt><dd><span class="{{ badge_class(log.actorType) }}">{{ log.actorType.value }}</span> {{ log.actorName }} {% if log.actorId %}<code class="text-xs">#{{ log.actorId }}</code>{% endif %}</dd></div>
+        <div><dt class="text-slate-500">What</dt><dd><code>{{ log.action }}</code></dd></div>
+        <div><dt class="text-slate-500">Entity</dt><dd>{{ log.entityType ?? '—' }} {{ log.entityId ? '#' ~ log.entityId }}</dd></div>
+        <div><dt class="text-slate-500">IP</dt><dd>{{ log.ip ?? '—' }}</dd></div>
+        <div><dt class="text-slate-500">User agent</dt><dd class="break-all text-xs">{{ log.userAgent ?? '—' }}</dd></div>
+        {% if log.message %}<div><dt class="text-slate-500">Message</dt><dd>{{ log.message }}</dd></div>{% endif %}
+    </dl>
+    <div class="space-y-6 lg:col-span-2">
+        {% for title, data in {'Old value': log.oldValue, 'New value': log.newValue, 'Metadata': log.metadata} %}
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">{{ title }}</h2></div>
+                <pre class="card-body overflow-x-auto text-xs">{{ data is empty ? '—' : data|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

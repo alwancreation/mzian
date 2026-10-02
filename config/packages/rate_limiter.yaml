@@ -1,0 +1,44 @@
+framework:
+    rate_limiter:
+        # Account creation per IP.
+        registration:
+            policy: sliding_window
+            limit: 5
+            interval: '1 hour'
+        # Lead capture / proposal requests per IP.
+        lead_submission:
+            policy: sliding_window
+            limit: 20
+            interval: '1 hour'
+        # AI analysis (costly) per IP.
+        ai_analysis:
+            policy: token_bucket
+            limit: 10
+            rate: { interval: '10 minutes', amount: 5 }
+        # Chat messages per IP.
+        chat_message:
+            policy: sliding_window
+            limit: 40
+            interval: '10 minutes'
+        # Public API calls per IP / token.
+        api:
+            policy: sliding_window
+            limit: 120
+            interval: '1 minute'
+        # Credential reveal per user.
+        credential_reveal:
+            policy: sliding_window
+            limit: 20
+            interval: '1 hour'
+
+when@test:
+    framework:
+        rate_limiter:
+            registration:
+                policy: no_limit
+            lead_submission:
+                policy: no_limit
+            ai_analysis:
+                policy: no_limit
+            chat_message:
+                policy: no_limit

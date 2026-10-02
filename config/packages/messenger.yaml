@@ -30,7 +30,7 @@ framework:
             sync: 'sync://'
 
         routing:
-            'Symfony\Component\Mailer\Messenger\SendEmailMessage': notifications
+            'App\Notification\Message\SendNotificationMessage': notifications
 
 when@test:
     framework:

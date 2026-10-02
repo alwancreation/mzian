@@ -1,0 +1,36 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'registration.title'|trans }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="section bg-gradient-to-b from-brand-50/60 to-white">
+    <div class="container-page max-w-xl">
+        <div class="card card-body">
+            <h1 class="text-2xl font-bold">{{ 'registration.title'|trans }}</h1>
+            <p class="mt-1 text-sm text-slate-600">{{ 'registration.subtitle'|trans }}</p>
+            <div class="mt-6">
+                {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+                    {{ form_errors(form) }}
+                    <div class="grid gap-x-5 sm:grid-cols-2">
+                        {{ form_row(form.firstName) }}
+                        {{ form_row(form.lastName) }}
+                    </div>
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.plainPassword) }}
+                    <div class="grid gap-x-5 sm:grid-cols-2">
+                        {{ form_row(form.companyName) }}
+                        {{ form_row(form.phone) }}
+                    </div>
+                    {{ form_row(form.acceptTerms) }}
+                    <button type="submit" class="btn-primary w-full">{{ 'registration.submit'|trans }}</button>
+                {{ form_end(form) }}
+            </div>
+            <p class="mt-6 text-center text-sm text-slate-600">
+                {{ 'registration.have_account'|trans }}
+                <a class="font-semibold text-brand-700 hover:underline" href="{{ path('login', app.request.query.get('target') ? {target: app.request.query.get('target')} : {}) }}">{{ 'nav.login'|trans }}</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

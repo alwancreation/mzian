@@ -1,0 +1,26 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.domains'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.domains'|trans }}{% endblock %}
+
+{% block account_content %}
+{% if domains is empty %}
+    {% include 'components/_empty.html.twig' with {icon: '🌐', title: 'account.empty.domains'|trans} %}
+{% else %}
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>{{ 'domain.name'|trans }}</th><th>{{ 'order.project'|trans }}</th><th>{{ 'domain.expires'|trans }}</th><th>{{ 'order.status'|trans }}</th></tr></thead>
+            <tbody>
+            {% for domain in domains %}
+                <tr>
+                    <td class="font-medium">{{ domain.name }} {% if domain.simulated %}<span class="badge-amber">{{ 'project.simulated'|trans }}</span>{% endif %}</td>
+                    <td>{{ domain.project ? domain.project.name : '—' }}</td>
+                    <td>{{ domain.expiresAt ? domain.expiresAt|format_date('medium', locale: app.request.locale) : '—' }}</td>
+                    <td><span class="badge-gray">{{ ('domain.statuses.' ~ domain.status.value)|trans }}</span></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

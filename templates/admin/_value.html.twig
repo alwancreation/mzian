@@ -1,0 +1,19 @@
+{# Renders one admin list cell according to its column format. #}
+{%- set value = admin_value(row, column.path) -%}
+{%- if value is null or value is same as('') -%}
+    <span class="text-slate-400">—</span>
+{%- elseif column.format == 'money' -%}
+    {{ value|money(column.currencyPath ? admin_value(row, column.currencyPath) : 'USD') }}
+{%- elseif column.format == 'datetime' -%}
+    <span class="whitespace-nowrap">{{ value|date('Y-m-d H:i') }}</span>
+{%- elseif column.format == 'date' -%}
+    <span class="whitespace-nowrap">{{ value|date('Y-m-d') }}</span>
+{%- elseif column.format == 'badge' -%}
+    <span class="{{ badge_class(value) }}">{{ value.value is defined ? value.value : value }}</span>
+{%- elseif column.format == 'bool' -%}
+    {{ value ? '<span class="badge-amber">yes</span>' : '<span class="text-slate-400">no</span>' }}
+{%- elseif column.format == 'code' -%}
+    <code class="text-xs">{{ value.value is defined ? value.value : value }}</code>
+{%- else -%}
+    {{ value.value is defined ? value.value : value }}
+{%- endif -%}

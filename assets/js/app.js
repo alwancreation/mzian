@@ -37,7 +37,7 @@ function initConfirmations() {
 }
 
 function initAutoSubmit() {
-    document.querySelectorAll('[data-autosubmit] input[type="radio"]').forEach((input) => {
+    document.querySelectorAll('[data-autosubmit] input[type="radio"], select[data-autosubmit-select]').forEach((input) => {
         input.addEventListener('change', () => input.form?.requestSubmit());
     });
 }
@@ -55,6 +55,10 @@ function initCopy() {
             }
         });
     });
+}
+
+function initPrint() {
+    document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
 }
 
 function initFlashes() {
@@ -151,6 +155,7 @@ ready(() => {
     initConfirmations();
     initAutoSubmit();
     initCopy();
+    initPrint();
     initFlashes();
     initChat();
     initStatusPolling();

@@ -1,0 +1,15 @@
+<a href="{{ path('account_project', {reference: project.reference}) }}" class="card card-body card-hover block">
+    <div class="flex items-start justify-between gap-3">
+        <div>
+            <p class="text-xs text-slate-500">{{ project.reference }}</p>
+            <h3 class="font-semibold">{{ project.name }}</h3>
+            {% if project.solution %}<p class="text-sm text-slate-600">{{ project.solution.name(app.request.locale) }}</p>{% endif %}
+        </div>
+        <span class="{{ project.status.badge }}">{{ project.status.translationKey|trans }}</span>
+    </div>
+    <div class="mt-4">
+        <div class="mb-1 flex justify-between text-xs text-slate-500"><span>{{ 'project.progress'|trans }}</span><span>{{ project.progress }}%</span></div>
+        <div class="progress"><div class="progress-bar" style="width: {{ project.progress }}%"></div></div>
+    </div>
+    <p class="mt-3 text-sm text-slate-600">{{ ('project.next_step.' ~ project.status.value|lower)|trans }}</p>
+</a>

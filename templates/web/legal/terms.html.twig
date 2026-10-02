@@ -1,0 +1,14 @@
+{% extends 'layouts/public.html.twig' %}
+{% block title %}{{ 'legal.terms.title'|trans }}{% endblock %}
+{% block content %}
+{% include 'components/_page_header.html.twig' with {title: 'legal.terms.title'|trans} %}
+<section class="section">
+    <div class="container-page prose-simple max-w-3xl text-slate-700">
+        {% for section in ['service', 'orders', 'approval', 'delivery', 'liability'] %}
+            <h2>{{ ('legal.terms.' ~ section ~ '.title')|trans }}</h2>
+            <p>{{ ('legal.terms.' ~ section ~ '.text')|trans }}</p>
+        {% endfor %}
+        <p class="mt-8 text-sm text-slate-500">{{ 'legal.placeholder_notice'|trans }}</p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.notifications'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.notifications'|trans }}{% endblock %}
+{% block page_actions %}
+    {% if notifications is not empty %}
+        <form method="post"><input type="hidden" name="_token" value="{{ csrf_token('notifications-read') }}"><button class="btn-secondary btn-sm">{{ 'notifications.mark_all_read'|trans }}</button></form>
+    {% endif %}
+{% endblock %}
+
+{% block account_content %}
+{% if notifications is empty %}
+    {% include 'components/_empty.html.twig' with {icon: '🔔', title: 'account.empty.notifications'|trans} %}
+{% else %}
+    <ul class="space-y-3">
+        {% for notification in notifications %}
+            <li class="card card-body {{ notification.read ? 'opacity-70' : '' }}">
+                <div class="flex items-start justify-between gap-3">
+                    <p class="font-semibold">{% if not notification.read %}<span class="me-2 inline-block size-2 rounded-full bg-brand-500"></span>{% endif %}{{ notification.subject }}</p>
+                    <span class="shrink-0 text-xs text-slate-500">{{ notification.createdAt|format_datetime('short', 'short', locale: app.request.locale) }}</span>
+                </div>
+                <p class="mt-2 text-sm whitespace-pre-line text-slate-600">{{ notification.body }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

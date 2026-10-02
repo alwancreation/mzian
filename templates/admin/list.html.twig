@@ -1,0 +1,44 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}{{ definition.title }}{% endblock %}
+{% block page_title %}{{ definition.title }} <span class="text-sm font-normal text-slate-500">({{ total }})</span>{% endblock %}
+
+{% block admin_content %}
+{% if definition.description %}<p class="mb-4 text-sm text-slate-600">{{ definition.description }}</p>{% endif %}
+<form method="get" class="mb-4 flex flex-wrap gap-2">
+    <input type="search" name="q" value="{{ search }}" class="form-input max-w-xs" placeholder="Search…">
+    {% if definition.statusChoices %}
+        <select name="status" class="form-select max-w-48">
+            <option value="">All statuses</option>
+            {% for choice in definition.statusChoices %}<option value="{{ choice }}" {{ choice == status ? 'selected' }}>{{ choice }}</option>{% endfor %}
+        </select>
+    {% endif %}
+    <button class="btn-secondary">Filter</button>
+</form>
+
+<div class="card table-wrap">
+    <table class="table">
+        <thead><tr>{% for column in definition.columns %}<th>{{ column.label }}</th>{% endfor %}{% if row_route %}<th></th>{% endif %}</tr></thead>
+        <tbody>
+        {% for row in rows %}
+            <tr>
+                {% for column in definition.columns %}<td>{% include 'admin/_value.html.twig' %}</td>{% endfor %}
+                {% if row_route %}<td class="text-end"><a class="btn-secondary btn-sm" href="{{ path(row_route, {(definition.rowRouteParam): admin_value(row, definition.rowRouteProperty)}) }}">Open</a></td>{% endif %}
+            </tr>
+        {% else %}
+            <tr><td colspan="{{ definition.columns|length + 1 }}" class="py-10 text-center text-slate-500">Nothing here yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if pages > 1 %}
+    <nav class="mt-4 flex items-center justify-between text-sm" aria-label="Pagination">
+        <span class="text-slate-500">Page {{ page }} / {{ pages }}</span>
+        <div class="flex gap-2">
+            {% if page > 1 %}<a class="btn-secondary btn-sm" href="{{ path('admin_list', {section: section, page: page - 1, q: search, status: status}) }}">← Previous</a>{% endif %}
+            {% if page < pages %}<a class="btn-secondary btn-sm" href="{{ path('admin_list', {section: section, page: page + 1, q: search, status: status}) }}">Next →</a>{% endif %}
+        </div>
+    </nav>
+{% endif %}
+{% endblock %}

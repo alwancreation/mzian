@@ -1,7 +1,15 @@
-{% extends 'base.html.twig' %}
-{% block body %}
-<main class="container-page section">
-    <h1 class="section-title">Décrivez votre besoin. <span class="gradient-text">Mzian crée votre solution web.</span></h1>
-    <p class="section-lead">Mzian.net</p>
-</main>
+{% extends 'layouts/public.html.twig' %}
+
+{% block content %}
+<section class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-grid" aria-hidden="true"></div>
+    <div class="container-page relative section text-center">
+        <h1 class="mx-auto max-w-4xl text-4xl font-extrabold sm:text-6xl">{{ 'home.hero.title_1'|trans }} <span class="gradient-text">{{ 'home.hero.title_2'|trans }}</span></h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-600">{{ 'home.hero.lead'|trans }}</p>
+        <div class="mt-8 flex justify-center gap-3">
+            <a href="{{ path('register') }}" class="btn-primary btn-lg btn-glow">{{ 'cta.start_free'|trans }}</a>
+            <a href="{{ path('how_it_works') }}" class="btn-secondary btn-lg">{{ 'nav.how_it_works'|trans }}</a>
+        </div>
+    </div>
+</section>
 {% endblock %}

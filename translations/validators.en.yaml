@@ -1,0 +1,5 @@
+user.email.already_used: "An account already exists with this e-mail address."
+registration.password.too_short: "The password must contain at least {{ limit }} characters."
+registration.phone.invalid: "This phone number is not valid."
+registration.terms.required: "You must accept the terms and conditions."
+profile.password.wrong: "The current password is wrong."

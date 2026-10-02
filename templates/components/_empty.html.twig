@@ -1,0 +1,6 @@
+<div class="card card-body flex flex-col items-center gap-3 py-12 text-center">
+    <div class="flex size-12 items-center justify-center rounded-2xl bg-brand-50 text-2xl">{{ icon|default('✨') }}</div>
+    <p class="font-semibold">{{ title }}</p>
+    {% if text is defined %}<p class="max-w-md text-sm text-slate-500">{{ text }}</p>{% endif %}
+    {% if cta_url is defined %}<a href="{{ cta_url }}" class="btn-primary mt-2">{{ cta_label }}</a>{% endif %}
+</div>

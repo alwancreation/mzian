@@ -1,0 +1,27 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.invoices'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.invoices'|trans }}{% endblock %}
+
+{% block account_content %}
+{% if invoices is empty %}
+    {% include 'components/_empty.html.twig' with {icon: '📄', title: 'account.empty.invoices'|trans} %}
+{% else %}
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>{{ 'invoice.number'|trans }}</th><th>{{ 'invoice.date'|trans }}</th><th>{{ 'invoice.total'|trans }}</th><th>{{ 'order.status'|trans }}</th><th></th></tr></thead>
+            <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td class="font-medium">{{ invoice.number }}</td>
+                    <td>{{ invoice.issuedAt|format_date('medium', locale: app.request.locale) }}</td>
+                    <td>{{ invoice.total|money(invoice.currency) }}</td>
+                    <td><span class="{{ invoice.status.value == 'paid' ? 'badge-green' : 'badge-amber' }}">{{ ('invoice.statuses.' ~ invoice.status.value)|trans }}</span></td>
+                    <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('account_invoice', {number: invoice.number}) }}">{{ 'action.view'|trans }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

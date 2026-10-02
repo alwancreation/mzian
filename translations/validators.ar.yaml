@@ -1,0 +1,5 @@
+user.email.already_used: "يوجد حساب بهذا البريد الإلكتروني."
+registration.password.too_short: "يجب أن تحتوي كلمة المرور على {{ limit }} أحرف على الأقل."
+registration.phone.invalid: "رقم الهاتف غير صالح."
+registration.terms.required: "يجب الموافقة على الشروط العامة."
+profile.password.wrong: "كلمة المرور الحالية غير صحيحة."

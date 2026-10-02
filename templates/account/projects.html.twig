@@ -1,0 +1,16 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.projects'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.projects'|trans }}{% endblock %}
+
+{% block account_content %}
+{% if projects is empty %}
+    {% include 'components/_empty.html.twig' with {icon: '🚀', title: 'account.empty.projects.title'|trans, text: 'account.empty.projects.text'|trans} %}
+{% else %}
+    <div class="grid gap-4 md:grid-cols-2">
+        {% for project in projects %}
+            {% include 'components/_project_card.html.twig' %}
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

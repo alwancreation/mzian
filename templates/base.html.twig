@@ -1,13 +1,42 @@
+{#
+    Root template: SEO metadata (title, description, canonical, hreflang, OpenGraph,
+    structured data), assets and RTL support. Every page layout extends it.
+#}
+{%- set locale = app.request.locale|default('fr') -%}
+{%- set page_title = block('title') is defined ? block('title')|trim : '' -%}
+{%- set page_description = block('meta_description') is defined ? block('meta_description')|trim : 'meta.default_description'|trans -%}
 <!DOCTYPE html>
-<html lang="{{ app.request.locale|default('fr') }}" dir="{{ app.request.locale|default('fr') == 'ar' ? 'rtl' : 'ltr' }}">
+<html lang="{{ locale }}" dir="{{ is_rtl() ? 'rtl' : 'ltr' }}" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Mzian{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{{ page_title ? page_title ~ ' · Mzian' : 'meta.default_title'|trans }}</title>
+    <meta name="description" content="{{ page_description }}">
+    <meta name="theme-color" content="#4c3fe6">
+    {% block robots %}<meta name="robots" content="index, follow">{% endblock %}
+    {% block seo_links %}
+        {% set alternates = locale_urls(alternate_overrides|default({}), true) %}
+        <link rel="canonical" href="{{ alternates[locale]|default(app.request.uri) }}">
+        {% for alt_locale, url in alternates %}
+            <link rel="alternate" hreflang="{{ alt_locale }}" href="{{ url }}">
+        {% endfor %}
+        {% if alternates.fr is defined %}<link rel="alternate" hreflang="x-default" href="{{ alternates.fr }}">{% endif %}
+    {% endblock %}
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:site_name" content="Mzian.net">
+    <meta property="og:title" content="{{ page_title ?: 'meta.default_title'|trans }}">
+    <meta property="og:description" content="{{ page_description }}">
+    <meta property="og:url" content="{{ app.request.uri }}">
+    <meta property="og:locale" content="{{ {fr: 'fr_FR', en: 'en_US', ar: 'ar_MA'}[locale]|default('fr_FR') }}">
+    <meta property="og:image" content="{{ absolute_url(asset('og-image.svg')) }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ asset('build/app.css') }}">
-    <script type="module" src="{{ asset('build/app.js') }}" defer></script>
+    <script type="module" src="{{ asset('build/app.js') }}"></script>
+    {% block structured_data %}{% endblock %}
+    {% block head %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}min-h-full{% endblock %}">
 {% block body %}{% endblock %}
 </body>
 </html>

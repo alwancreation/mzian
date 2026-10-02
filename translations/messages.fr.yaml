@@ -1,0 +1,341 @@
+meta:
+  default_title: "Mzian.net — Décrivez votre besoin, Mzian crée votre solution web"
+  default_description: "Sites vitrines, réservations, e-commerce, CRM et applications métier pour petites entreprises : l'IA analyse votre besoin, propose une solution et la livre."
+
+nav:
+  main: "Navigation principale"
+  skip_to_content: "Aller au contenu"
+  solutions: "Solutions"
+  industries: "Secteurs"
+  pricing: "Tarifs"
+  how_it_works: "Comment ça marche"
+  faq: "FAQ"
+  contact: "Contact"
+  login: "Connexion"
+  logout: "Déconnexion"
+  my_account: "Mon espace"
+  menu: "Menu"
+  language: "Langue"
+
+cta:
+  start_free: "Commencer gratuitement"
+
+footer:
+  tagline: "L'usine automatisée de solutions web pour les petites entreprises : décrivez votre besoin, l'IA s'occupe du reste."
+  product: "Produit"
+  questionnaire: "Questionnaire guidé"
+  ai_chat: "Décrire mon projet à l'IA"
+  company: "Mzian"
+  legal: "Légal"
+  terms: "Conditions générales"
+  privacy: "Confidentialité"
+  rights: "Tous droits réservés."
+  made_with_ai: "Conçu avec l'IA, validé par des humains."
+
+form:
+  first_name: "Prénom"
+  last_name: "Nom"
+  full_name: "Nom complet"
+  email: "Adresse e-mail"
+  password: "Mot de passe"
+  current_password: "Mot de passe actuel"
+  new_password: "Nouveau mot de passe"
+  company: "Entreprise"
+  phone: "Téléphone"
+  city: "Ville"
+  message: "Message"
+  language: "Langue"
+
+action:
+  copy: "Copier"
+  view: "Voir"
+  print: "Imprimer"
+  save: "Enregistrer"
+  revoke: "Révoquer"
+
+error:
+  too_many_requests: "Trop de tentatives. Merci de réessayer dans quelques minutes."
+
+how:
+  title: "Comment Mzian transforme votre idée en solution en ligne"
+  lead: "Vous décrivez votre activité, l'IA propose la bonne solution au bon prix, un administrateur Mzian valide, puis nos agents IA réalisent et livrent votre application."
+  steps:
+    describe: { title: "Vous décrivez votre activité", text: "Choisissez votre secteur et expliquez votre besoin avec vos mots, en français, en anglais ou en arabe." }
+    questions: { title: "Quelques questions ciblées", text: "Les questions s'adaptent à vos réponses : nombre de véhicules, réservations, paiements, contrats…" }
+    analysis: { title: "Analyse par l'IA", text: "L'IA transforme votre demande en exigences structurées et recommande la solution adaptée." }
+    proposal: { title: "Proposition et prix clairs", text: "Fonctionnalités, hébergement, nom de domaine et services : un prix calculé de façon transparente." }
+    order: { title: "Commande et paiement", text: "Vous commandez en ligne et payez en toute sécurité." }
+    validation: { title: "Validation humaine", text: "Un administrateur Mzian vérifie et valide le lancement de votre projet." }
+    build: { title: "Réalisation automatisée", text: "Les agents IA réservent l'hébergement, configurent le domaine et développent votre solution à partir de modèles éprouvés." }
+    quality: { title: "Tests et contrôle qualité", text: "Des tests techniques réels sont exécutés : pages, HTTPS, domaine, ressources, affichage mobile." }
+    delivery: { title: "Livraison", text: "Vous recevez vos accès, l'adresse de votre site et une documentation dans votre espace client." }
+  human:
+    title: "Une seule validation humaine, au bon moment"
+    text: "Après votre paiement, un administrateur Mzian valide la réalisation. Ensuite, l'automatisation prend le relais : vous suivez l'avancement en temps réel dans votre espace."
+  safety:
+    title: "Une automatisation sous contrôle"
+    budget: "Budgets et plafonds de dépenses : au-delà, l'administrateur doit approuver."
+    secrets: "Identifiants chiffrés, jamais transmis en clair à l'IA."
+    tests: "Aucune livraison si des tests critiques échouent."
+    audit: "Chaque action est tracée dans un journal d'audit."
+
+faq:
+  title: "Questions fréquentes"
+  lead: "Tout ce qu'il faut savoir avant de lancer votre projet avec Mzian."
+  more_questions: "Une autre question ? Écrivez-nous."
+  items:
+    what: { q: "Qu'est-ce que Mzian ?", a: "Mzian est une plateforme qui analyse le besoin d'une petite entreprise grâce à l'IA, propose une solution web adaptée (site, réservation, e-commerce, CRM, application métier) et la réalise de façon automatisée." }
+    how_long: { q: "Combien de temps faut-il pour être en ligne ?", a: "La plupart des solutions basées sur nos modèles sont livrées en quelques jours après la validation de votre commande. Le délai estimé est indiqué dans votre proposition." }
+    price: { q: "Comment le prix est-il calculé ?", a: "Le prix est calculé par notre moteur de tarification (et non par l'IA seule) : solution de base, fonctionnalités, hébergement, nom de domaine et services. Tout est détaillé avant la commande." }
+    ai: { q: "L'IA décide-t-elle de tout ?", a: "Non. L'IA analyse et propose, un administrateur Mzian valide chaque projet et des tests techniques réels contrôlent la qualité avant la livraison." }
+    domain: { q: "Puis-je utiliser mon propre nom de domaine ?", a: "Oui. Vous pouvez indiquer un domaine existant ou nous laisser en réserver un nouveau pour vous." }
+    hosting: { q: "L'hébergement est-il inclus ?", a: "Oui, la première année d'hébergement est incluse dans la proposition. Des formules d'abonnement couvrent ensuite l'hébergement, la maintenance et le support." }
+    changes: { q: "Puis-je demander des modifications ?", a: "Oui. Avant la réalisation, l'administrateur peut vous demander des précisions ; après la livraison, le support est disponible depuis votre espace client." }
+    own: { q: "Suis-je propriétaire de mon site ?", a: "Oui, votre contenu et vos données vous appartiennent. Chaque projet dispose de son propre dépôt de code." }
+    payment: { q: "Quels moyens de paiement acceptez-vous ?", a: "Le paiement par carte (via notre prestataire de paiement) et le virement bancaire. Les modes disponibles sont affichés lors du paiement." }
+    languages: { q: "Mon site peut-il être multilingue ?", a: "Oui : français, anglais et arabe (avec affichage de droite à gauche) sont pris en charge." }
+
+contact:
+  title: "Parlons de votre projet"
+  lead: "Une question avant de commencer ? Envoyez-nous un message, nous vous répondons rapidement."
+  send: "Envoyer le message"
+  sent: "Merci ! Votre message a bien été envoyé, nous revenons vers vous rapidement."
+  response_time: "Nous répondons généralement sous 24 h ouvrées."
+  faster:
+    title: "Le plus rapide : décrivez votre besoin"
+    text: "En quelques minutes, l'IA analyse votre besoin et vous propose une solution avec son prix."
+
+legal:
+  placeholder_notice: "Ce texte est un modèle à faire relire par un juriste avant la mise en production."
+  terms:
+    title: "Conditions générales"
+    service: { title: "Le service", text: "Mzian conçoit et met en ligne des solutions web pour les petites entreprises à partir de l'analyse de leur besoin." }
+    orders: { title: "Commandes", text: "Une commande est passée après acceptation d'une proposition chiffrée. Le paiement est requis avant la réalisation." }
+    approval: { title: "Validation", text: "Chaque projet est validé par un administrateur Mzian avant le démarrage de la réalisation. En cas de refus, le montant payé est remboursé." }
+    delivery: { title: "Livraison", text: "La livraison intervient après réussite des tests techniques et du contrôle qualité. Les accès sont transmis de manière sécurisée dans l'espace client." }
+    liability: { title: "Responsabilité", text: "Le client reste responsable des contenus publiés sur sa solution." }
+  privacy:
+    title: "Politique de confidentialité"
+    data: { title: "Données collectées", text: "Nous collectons les informations nécessaires à l'étude et à la réalisation de votre projet (coordonnées, description du besoin, réponses au questionnaire)." }
+    analytics: { title: "Mesure d'audience", text: "Notre mesure d'audience n'utilise pas de cookie et ne conserve pas d'adresse IP." }
+    ai: { title: "Intelligence artificielle", text: "Votre description peut être analysée par un fournisseur d'IA. Aucun mot de passe ni identifiant ne lui est jamais transmis." }
+    security: { title: "Sécurité", text: "Les identifiants sont chiffrés, les accès sont journalisés et protégés." }
+    rights: { title: "Vos droits", text: "Vous pouvez demander l'accès, la rectification ou la suppression de vos données en nous contactant." }
+
+login:
+  title: "Connexion"
+  subtitle: "Accédez à votre espace Mzian."
+  remember_me: "Rester connecté"
+  submit: "Se connecter"
+  no_account: "Pas encore de compte ?"
+  create_account: "Créer un compte"
+
+registration:
+  title: "Créer votre compte"
+  subtitle: "Pour commander et suivre votre projet en temps réel."
+  submit: "Créer mon compte"
+  have_account: "Déjà un compte ?"
+  accept_terms: "J'accepte les conditions générales et la politique de confidentialité."
+  success: "Bienvenue sur Mzian ! Votre compte est créé."
+  password:
+    help: "10 caractères minimum."
+
+account:
+  hello: "Bonjour %name%"
+  subscriptions: "Abonnements"
+  nav:
+    label: "Mon espace"
+    dashboard: "Tableau de bord"
+    projects: "Mes projets"
+    orders: "Commandes"
+    invoices: "Factures"
+    domains: "Domaines"
+    hosting: "Hébergement"
+    notifications: "Notifications"
+    support: "Support"
+    profile: "Profil"
+  kpi:
+    active_projects: "Projets en cours"
+    pending_orders: "Paiements en attente"
+    notifications: "Notifications non lues"
+  empty:
+    projects:
+      title: "Aucun projet pour le moment"
+      text: "Décrivez votre besoin : l'IA vous propose une solution et son prix en quelques minutes."
+    orders: "Aucune commande pour le moment."
+    invoices: "Aucune facture pour le moment."
+    domains: "Aucun nom de domaine pour le moment."
+    hosting: "Aucun hébergement pour le moment."
+    notifications: "Aucune notification."
+
+project:
+  progress: "Avancement"
+  simulated: "Simulation"
+  simulated_help: "Ce projet utilise des fournisseurs simulés (environnement de démonstration) : rien n'a été réellement acheté."
+  live: "Mise à jour en direct"
+  open_site: "Ouvrir le site"
+  pipeline: "Étapes de réalisation"
+  details: "Détails du projet"
+  solution: "Solution"
+  domain: "Nom de domaine"
+  website_url: "Adresse du site"
+  admin_url: "Administration"
+  created_at: "Créé le"
+  delivered_at: "Livré le"
+  features: "Fonctionnalités"
+  credentials: "Vos accès"
+  credentials_encrypted: "Stockés chiffrés"
+  username: "Identifiant"
+  reveal_password: "Afficher le mot de passe"
+  documentation: "Documentation"
+  timeline: "Historique"
+  no_events: "Aucun événement pour le moment."
+  status:
+    draft: "Brouillon"
+    analyzing: "Analyse en cours"
+    quoted: "Proposition prête"
+    ordered: "Commandé"
+    paid: "Payé"
+    pending_admin_approval: "En attente de validation"
+    changes_requested: "Précisions demandées"
+    approved: "Validé"
+    provisioning: "Réservation de l'hébergement"
+    hosting_ready: "Hébergement prêt"
+    domain_ready: "Domaine prêt"
+    development: "Développement"
+    testing: "Tests"
+    deploying: "Déploiement"
+    deployed: "Déployé"
+    qa: "Contrôle qualité"
+    delivery: "Préparation de la livraison"
+    completed: "Livré"
+    failed: "Bloqué"
+    cancelled: "Annulé"
+    waiting_admin_approval: "En attente d'un administrateur"
+  next_step:
+    draft: "Complétez la description de votre besoin."
+    analyzing: "L'IA analyse votre besoin…"
+    quoted: "Consultez la proposition et passez commande."
+    ordered: "Finalisez le paiement pour lancer le projet."
+    paid: "Paiement reçu, votre projet est transmis à l'équipe Mzian."
+    pending_admin_approval: "Un administrateur Mzian vérifie votre projet avant le lancement."
+    changes_requested: "L'équipe Mzian a besoin de précisions : consultez vos notifications."
+    approved: "Projet validé ! Les agents IA démarrent la réalisation."
+    provisioning: "Réservation de votre hébergement…"
+    hosting_ready: "Configuration de votre nom de domaine…"
+    domain_ready: "Préparation de votre application…"
+    development: "Développement et personnalisation de votre application…"
+    testing: "Exécution des tests automatisés…"
+    deploying: "Mise en ligne de votre application…"
+    deployed: "Application en ligne, contrôle qualité imminent…"
+    qa: "Contrôle qualité en cours…"
+    delivery: "Préparation de vos accès et de la documentation…"
+    completed: "Votre application est prête ! Retrouvez vos accès ci-dessous."
+    failed: "Un contrôle a échoué : l'équipe Mzian intervient."
+    cancelled: "Ce projet a été annulé."
+    waiting_admin_approval: "Une validation de l'équipe Mzian est nécessaire pour continuer."
+
+pipeline:
+  step:
+    hosting: "Hébergement"
+    domain: "Domaine"
+    development: "Développement"
+    testing: "Tests"
+    deployment: "Déploiement"
+    qa: "Qualité"
+    delivery: "Livraison"
+
+order:
+  number: "N° de commande"
+  project: "Projet"
+  date: "Date"
+  total: "Total"
+  status: "Statut"
+  statuses:
+    pending_payment: "En attente de paiement"
+    paid: "Payée"
+    cancelled: "Annulée"
+    refunded: "Remboursée"
+
+pricing:
+  month: "mois"
+  year: "an"
+
+subscription:
+  plan: "Formule"
+  price: "Prix"
+  period_end: "Fin de période"
+  statuses:
+    pending: "En attente"
+    active: "Actif"
+    past_due: "Impayé"
+    cancelled: "Résilié"
+
+invoice:
+  title: "Facture"
+  number: "N° de facture"
+  date: "Date"
+  total: "Total"
+  billed_to: "Facturé à"
+  description: "Description"
+  amount: "Montant"
+  subtotal: "Sous-total"
+  tax: "Taxes"
+  statuses:
+    issued: "Émise"
+    paid: "Payée"
+    void: "Annulée"
+
+domain:
+  name: "Domaine"
+  expires: "Expiration"
+  statuses:
+    pending: "En attente"
+    registered: "Enregistré"
+    active: "Actif"
+    external: "Externe"
+    failed: "Échec"
+    expired: "Expiré"
+
+hosting:
+  region: "Région"
+  expires: "Expiration"
+  statuses:
+    provisioning: "En création"
+    active: "Actif"
+    failed: "Échec"
+    suspended: "Suspendu"
+    deleted: "Supprimé"
+
+notifications:
+  mark_all_read: "Tout marquer comme lu"
+
+support:
+  title: "Contacter le support"
+  lead: "Décrivez votre demande, l'équipe Mzian vous répond rapidement."
+  send: "Envoyer"
+  sent: "Votre demande a été transmise à l'équipe Mzian."
+  invalid: "Merci de décrire votre demande (10 à 3000 caractères)."
+  hours:
+    title: "Horaires du support"
+    text: "Du lundi au vendredi, de 9 h à 18 h. Les demandes urgentes concernant un site en ligne sont traitées en priorité."
+
+profile:
+  information: "Informations"
+  saved: "Profil enregistré."
+  password:
+    title: "Mot de passe"
+    submit: "Changer le mot de passe"
+    changed: "Mot de passe modifié."
+  api:
+    title: "Jetons d'API"
+    lead: "Pour accéder à l'API Mzian (/api/v1) depuis vos outils."
+    created: "Jeton créé. Copiez-le maintenant : il ne sera plus affiché."
+    name: "Nom du jeton"
+    create: "Créer un jeton"
+
+home:
+  hero:
+    title_1: "Décrivez votre besoin."
+    title_2: "Mzian crée votre solution web."
+    lead: "Site vitrine, réservation, e-commerce, CRM ou application métier : l'IA analyse votre activité, vous propose la bonne solution avec son prix, puis nos agents la réalisent et la mettent en ligne."

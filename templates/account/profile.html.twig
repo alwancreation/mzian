@@ -1,0 +1,63 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.profile'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.profile'|trans }}{% endblock %}
+
+{% block account_content %}
+<div class="grid gap-6 lg:grid-cols-2">
+    <div class="card card-body">
+        <h2 class="mb-4 font-semibold">{{ 'profile.information'|trans }}</h2>
+        <p class="mb-4 text-sm text-slate-500">{{ 'form.email'|trans }}: <span class="font-medium text-ink">{{ app.user.email }}</span></p>
+        {{ form_start(profile_form) }}
+            {{ form_errors(profile_form) }}
+            <div class="grid gap-x-5 sm:grid-cols-2">
+                {{ form_row(profile_form.firstName) }}
+                {{ form_row(profile_form.lastName) }}
+            </div>
+            {{ form_row(profile_form.companyName) }}
+            <div class="grid gap-x-5 sm:grid-cols-2">
+                {{ form_row(profile_form.phone) }}
+                {{ form_row(profile_form.city) }}
+            </div>
+            {{ form_row(profile_form.locale) }}
+            <button class="btn-primary">{{ 'action.save'|trans }}</button>
+        {{ form_end(profile_form) }}
+    </div>
+    <div class="space-y-6">
+        <div class="card card-body">
+            <h2 class="mb-4 font-semibold">{{ 'profile.password.title'|trans }}</h2>
+            {{ form_start(password_form) }}
+                {{ form_row(password_form.currentPassword) }}
+                {{ form_row(password_form.newPassword) }}
+                <button class="btn-secondary">{{ 'profile.password.submit'|trans }}</button>
+            {{ form_end(password_form) }}
+        </div>
+        <div class="card card-body">
+            <h2 class="font-semibold">{{ 'profile.api.title'|trans }}</h2>
+            <p class="mt-1 text-sm text-slate-600">{{ 'profile.api.lead'|trans }}</p>
+            {% if new_token %}
+                <div class="alert-success mt-4 flex-col">
+                    <p>{{ 'profile.api.created'|trans }}</p>
+                    <code class="block w-full break-all rounded bg-white px-2 py-1 font-mono text-xs">{{ new_token }}</code>
+                </div>
+            {% endif %}
+            <ul class="mt-4 divide-y divide-slate-100 text-sm">
+                {% for token in tokens %}
+                    <li class="flex items-center justify-between gap-3 py-2">
+                        <span><span class="font-medium">{{ token.name }}</span> <span class="font-mono text-slate-500">{{ token.tokenPrefix }}…</span></span>
+                        <form method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('api-token') }}">
+                            <button name="revoke_token" value="{{ token.id }}" class="btn-ghost btn-sm text-rose-600">{{ 'action.revoke'|trans }}</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+            <form method="post" class="mt-4 flex gap-2">
+                <input type="hidden" name="_token" value="{{ csrf_token('api-token') }}">
+                <input class="form-input" name="token_name" placeholder="{{ 'profile.api.name'|trans }}" maxlength="100">
+                <button name="create_token" value="1" class="btn-secondary whitespace-nowrap">{{ 'profile.api.create'|trans }}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

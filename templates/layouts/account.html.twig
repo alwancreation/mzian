@@ -1,0 +1,41 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block seo_links %}{% endblock %}
+
+{% block content %}
+{% set route = app.request.attributes.get('_canonical_route') ?? app.request.attributes.get('_route') %}
+{% set tabs = [
+    {route: 'account_dashboard', label: 'account.nav.dashboard', icon: '🏠'},
+    {route: 'account_projects', label: 'account.nav.projects', icon: '🚀'},
+    {route: 'account_orders', label: 'account.nav.orders', icon: '🧾'},
+    {route: 'account_invoices', label: 'account.nav.invoices', icon: '📄'},
+    {route: 'account_domains', label: 'account.nav.domains', icon: '🌐'},
+    {route: 'account_hosting', label: 'account.nav.hosting', icon: '🗄️'},
+    {route: 'account_notifications', label: 'account.nav.notifications', icon: '🔔'},
+    {route: 'account_support', label: 'account.nav.support', icon: '💬'},
+    {route: 'account_profile', label: 'account.nav.profile', icon: '👤'},
+] %}
+<div class="bg-canvas">
+    <div class="container-page py-8">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <p class="text-sm text-slate-500">{{ 'account.hello'|trans({'%name%': app.user.firstName}) }}</p>
+                <h1 class="text-2xl font-bold">{% block page_title %}{% endblock %}</h1>
+            </div>
+            <div class="flex gap-2">
+                {% block page_actions %}{% endblock %}
+                <a href="{{ logout_path('main') }}" class="btn-ghost btn-sm">{{ 'nav.logout'|trans }}</a>
+            </div>
+        </div>
+        <nav class="-mx-4 mb-6 flex gap-1 overflow-x-auto px-4 pb-1" aria-label="{{ 'account.nav.label'|trans }}">
+            {% for tab in tabs %}
+                <a href="{{ path(tab.route) }}" class="{{ route starts with tab.route and (tab.route != 'account_dashboard' or route == 'account_dashboard') ? 'nav-link-active' : 'nav-link' }} whitespace-nowrap">
+                    <span aria-hidden="true">{{ tab.icon }}</span> {{ tab.label|trans }}
+                </a>
+            {% endfor %}
+        </nav>
+        {% block account_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

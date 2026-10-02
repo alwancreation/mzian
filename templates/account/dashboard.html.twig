@@ -1,0 +1,23 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ 'account.nav.dashboard'|trans }}{% endblock %}
+{% block page_title %}{{ 'account.nav.dashboard'|trans }}{% endblock %}
+
+{% block account_content %}
+<div class="grid gap-4 sm:grid-cols-3">
+    <div class="kpi"><p class="kpi-label">{{ 'account.kpi.active_projects'|trans }}</p><p class="kpi-value">{{ active_projects|length }}</p></div>
+    <div class="kpi"><p class="kpi-label">{{ 'account.kpi.pending_orders'|trans }}</p><p class="kpi-value">{{ pending_orders|length }}</p></div>
+    <div class="kpi"><p class="kpi-label">{{ 'account.kpi.notifications'|trans }}</p><p class="kpi-value">{{ unread_notifications }}</p></div>
+</div>
+
+<h2 class="mt-10 mb-4 text-lg font-semibold">{{ 'account.nav.projects'|trans }}</h2>
+{% if projects is empty %}
+    {% include 'components/_empty.html.twig' with {icon: '🚀', title: 'account.empty.projects.title'|trans, text: 'account.empty.projects.text'|trans} %}
+{% else %}
+    <div class="grid gap-4 md:grid-cols-2">
+        {% for project in projects|slice(0, 4) %}
+            {% include 'components/_project_card.html.twig' %}
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

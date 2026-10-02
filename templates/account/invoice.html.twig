@@ -1,0 +1,35 @@
+{% extends 'layouts/account.html.twig' %}
+
+{% block title %}{{ invoice.number }}{% endblock %}
+{% block page_title %}{{ 'invoice.title'|trans }} {{ invoice.number }}{% endblock %}
+{% block page_actions %}<button type="button" class="btn-secondary btn-sm" data-print>{{ 'action.print'|trans }}</button>{% endblock %}
+
+{% block account_content %}
+<article class="card card-body mx-auto max-w-3xl">
+    <header class="flex flex-wrap items-start justify-between gap-6">
+        {% include 'components/_logo.html.twig' with {variant: 'invoice'} %}
+        <div class="text-end text-sm">
+            <p class="text-lg font-bold">{{ invoice.number }}</p>
+            <p class="text-slate-500">{{ 'invoice.date'|trans }}: {{ invoice.issuedAt|format_date('long', locale: app.request.locale) }}</p>
+            <span class="{{ invoice.status.value == 'paid' ? 'badge-green' : 'badge-amber' }} mt-2">{{ ('invoice.statuses.' ~ invoice.status.value)|trans }}</span>
+        </div>
+    </header>
+    <div class="mt-8 text-sm">
+        <p class="text-slate-500">{{ 'invoice.billed_to'|trans }}</p>
+        {% for key, value in invoice.billingDetails|filter(v => v) %}<p class="font-medium">{{ value }}</p>{% endfor %}
+    </div>
+    <table class="table mt-8">
+        <thead><tr><th>{{ 'invoice.description'|trans }}</th><th class="text-end">{{ 'invoice.amount'|trans }}</th></tr></thead>
+        <tbody>
+        {% for line in invoice.lines %}
+            <tr><td>{{ line.label }}</td><td class="text-end">{{ line.amount|money(invoice.currency) }}</td></tr>
+        {% endfor %}
+        </tbody>
+        <tfoot class="text-sm">
+            <tr><td class="px-4 pt-4 text-end text-slate-500">{{ 'invoice.subtotal'|trans }}</td><td class="px-4 pt-4 text-end">{{ invoice.subtotal|money(invoice.currency) }}</td></tr>
+            <tr><td class="px-4 text-end text-slate-500">{{ 'invoice.tax'|trans }}</td><td class="px-4 text-end">{{ invoice.taxAmount|money(invoice.currency) }}</td></tr>
+            <tr><td class="px-4 py-2 text-end font-bold">{{ 'invoice.total'|trans }}</td><td class="px-4 py-2 text-end text-lg font-bold">{{ invoice.total|money(invoice.currency) }}</td></tr>
+        </tfoot>
+    </table>
+</article>
+{% endblock %}
