@@ -40,7 +40,7 @@
                         <input type="hidden" name="_token" value="{{ token }}">
                         <label class="form-label" for="reject-reason">Reason (sent to the customer)</label>
                         <textarea id="reject-reason" name="message" rows="3" class="form-textarea" required></textarea>
-                        <label class="form-check text-sm"><input type="checkbox" name="refund" value="1" checked> Refund the payment</label>
+                        <label class="form-check-label text-sm"><input type="checkbox" name="refund" value="1" checked> Refund the payment</label>
                         <button class="btn-danger w-full">⛔ Reject</button>
                     </form>
                 </div>
@@ -335,7 +335,7 @@
                     <form method="post" action="{{ path('admin_project_action', {id: project.id, action: 'cancel'}) }}" class="mt-3 space-y-2" data-confirm="Cancel this project?">
                         <input type="hidden" name="_token" value="{{ token }}">
                         <textarea name="message" rows="2" class="form-textarea" placeholder="Reason" required></textarea>
-                        {% if order and order.paid %}<label class="form-check"><input type="checkbox" name="refund" value="1"> Refund the payment</label>{% endif %}
+                        {% if order and order.paid %}<label class="form-check-label"><input type="checkbox" name="refund" value="1"> Refund the payment</label>{% endif %}
                         <button class="btn-danger w-full">Cancel project</button>
                     </form>
                 {% endif %}

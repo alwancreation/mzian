@@ -164,9 +164,12 @@ class ProjectTask
         return max(0, $end->getTimestamp() - $this->startedAt->getTimestamp());
     }
 
-    public function start(): void
+    /**
+     * @param int $attempt attempt number of the running operation (1 = first try)
+     */
+    public function start(int $attempt = 1): void
     {
-        ++$this->attempts;
+        $this->attempts = max($this->attempts, $attempt);
         $this->status = ProjectTaskStatus::Running;
         $this->startedAt ??= new \DateTimeImmutable();
         $this->finishedAt = null;

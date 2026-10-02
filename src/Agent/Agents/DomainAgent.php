@@ -95,7 +95,7 @@ final readonly class DomainAgent implements AgentInterface
             $domain ??= new Domain($project, $name, $provider->getCode(), $registration->currency, $registration->simulated);
             $domain->markRegistered($registration->externalId, $registration->cost, $registration->expiresAt, $registration->nameservers);
             $this->em->persist($domain);
-            $this->budget->record($project, CostCategory::Domain, $registration->cost, $registration->currency, 'Domain '.$name.' (1 year)', $registration->externalId, $key, $registration->simulated);
+            $this->budget->record($project, CostCategory::Domain, $registration->cost, $registration->currency, 'Domain '.$name.' (1 year)', $registration->externalId, $key, $registration->simulated, $context->task);
             $this->em->flush();
             $context->log('Domain registered', ['domain' => $name, 'simulated' => $registration->simulated]);
         }

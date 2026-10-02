@@ -103,7 +103,7 @@ class Quote
 
     /** @var Collection<int, QuoteItem> */
     #[ORM\OneToMany(targetEntity: QuoteItem::class, mappedBy: 'quote', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $items;
 
     /**

@@ -82,6 +82,7 @@ final class PipelineTest extends KernelTestCase
         self::assertSame(ProjectStatus::Completed, $project->getStatus(), (string) $project->getHoldReason());
         foreach (PipelineStep::ordered() as $step) {
             self::assertSame(ProjectTaskStatus::Succeeded, $project->getTask($step)?->getStatus(), $step->value);
+            self::assertSame(1, $project->getTask($step)->getAttempts(), $step->value.' succeeded at the first attempt');
         }
 
         // Infrastructure bought once, within the budget, costs recorded.
@@ -89,6 +90,8 @@ final class PipelineTest extends KernelTestCase
         self::assertSame('atlas-cars.com', $this->em->getRepository(Domain::class)->findOneBy(['project' => $project])?->getName());
         self::assertSame(7200, $project->getSpent(CostCategory::Hosting));
         self::assertSame(1200, $project->getSpent(CostCategory::Domain));
+        self::assertSame(7200, $project->getTask(PipelineStep::Hosting)?->getCost());
+        self::assertSame(1200, $project->getTask(PipelineStep::Domain)?->getCost());
         self::assertLessThanOrEqual($project->getBudget(), $project->getSpent());
 
         // Real tests and QA were executed and recorded.
@@ -156,6 +159,7 @@ final class PipelineTest extends KernelTestCase
         self::assertSame(ProjectStatus::WaitingAdminApproval, $project->getStatus());
         self::assertStringContainsString('register_domain failed 3 times', (string) $project->getHoldReason());
         self::assertSame(3, $this->em->getRepository(AgentRun::class)->count(['project' => $project, 'agentCode' => 'domain']));
+        self::assertSame(3, $project->getTask(PipelineStep::Domain)?->getAttempts());
 
         // The registrar is back (failure simulation removed): the administrator resumes.
         $provider?->setSettings(array_diff_key($provider->getSettings(), ['simulate_failures' => true]));

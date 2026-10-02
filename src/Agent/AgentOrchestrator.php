@@ -242,7 +242,7 @@ final class AgentOrchestrator
         } else {
             $agentTask->restart($run);
         }
-        $task->start();
+        $task->start($message->attempt);
         $this->em->flush();
 
         try {

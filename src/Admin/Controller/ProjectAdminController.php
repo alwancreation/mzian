@@ -85,7 +85,7 @@ final class ProjectAdminController extends AbstractController
         $qb = $this->projects->createQueryBuilder('p')
             ->leftJoin('p.customer', 'c')->addSelect('c')
             ->leftJoin('p.solution', 's')->addSelect('s')
-            ->orderBy('p.updatedAt', 'DESC')
+            ->orderBy('p.updatedAt', \SortDirection::Descending)
             ->setMaxResults(100);
         if (null !== $status) {
             $qb->andWhere('p.status = :status')->setParameter('status', $status);

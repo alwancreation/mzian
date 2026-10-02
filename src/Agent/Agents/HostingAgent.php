@@ -83,7 +83,7 @@ final readonly class HostingAgent implements AgentInterface
             if (null !== $provisioning->password()) {
                 $this->credentials->store($project, 'hosting_panel', 'Hosting control panel', $provisioning->username, (string) $provisioning->password(), $provisioning->controlPanelUrl);
             }
-            $this->budget->record($project, CostCategory::Hosting, $provisioning->cost, $provisioning->currency, 'Hosting '.$plan->getName().' (1 year)', $provisioning->externalId, $accountKey, $provisioning->simulated);
+            $this->budget->record($project, CostCategory::Hosting, $provisioning->cost, $provisioning->currency, 'Hosting '.$plan->getName().' (1 year)', $provisioning->externalId, $accountKey, $provisioning->simulated, $context->task);
             $this->em->flush();
             $context->log('Hosting account created', ['external_id' => $provisioning->externalId, 'simulated' => $provisioning->simulated]);
         } else {

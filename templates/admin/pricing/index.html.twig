@@ -85,7 +85,7 @@
                         <legend class="form-label">Options</legend>
                         <div class="grid gap-2 sm:grid-cols-2">
                             {% for feature in simulation.params.solution.enabledFeatures|filter(f => not f.included) %}
-                                <label class="form-check"><input type="checkbox" name="options[]" value="{{ feature.code }}" {{ feature.code in simulation.params.options ? 'checked' }}> {{ feature.name('en') }} ({{ feature.price|money }})</label>
+                                <label class="form-check-label"><input type="checkbox" name="options[]" value="{{ feature.code }}" {{ feature.code in simulation.params.options ? 'checked' }}> {{ feature.name('en') }} ({{ feature.price|money }})</label>
                             {% else %}<p class="text-sm text-slate-500">No optional feature.</p>{% endfor %}
                         </div>
                     </fieldset>

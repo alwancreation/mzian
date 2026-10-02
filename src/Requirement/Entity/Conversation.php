@@ -59,7 +59,7 @@ class Conversation
 
     /** @var Collection<int, ConversationMessage> */
     #[ORM\OneToMany(targetEntity: ConversationMessage::class, mappedBy: 'conversation', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['id' => 'ASC'])]
+    #[ORM\OrderBy(['id' => \SortDirection::Ascending])]
     private Collection $messages;
 
     public function __construct(string $locale = 'fr')

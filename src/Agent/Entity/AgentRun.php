@@ -73,7 +73,7 @@ class AgentRun
 
     /** @var Collection<int, AgentTask> */
     #[ORM\OneToMany(targetEntity: AgentTask::class, mappedBy: 'run', cascade: ['persist'])]
-    #[ORM\OrderBy(['id' => 'ASC'])]
+    #[ORM\OrderBy(['id' => \SortDirection::Ascending])]
     private Collection $tasks;
 
     public function __construct(string $agentCode, ?Project $project, ?ProjectTask $projectTask, int $attempt = 1)

@@ -28,7 +28,7 @@ class HostingAccountRepository extends ServiceEntityRepository
             ->join('h.project', 'p')
             ->andWhere('p.customer = :customer')
             ->setParameter('customer', $customer)
-            ->orderBy('h.id', 'DESC')
+            ->orderBy('h.id', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }

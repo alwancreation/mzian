@@ -66,7 +66,7 @@
                         {% endfor %}
                     </ul>
                     <p class="mt-4 flex items-end justify-between border-t border-slate-200 pt-4"><span class="font-semibold">{{ 'checkout.total_today'|trans }}</span><span class="text-2xl font-bold">{{ quote.sellingPrice|money(quote.currency) }}</span></p>
-                    <label class="form-check mt-5 text-sm">
+                    <label class="form-check-label mt-5 text-sm">
                         <input type="checkbox" name="accept_terms" value="1" required>
                         <span>{{ 'checkout.accept_terms'|trans({'%url%': path('legal_terms')})|raw }}</span>
                     </label>

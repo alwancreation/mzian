@@ -26,7 +26,7 @@ class LeadRepository extends ServiceEntityRepository
             ->andWhere('l.status != :lost')
             ->setParameter('email', mb_strtolower(trim($email)))
             ->setParameter('lost', LeadStatus::Lost)
-            ->orderBy('l.id', 'DESC')
+            ->orderBy('l.id', \SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

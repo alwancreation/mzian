@@ -29,7 +29,7 @@ class ProjectRepository extends ServiceEntityRepository
             ->leftJoin('p.solution', 's')->addSelect('s')
             ->andWhere('p.customer = :customer')
             ->setParameter('customer', $customer)
-            ->orderBy('p.id', 'DESC')
+            ->orderBy('p.id', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }
@@ -46,7 +46,7 @@ class ProjectRepository extends ServiceEntityRepository
             ->leftJoin('p.solution', 's')->addSelect('s')
             ->andWhere('p.status IN (:statuses)')
             ->setParameter('statuses', $statuses)
-            ->orderBy('p.updatedAt', 'DESC')
+            ->orderBy('p.updatedAt', \SortDirection::Descending)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

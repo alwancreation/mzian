@@ -102,7 +102,7 @@ class Solution
 
     /** @var Collection<int, SolutionFeature> */
     #[ORM\OneToMany(targetEntity: SolutionFeature::class, mappedBy: 'solution', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $features;
 
     /**

@@ -62,7 +62,7 @@
                 <textarea id="lead-note" name="note" rows="2" class="form-textarea" required maxlength="2000"></textarea>
                 <div class="flex flex-wrap items-center gap-3">
                     <button class="btn-secondary btn-sm">Add note</button>
-                    {% if lead.status.value not in ['converted', 'lost'] %}<label class="form-check"><input type="checkbox" name="lost" value="1"> Mark as lost</label>{% endif %}
+                    {% if lead.status.value not in ['converted', 'lost'] %}<label class="form-check-label"><input type="checkbox" name="lost" value="1"> Mark as lost</label>{% endif %}
                 </div>
             </form>
         </section>

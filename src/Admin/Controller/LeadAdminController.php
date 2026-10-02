@@ -81,7 +81,7 @@ final class LeadAdminController extends AbstractController
             ->leftJoin('r.recommendedSolution', 's')->addSelect('s')
             ->leftJoin('r.lead', 'l')->addSelect('l')
             ->andWhere('r.analysis IS NOT NULL')
-            ->orderBy('r.analyzedAt', 'DESC')
+            ->orderBy('r.analyzedAt', \SortDirection::Descending)
             ->setMaxResults(200);
         if ('' !== ($solution = $request->query->getString('solution'))) {
             $qb->andWhere('s.code = :solution')->setParameter('solution', $solution);

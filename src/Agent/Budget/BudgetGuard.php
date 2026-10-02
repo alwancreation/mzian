@@ -7,6 +7,7 @@ namespace App\Agent\Budget;
 use App\Agent\Exception\NeedsAdminException;
 use App\Project\Entity\Project;
 use App\Project\Entity\ProjectCostEntry;
+use App\Project\Entity\ProjectTask;
 use App\Project\Enum\CostCategory;
 use App\Shared\Audit\AuditLogger;
 use App\Shared\I18n\MoneyFormatter;
@@ -65,7 +66,7 @@ final readonly class BudgetGuard
     /**
      * Records a cost once per idempotency key.
      */
-    public function record(Project $project, CostCategory $category, int $amount, string $currency, string $description, ?string $reference, string $idempotencyKey, bool $simulated): ProjectCostEntry
+    public function record(Project $project, CostCategory $category, int $amount, string $currency, string $description, ?string $reference, string $idempotencyKey, bool $simulated, ?ProjectTask $task = null): ProjectCostEntry
     {
         foreach ($project->getCostEntries() as $entry) {
             if ($entry->getIdempotencyKey() === $idempotencyKey) {
@@ -78,6 +79,7 @@ final readonly class BudgetGuard
         }
         $entry = new ProjectCostEntry($project, $category, $amount, $currency, $description, $reference, $idempotencyKey, $simulated);
         $this->em->persist($entry);
+        $task?->addCost($amount);
 
         return $entry;
     }

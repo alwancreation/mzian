@@ -55,7 +55,7 @@ class TestRun
 
     /** @var Collection<int, TestResult> */
     #[ORM\OneToMany(targetEntity: TestResult::class, mappedBy: 'testRun', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['id' => 'ASC'])]
+    #[ORM\OrderBy(['id' => \SortDirection::Ascending])]
     private Collection $results;
 
     public function __construct(Project $project, TestRunType $type, ?string $target = null)

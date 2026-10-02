@@ -173,17 +173,17 @@ class Project
 
     /** @var Collection<int, ProjectTask> */
     #[ORM\OneToMany(targetEntity: ProjectTask::class, mappedBy: 'project', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $tasks;
 
     /** @var Collection<int, ProjectEvent> */
     #[ORM\OneToMany(targetEntity: ProjectEvent::class, mappedBy: 'project', cascade: ['persist'])]
-    #[ORM\OrderBy(['id' => 'DESC'])]
+    #[ORM\OrderBy(['id' => \SortDirection::Descending])]
     private Collection $events;
 
     /** @var Collection<int, ProjectCostEntry> */
     #[ORM\OneToMany(targetEntity: ProjectCostEntry::class, mappedBy: 'project', cascade: ['persist'])]
-    #[ORM\OrderBy(['id' => 'ASC'])]
+    #[ORM\OrderBy(['id' => \SortDirection::Ascending])]
     private Collection $costEntries;
 
     /** @var Collection<int, ProjectCredential> */

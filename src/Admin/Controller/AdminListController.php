@@ -51,7 +51,7 @@ final class AdminListController extends AbstractController
         if ('' !== $status && null !== $definition->statusChoices && \in_array($status, $definition->statusChoices, true)) {
             $qb->andWhere('e.status = :status')->setParameter('status', $status);
         }
-        $qb->orderBy($definition->orderBy, $definition->direction)
+        $qb->orderBy($definition->orderBy, 'DESC' === strtoupper($definition->direction) ? \SortDirection::Descending : \SortDirection::Ascending)
             ->setFirstResult(($page - 1) * self::PER_PAGE)
             ->setMaxResults(self::PER_PAGE);
 

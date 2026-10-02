@@ -87,7 +87,7 @@ class Lead
 
     /** @var Collection<int, LeadActivity> */
     #[ORM\OneToMany(targetEntity: LeadActivity::class, mappedBy: 'lead', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['createdAt' => 'DESC'])]
+    #[ORM\OrderBy(['createdAt' => \SortDirection::Descending])]
     private Collection $activities;
 
     public function __construct(string $email, string $fullName)

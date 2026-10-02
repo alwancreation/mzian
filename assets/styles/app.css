@@ -214,6 +214,16 @@
         @apply size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500;
     }
 
+    /* <label class="form-check-label"><input type="checkbox"> Text</label> */
+    .form-check-label {
+        @apply inline-flex cursor-pointer items-center gap-2;
+    }
+
+    .form-check-label > input[type='checkbox'],
+    .form-check-label > input[type='radio'] {
+        @apply size-4 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-500;
+    }
+
     .form-row {
         @apply mb-5;
     }

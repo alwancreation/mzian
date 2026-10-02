@@ -83,7 +83,7 @@ class Requirement
 
     /** @var Collection<int, RequirementItem> */
     #[ORM\OneToMany(targetEntity: RequirementItem::class, mappedBy: 'requirement', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['id' => 'ASC'])]
+    #[ORM\OrderBy(['id' => \SortDirection::Ascending])]
     private Collection $items;
 
     public function __construct(string $locale = 'fr')

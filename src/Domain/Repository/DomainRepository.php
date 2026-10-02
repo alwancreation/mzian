@@ -28,7 +28,7 @@ class DomainRepository extends ServiceEntityRepository
             ->join('d.project', 'p')
             ->andWhere('p.customer = :customer')
             ->setParameter('customer', $customer)
-            ->orderBy('d.id', 'DESC')
+            ->orderBy('d.id', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }

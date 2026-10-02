@@ -41,7 +41,7 @@ final class CatalogProvider implements ResetInterface
     {
         return $this->memo['sectors'] ??= $this->sectors->createQueryBuilder('s')
             ->andWhere('s.enabled = true')
-            ->orderBy('s.position', 'ASC')
+            ->orderBy('s.position', \SortDirection::Ascending)
             ->getQuery()->enableResultCache(self::TTL, 'catalog_sectors')->getResult();
     }
 
@@ -81,8 +81,8 @@ final class CatalogProvider implements ResetInterface
         return $this->memo['solutions'] ??= $this->solutions->createQueryBuilder('s')
             ->leftJoin('s.features', 'f')->addSelect('f')
             ->andWhere('s.enabled = true')
-            ->orderBy('s.position', 'ASC')
-            ->addOrderBy('f.position', 'ASC')
+            ->orderBy('s.position', \SortDirection::Ascending)
+            ->addOrderBy('f.position', \SortDirection::Ascending)
             ->getQuery()->enableResultCache(self::TTL, 'catalog_solutions')->getResult();
     }
 
@@ -157,8 +157,8 @@ final class CatalogProvider implements ResetInterface
             $qb->andWhere('q.sector IS NULL');
         }
 
-        return $this->memo[$key] = $qb->orderBy('q.position', 'ASC')
-            ->addOrderBy('q.id', 'ASC')
+        return $this->memo[$key] = $qb->orderBy('q.position', \SortDirection::Ascending)
+            ->addOrderBy('q.id', \SortDirection::Ascending)
             ->getQuery()->enableResultCache(self::TTL, 'catalog_'.$key)->getResult();
     }
 

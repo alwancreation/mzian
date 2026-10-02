@@ -120,7 +120,7 @@ final readonly class DevelopmentAgent implements AgentInterface
             $cost = (int) ($written['usage']['cost_cents'] ?? 0);
             if ($cost > 0) {
                 $this->budget->authorize($project, CostCategory::Ai, $cost, 'Website copy ('.$language.')');
-                $this->budget->record($project, CostCategory::Ai, $cost, 'USD', 'AI website copy ('.$language.')', (string) ($written['usage']['model'] ?? ''), $context->idempotencyKey('ai-copy-'.$language.'-run'.$context->run->getId()), false);
+                $this->budget->record($project, CostCategory::Ai, $cost, 'USD', 'AI website copy ('.$language.')', (string) ($written['usage']['model'] ?? ''), $context->idempotencyKey('ai-copy-'.$language.'-run'.$context->run->getId()), false, $context->task);
             }
         }
         $context->log('Website copy written', ['languages' => $languages, 'fallback' => $fallback]);
