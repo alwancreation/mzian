@@ -49,7 +49,6 @@ final class SeoController extends AbstractController
             'Disallow: /admin',
             'Disallow: /api/',
             'Disallow: /webhooks/',
-            'Disallow: /preview/',
             'Disallow: /*/compte',
             'Disallow: /*/account',
             'Disallow: /*/start/',

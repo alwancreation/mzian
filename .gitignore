@@ -37,3 +37,6 @@
 id_rsa*
 /.secrets/
 /config/jwt/
+
+# Server-side provider keys (docker-compose.prod.yml)
+/app.env

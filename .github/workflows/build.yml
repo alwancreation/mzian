@@ -1,0 +1,143 @@
+# Production images (PHP-FPM + nginx), smoke-tested as a full production stack
+# (MySQL, Redis, worker, demo apps server) before being published to GHCR.
+#
+# Pushed tags: branch name (main, develop), sha-<short sha>, and the version for
+# v* tags. Pull requests only build and test the images.
+name: Build
+
+on:
+  push:
+    branches: [main, develop]
+    tags: ['v*']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_PHP: ghcr.io/${{ github.repository }}/php
+  IMAGE_NGINX: ghcr.io/${{ github.repository }}/nginx
+
+jobs:
+  images:
+    name: Build, smoke test and publish
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Image tags
+        id: meta
+        run: |
+          tags() {
+            local image="$1"
+            echo "${image}:sha-${GITHUB_SHA::7}"
+            case "$GITHUB_REF" in
+              refs/heads/main|refs/heads/develop) echo "${image}:${GITHUB_REF_NAME}" ;;
+              refs/tags/v*) echo "${image}:${GITHUB_REF_NAME#v}"; echo "${image}:latest" ;;
+            esac
+          }
+          image_php="$(echo "$IMAGE_PHP" | tr '[:upper:]' '[:lower:]')"
+          image_nginx="$(echo "$IMAGE_NGINX" | tr '[:upper:]' '[:lower:]')"
+          { echo 'php<<EOF'; tags "$image_php"; echo 'EOF'; } >> "$GITHUB_OUTPUT"
+          { echo 'nginx<<EOF'; tags "$image_nginx"; echo 'EOF'; } >> "$GITHUB_OUTPUT"
+
+      - name: Build the PHP image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: php_prod
+          load: true
+          tags: |
+            mzian-php:ci
+            ${{ steps.meta.outputs.php }}
+          cache-from: type=gha,scope=php
+          cache-to: type=gha,scope=php,mode=max
+
+      - name: Build the nginx image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: nginx
+          load: true
+          tags: |
+            mzian-nginx:ci
+            ${{ steps.meta.outputs.nginx }}
+          cache-from: type=gha,scope=nginx
+          cache-to: type=gha,scope=nginx,mode=max
+
+      - name: The image refuses to start with development secrets
+        run: |
+          if docker run --rm -e APP_ENV=prod -e APP_SECRET=dev-only-insecure-app-secret-change-me \
+               -e MZIAN_ENCRYPTION_KEY=ZGV2LW9ubHktaW5zZWN1cmUta2V5LTMyLWJ5dGVzISE= -e MZIAN_WEBHOOK_SECRET=dev-only-webhook-secret \
+               mzian-php:ci php bin/console mzian:security:check; then
+            echo "::error::The production image accepted development secrets."; exit 1
+          fi
+
+      - name: Smoke test the production stack
+        env:
+          MZIAN_IMAGE: mzian-php
+          MZIAN_NGINX_IMAGE: mzian-nginx
+          MZIAN_IMAGE_TAG: ci
+          MZIAN_PUBLIC_BASE_URL: http://localhost
+        run: |
+          # Throw-away secrets for this run only (never printed).
+          APP_SECRET="$(openssl rand -hex 32)"
+          MZIAN_ENCRYPTION_KEY="$(openssl rand -base64 32)"
+          MZIAN_WEBHOOK_SECRET="$(openssl rand -hex 24)"
+          MYSQL_PASSWORD="$(openssl rand -hex 16)"
+          MYSQL_ROOT_PASSWORD="$(openssl rand -hex 16)"
+          export APP_SECRET MZIAN_ENCRYPTION_KEY MZIAN_WEBHOOK_SECRET MYSQL_PASSWORD MYSQL_ROOT_PASSWORD
+          compose="docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile demo"
+          $compose up -d --no-build --wait --wait-timeout 300
+          check() { code="$(curl -s -o /dev/null -w '%{http_code}' "$1")"; echo "$1 -> $code"; [ "$code" = "$2" ]; }
+          check http://localhost/fr/ 200
+          check http://localhost/en/ 200
+          check http://localhost/ar/ 200
+          check http://localhost/fr/tarifs 200
+          check http://localhost/sitemap.xml 200
+          check http://localhost/api/v1/solutions 200
+          check http://localhost/admin 302
+          check http://localhost:8081/healthz 200
+          $compose exec -T php php bin/console doctrine:schema:validate
+          $compose exec -T php php bin/console mzian:security:check
+
+      - name: Logs of the stack
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile demo logs --no-color --tail 200
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish the PHP image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: php_prod
+          push: true
+          tags: ${{ steps.meta.outputs.php }}
+          cache-from: type=gha,scope=php
+
+      - name: Publish the nginx image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: nginx
+          push: true
+          tags: ${{ steps.meta.outputs.nginx }}
+          cache-from: type=gha,scope=nginx

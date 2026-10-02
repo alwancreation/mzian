@@ -6,6 +6,7 @@
 #   2. waits for the database
 #   3. runs Doctrine migrations
 #   4. runs `mzian:setup` (idempotent: catalog, providers, agents, settings)
+# In production it first refuses to start with missing or development secrets.
 # Workers (CONTAINER_ROLE=worker) skip the bootstrap and only wait for the DB.
 set -e
 
@@ -17,6 +18,11 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     if [ "$APP_ENV" != 'prod' ] && [ ! -f vendor/autoload_runtime.php ]; then
         echo "[entrypoint] Installing Composer dependencies..."
         composer install --prefer-dist --no-progress --no-interaction
+    fi
+
+    if [ "$APP_ENV" = 'prod' ]; then
+        # Refuse to start with missing or development secrets (values are never printed).
+        php bin/console mzian:security:check --no-interaction
     fi
 
     mkdir -p var/cache var/log var/share var/builds var/deployments var/repositories

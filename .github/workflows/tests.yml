@@ -1,0 +1,162 @@
+# Quality gate of every change: code style, static analysis, lints, the PHPUnit
+# suite (unit, integration, functional, the whole agent pipeline with mock
+# providers), migrations on MySQL, front-end build and secret scanning.
+name: Tests
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'fix/**', 'claude/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PHP_VERSION: '8.3'
+  PHP_EXTENSIONS: intl, sodium, pdo_sqlite, pdo_mysql, zip, mbstring
+  NODE_VERSION: '22'
+
+jobs:
+  quality:
+    name: Code quality
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - run: composer validate --strict --no-check-publish
+      - run: composer install --prefer-dist --no-progress --no-interaction
+      - run: composer audit
+
+      - name: Code style (PHP CS Fixer)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+      - name: Static analysis (PHPStan)
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      - name: Symfony lints
+        run: |
+          php bin/console lint:container
+          php bin/console lint:yaml config translations resources --parse-tags
+          php bin/console lint:twig templates
+          php bin/console lint:translations
+          php bin/console doctrine:schema:validate --skip-sync
+
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - run: composer install --prefer-dist --no-progress --no-interaction
+
+      # The agents create git repositories and start PHP servers (generated
+      # applications are really built, tested, deployed and checked).
+      - name: Tests (SQLite, in-memory transports, mock providers)
+        run: php bin/phpunit --testdox-summary
+
+  migrations:
+    name: Migrations on MySQL 8.4
+    runs-on: ubuntu-24.04
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-root
+          MYSQL_DATABASE: mzian
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pci-root"
+          --health-interval=5s --health-timeout=3s --health-retries=30
+    env:
+      APP_ENV: dev
+      DATABASE_URL: mysql://root:ci-root@127.0.0.1:3306/mzian?serverVersion=8.4.0&charset=utf8mb4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Migrate an empty database, then check the schema matches the mapping
+        run: |
+          php bin/console doctrine:migrations:migrate --no-interaction
+          php bin/console doctrine:schema:validate
+          php bin/console messenger:setup-transports --no-interaction
+
+      - name: Setup is idempotent (run twice)
+        run: |
+          php bin/console mzian:setup --demo --no-interaction
+          php bin/console mzian:setup --demo --no-interaction
+          php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+  assets:
+    name: Front-end build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - name: Built files and manifest exist
+        run: test -s public/build/manifest.json && ls -l public/build
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Committed env files contain no secret
+        run: .github/scripts/check-env-files.sh
+      - name: Gitleaks (whole history)
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 \
+            git /repo --config /repo/.gitleaks.toml --redact --no-banner --exit-code 1

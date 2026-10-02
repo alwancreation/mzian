@@ -12,6 +12,12 @@ x-php-prod: &php-prod
     target: php_prod
   image: ${MZIAN_IMAGE:-mzian-php}:${MZIAN_IMAGE_TAG:-latest}
   volumes: !reset []
+  # Optional provider keys and selections (OPENAI_API_KEY, STRIPE_SECRET_KEY,
+  # MZIAN_AI_PROVIDER...), chmod 600, never committed. Prefer Admin > Providers
+  # (encrypted credentials). The database root password is not given to PHP.
+  env_file:
+    - path: ./app.env
+      required: false
 
 services:
   php:
@@ -22,6 +28,7 @@ services:
       MZIAN_ENCRYPTION_KEY: ${MZIAN_ENCRYPTION_KEY:?MZIAN_ENCRYPTION_KEY must be set}
       MZIAN_WEBHOOK_SECRET: ${MZIAN_WEBHOOK_SECRET:?MZIAN_WEBHOOK_SECRET must be set}
       MAILER_DSN: ${MAILER_DSN:-null://null}
+      MZIAN_PUBLIC_BASE_URL: ${MZIAN_PUBLIC_BASE_URL:?MZIAN_PUBLIC_BASE_URL must be set (e.g. https://mzian.net)}
       MZIAN_MOCK_LATENCY_MS: 0
 
   worker:
@@ -32,6 +39,7 @@ services:
       MZIAN_ENCRYPTION_KEY: ${MZIAN_ENCRYPTION_KEY:?MZIAN_ENCRYPTION_KEY must be set}
       MZIAN_WEBHOOK_SECRET: ${MZIAN_WEBHOOK_SECRET:?MZIAN_WEBHOOK_SECRET must be set}
       MAILER_DSN: ${MAILER_DSN:-null://null}
+      MZIAN_PUBLIC_BASE_URL: ${MZIAN_PUBLIC_BASE_URL:?MZIAN_PUBLIC_BASE_URL must be set (e.g. https://mzian.net)}
       MZIAN_MOCK_LATENCY_MS: 0
 
   nginx:
@@ -40,6 +48,12 @@ services:
       target: nginx
     image: ${MZIAN_NGINX_IMAGE:-mzian-nginx}:${MZIAN_IMAGE_TAG:-latest}
     volumes: !reset []
+
+  # No default password in production.
+  database:
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD must be set (letters and digits, e.g. openssl rand -hex 24)}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD must be set}
 
   mailpit:
     profiles: ["dev-tools"]

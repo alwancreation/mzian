@@ -1,0 +1,20 @@
+# Secret scanning (CI: .github/workflows/tests.yml). Default gitleaks rules plus
+# narrow exceptions, each matching BOTH a file and a line pattern.
+title = "Mzian.net"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Development/test-only keys, labelled insecure and refused in production by mzian:security:check"
+condition = "AND"
+paths = ['''^\.env\.(dev|test)$''']
+regexTarget = "line"
+regexes = ['''(?m)^(APP_SECRET|MZIAN_ENCRYPTION_KEY|MZIAN_WEBHOOK_SECRET|STRIPE_WEBHOOK_SECRET|GITHUB_WEBHOOK_SECRET)=''']
+
+[[allowlists]]
+description = "Payment idempotency keys in tests (pay-<order number>-<n>), not secrets"
+condition = "AND"
+paths = ['''^tests/''']
+regexTarget = "line"
+regexes = ['''payment_key' => 'pay-ORD-''']

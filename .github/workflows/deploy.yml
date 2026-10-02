@@ -1,0 +1,162 @@
+# Deploys published images to a server running Docker Compose, over SSH.
+#
+#   - automatically after a successful "Build" of a v* tag  -> production
+#   - manually (Actions > Deploy > Run workflow)             -> staging or production
+#
+# Configure a GitHub environment per target (Settings > Environments) with
+# required reviewers for production, and these environment secrets:
+#   DEPLOY_HOST          server name or IP
+#   DEPLOY_USER          SSH user (member of the docker group, no root needed)
+#   DEPLOY_SSH_KEY       private key of a deploy-only key pair
+#   DEPLOY_KNOWN_HOSTS   output of `ssh-keyscan <host>` (host key pinned, no TOFU)
+#   DEPLOY_PATH          directory holding the compose files and the server .env
+# and this environment variable (not secret):
+#   DEPLOY_URL           public URL checked after the deployment (https://...)
+#
+# Application secrets are NEVER sent from GitHub: they live on the server, in
+# DEPLOY_PATH/.env (APP_SECRET, MZIAN_ENCRYPTION_KEY, database passwords...) and
+# DEPLOY_PATH/app.env (optional provider keys), both chmod 600 — or encrypted in
+# Admin > Providers. Migrations must stay backward compatible
+# (expand/contract) so that the automatic rollback remains possible.
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [staging, production]
+        default: staging
+      image_tag:
+        description: Image tag to deploy (e.g. sha-1a2b3c4, 1.4.0, develop)
+        required: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment || 'production' }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       startsWith(github.event.workflow_run.head_branch, 'v'))
+    runs-on: ubuntu-24.04
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ vars.DEPLOY_URL || '' }}
+    concurrency:
+      group: deploy-${{ github.event.inputs.environment || 'production' }}
+      cancel-in-progress: false
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      DEPLOY_URL: ${{ vars.DEPLOY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Resolve the image tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.image_tag }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [ -n "$INPUT_TAG" ]; then tag="$INPUT_TAG"; else tag="sha-${RUN_SHA::7}"; fi
+          if ! printf '%s' "$tag" | grep -Eq '^[A-Za-z0-9._-]{1,64}$'; then echo "::error::Invalid image tag"; exit 1; fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "image=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Check the deployment configuration
+        env:
+          HAS_KEY: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+          HAS_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS != '' }}
+        run: |
+          missing=""
+          for name in DEPLOY_HOST DEPLOY_USER DEPLOY_PATH DEPLOY_URL; do [ -n "${!name}" ] || missing="$missing $name"; done
+          case "$DEPLOY_URL" in https://*|http://*) ;; *) missing="$missing DEPLOY_URL(http/https)";; esac
+          [ "$HAS_KEY" = "true" ] || missing="$missing DEPLOY_SSH_KEY"
+          [ "$HAS_KNOWN_HOSTS" = "true" ] || missing="$missing DEPLOY_KNOWN_HOSTS"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing environment secrets/variables:$missing (see the header of .github/workflows/deploy.yml and DEPLOYMENT.md)."
+            exit 1
+          fi
+
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
+          printf 'Host target\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking yes\n' "$DEPLOY_HOST" "$DEPLOY_USER" > ~/.ssh/config
+
+      - name: Upload the stack definition (no secret)
+        run: |
+          # shellcheck disable=SC2029 # variables are expanded locally on purpose
+          ssh target "mkdir -p '$DEPLOY_PATH/docker'"
+          scp -q docker-compose.yml docker-compose.prod.yml "target:$DEPLOY_PATH/"
+          scp -qr docker/apps docker/mysql "target:$DEPLOY_PATH/docker/"
+
+      - name: Deploy, verify, roll back on failure
+        env:
+          IMAGE: ${{ steps.tag.outputs.image }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # shellcheck disable=SC2029 # variables are expanded locally on purpose
+          # The registry token is passed on stdin, never on a command line.
+          printf '%s' "$REGISTRY_TOKEN" | ssh target "docker login ghcr.io -u '$REGISTRY_USER' --password-stdin" >/dev/null
+          # shellcheck disable=SC2029
+          ssh target "DEPLOY_PATH='$DEPLOY_PATH' IMAGE='$IMAGE' TAG='$TAG' DEPLOY_URL='$DEPLOY_URL' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$DEPLOY_PATH"
+          [ -f .env ] || { echo "Missing $DEPLOY_PATH/.env (application secrets, see DEPLOYMENT.md)"; exit 1; }
+          export MZIAN_IMAGE="$IMAGE/php" MZIAN_NGINX_IMAGE="$IMAGE/nginx"
+          compose() { docker compose -f docker-compose.yml -f docker-compose.prod.yml "$@"; }
+          previous="$(cat .deployed-tag 2>/dev/null || true)"
+
+          MZIAN_IMAGE_TAG="$TAG" compose pull php worker nginx
+          # Refuses missing or development secrets before anything changes.
+          MZIAN_IMAGE_TAG="$TAG" compose run --rm --no-deps --entrypoint php php bin/console mzian:security:check
+
+          healthy() {
+            for i in $(seq 1 30); do
+              code="$(curl -s -o /dev/null -w '%{http_code}' "$DEPLOY_URL/fr/" || true)"
+              [ "$code" = "200" ] && return 0
+              sleep 5
+            done
+            return 1
+          }
+
+          # The php container runs the migrations and mzian:setup on start-up.
+          if MZIAN_IMAGE_TAG="$TAG" compose up -d --no-build --remove-orphans --wait --wait-timeout 300 && healthy; then
+            echo "$TAG" > .deployed-tag
+            echo "Deployed $TAG"
+            docker image prune -f >/dev/null
+            exit 0
+          fi
+
+          echo "Deployment of $TAG failed."
+          if [ -n "$previous" ]; then
+            echo "Rolling back to $previous"
+            MZIAN_IMAGE_TAG="$previous" compose up -d --no-build --remove-orphans --wait --wait-timeout 300 || true
+          fi
+          exit 1
+          REMOTE
+
+      - name: Clean up
+        if: always()
+        run: |
+          ssh target "docker logout ghcr.io" >/dev/null 2>&1 || true
+          rm -f ~/.ssh/deploy_key

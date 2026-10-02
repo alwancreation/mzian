@@ -79,7 +79,7 @@ RUN rm -f .env.local .env.*.local \
     && composer dump-autoload --classmap-authoritative --no-dev \
     && composer dump-env prod \
     && composer run-script --no-dev post-install-cmd \
-    && mkdir -p var/cache var/log var/share var/workspaces var/repositories var/previews \
+    && mkdir -p var/cache var/log var/share var/builds var/deployments var/repositories \
     && chown -R www-data:www-data var \
     && sync
 
