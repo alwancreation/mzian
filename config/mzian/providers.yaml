@@ -1,0 +1,50 @@
+# =============================================================================
+# External providers — imported by `mzian:setup` (Admin > Providers afterwards).
+#
+# driver   = PHP implementation (see PROVIDERS.md to add one)
+# settings = NON-secret configuration. Secrets are never stored here:
+#            "env" maps a credential name to the environment variable used as a
+#            fallback when no encrypted credential has been saved in the admin.
+# Mock providers never spend money nor call external APIs (local development).
+# Prices are in MAJOR units of the platform currency.
+# =============================================================================
+
+providers:
+  # ------------------------------------------------------------------ AI
+  - code: mock_ai
+    type: ai
+    driver: mock
+    name: "Mock AI (deterministic, offline)"
+    provisioning_method: mock
+    enabled: true
+    default_if_env: { MZIAN_AI_PROVIDER: mock }
+    capabilities: [requirement_analysis, conversation, content_generation]
+  - code: openai
+    type: ai
+    driver: openai
+    name: "OpenAI"
+    provisioning_method: api
+    enabled_if_env: { MZIAN_AI_PROVIDER: openai }
+    default_if_env: { MZIAN_AI_PROVIDER: openai }
+    settings:
+      base_url: "https://api.openai.com/v1"
+      model_env: OPENAI_MODEL
+      default_model: "gpt-4.1-mini"
+      env: { api_key: OPENAI_API_KEY }
+      # Used to estimate the AI cost of each call (USD per million tokens). Check your contract.
+      price_per_million_tokens: { input: 0.4, output: 1.6 }
+    capabilities: [requirement_analysis, conversation, content_generation, json_schema]
+  - code: claude
+    type: ai
+    driver: claude
+    name: "Anthropic Claude"
+    provisioning_method: api
+    enabled_if_env: { MZIAN_AI_PROVIDER: claude }
+    default_if_env: { MZIAN_AI_PROVIDER: claude }
+    settings:
+      base_url: "https://api.anthropic.com/v1"
+      model_env: ANTHROPIC_MODEL
+      default_model: "claude-sonnet-5-5"
+      env: { api_key: ANTHROPIC_API_KEY }
+      price_per_million_tokens: { input: 3.0, output: 15.0 }
+    capabilities: [requirement_analysis, conversation, content_generation, tool_use]

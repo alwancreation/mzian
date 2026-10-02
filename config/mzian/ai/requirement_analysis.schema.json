@@ -1,0 +1,29 @@
+{
+  "$comment": "Structured output of the AI requirement analysis. Validated before any use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["solution_type", "solution", "features", "complexity", "estimated_development_days", "hosting_requirements", "domain_required", "recommendation", "confidence", "unsupported_features", "risks"],
+  "properties": {
+    "solution_type": { "type": "string", "enum": ["website", "web_application", "ecommerce", "booking", "crm", "custom"] },
+    "solution": { "type": "string", "minLength": 2, "maxLength": 80, "pattern": "^[a-z0-9_]+$" },
+    "features": { "type": "array", "maxItems": 40, "items": { "type": "string", "pattern": "^[a-z0-9_]+$" } },
+    "complexity": { "type": "string", "enum": ["low", "medium", "high"] },
+    "estimated_development_days": { "type": "integer", "minimum": 1, "maximum": 120 },
+    "hosting_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storage_gb", "database", "ssl", "email_accounts"],
+      "properties": {
+        "storage_gb": { "type": "integer", "minimum": 1, "maximum": 500 },
+        "database": { "type": "boolean" },
+        "ssl": { "type": "boolean" },
+        "email_accounts": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "domain_required": { "type": "boolean" },
+    "recommendation": { "type": "string", "minLength": 10, "maxLength": 2000 },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "unsupported_features": { "type": "array", "maxItems": 20, "items": { "type": "string", "maxLength": 80 } },
+    "risks": { "type": "array", "maxItems": 10, "items": { "type": "string", "maxLength": 300 } }
+  }
+}

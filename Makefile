@@ -44,7 +44,7 @@ test: ## Run the whole PHPUnit test-suite
 	$(PHP) php bin/phpunit
 
 phpstan: ## Static analysis
-	$(PHP) vendor/bin/phpstan analyse --memory-limit=1G
+	$(CONSOLE) cache:warmup --env=test && $(PHP) vendor/bin/phpstan analyse --memory-limit=1G
 
 cs: ## Check coding standards
 	$(PHP) vendor/bin/php-cs-fixer fix --dry-run --diff

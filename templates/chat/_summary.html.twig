@@ -1,0 +1,22 @@
+{# Live summary of what the assistant understood (re-rendered after each message). #}
+{% set locale = app.request.locale %}
+<div class="card card-body">
+    <h2 class="font-semibold">{{ 'chat.summary.title'|trans }}</h2>
+    <dl class="mt-3 space-y-2 text-sm">
+        <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'chat.summary.sector'|trans }}</dt><dd class="font-medium">{{ requirement.sector ? ('chat.sectors.' ~ requirement.sector)|trans : '—' }}</dd></div>
+        <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'form.city'|trans }}</dt><dd class="font-medium">{{ requirement.city ?: '—' }}</dd></div>
+        {% for item in requirement.items|filter(i => i.key in ['fleet_size', 'rooms_count', 'products_count', 'staff_count']) %}
+            <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ item.label }}</dt><dd class="font-medium">{{ item.displayValue }}</dd></div>
+        {% endfor %}
+    </dl>
+    {% set wanted = requirement.items|filter(i => i.key starts with 'feature.' and i.value is same as(true)) %}
+    {% set refused = requirement.items|filter(i => i.key starts with 'feature.' and i.value is same as(false)) %}
+    {% if wanted is not empty or refused is not empty %}
+        <ul class="mt-4 space-y-1.5 border-t border-slate-100 pt-3 text-sm">
+            {% for item in wanted %}<li class="flex gap-2"><span class="text-accent-600">✓</span>{{ item.label }}</li>{% endfor %}
+            {% for item in refused %}<li class="flex gap-2 text-slate-400"><span>✗</span><span class="line-through">{{ item.label }}</span></li>{% endfor %}
+        </ul>
+    {% else %}
+        <p class="mt-4 border-t border-slate-100 pt-3 text-sm text-slate-500">{{ 'chat.summary.empty'|trans }}</p>
+    {% endif %}
+</div>

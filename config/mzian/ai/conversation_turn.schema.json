@@ -1,0 +1,29 @@
+{
+  "$comment": "Structured output of one assistant turn in the 'Describe your project' chat.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reply", "sector", "business_name", "city", "facts", "features_add", "features_remove", "next_question_key", "ready"],
+  "properties": {
+    "reply": { "type": "string", "minLength": 1, "maxLength": 1500 },
+    "sector": { "type": ["string", "null"] },
+    "business_name": { "type": ["string", "null"] },
+    "city": { "type": ["string", "null"] },
+    "facts": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "value"],
+        "properties": {
+          "key": { "type": "string", "pattern": "^[a-z0-9_]+$", "maxLength": 60 },
+          "value": { "type": "string", "maxLength": 300 }
+        }
+      }
+    },
+    "features_add": { "type": "array", "maxItems": 20, "items": { "type": "string", "pattern": "^[a-z0-9_]+$" } },
+    "features_remove": { "type": "array", "maxItems": 20, "items": { "type": "string", "pattern": "^[a-z0-9_]+$" } },
+    "next_question_key": { "type": ["string", "null"] },
+    "ready": { "type": "boolean" }
+  }
+}

@@ -15,6 +15,7 @@ use App\Requirement\Enum\RequirementStatus;
 use App\Requirement\Form\DetailsFormType;
 use App\Requirement\Form\LeadFormType;
 use App\Requirement\Service\RequirementAccess;
+use App\Requirement\Service\RequirementAnalysisService;
 use App\Requirement\Service\RequirementService;
 use App\Security\Entity\User;
 use App\Shared\Controller\CsrfGuardTrait;
@@ -186,6 +187,43 @@ final class StartController extends AbstractController
             'sector' => $sector,
             'answered' => $answered,
             'features' => $this->requirements->requestedFeatures($requirement),
+        ]);
+    }
+
+    #[Route(['fr' => '/fr/demarrer/{token}/analyse', 'en' => '/en/start/{token}/analyze', 'ar' => '/ar/start/{token}/analyze'], name: 'start_analyze', requirements: ['token' => '[a-f0-9]{32}'], methods: ['POST'])]
+    public function analyze(Request $request, #[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, RequirementAnalysisService $analysis, RateLimiterFactoryInterface $aiAnalysisLimiter): Response
+    {
+        $this->access->denyUnlessAccessible($requirement);
+        $this->denyUnlessCsrfValid('analyze-'.$requirement->getToken(), $request);
+        if (null === $requirement->getLead() || null === $requirement->getSector()) {
+            return $this->redirectToRoute('start_summary', ['token' => $requirement->getToken()]);
+        }
+        if (!$aiAnalysisLimiter->create($request->getClientIp() ?? 'unknown')->consume()->isAccepted()) {
+            $this->addFlash('error', $this->translator->trans('error.too_many_requests'));
+
+            return $this->redirectToRoute('start_summary', ['token' => $requirement->getToken()]);
+        }
+
+        $analysis->analyze($requirement);
+
+        return $this->redirectToRoute('start_analysis', ['token' => $requirement->getToken()]);
+    }
+
+    #[Route(['fr' => '/fr/demarrer/{token}/solution', 'en' => '/en/start/{token}/solution', 'ar' => '/ar/start/{token}/solution'], name: 'start_analysis', requirements: ['token' => '[a-f0-9]{32}'], methods: ['GET'])]
+    public function analysis(#[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, RequirementAnalysisService $analysisService): Response
+    {
+        $this->access->denyUnlessAccessible($requirement);
+        $analysis = $analysisService->storedAnalysis($requirement);
+        if (null === $analysis) {
+            return $this->redirectToRoute('start_summary', ['token' => $requirement->getToken()]);
+        }
+        $solution = $this->catalog->solution($analysis->solution);
+
+        return $this->render('start/analysis.html.twig', [
+            'requirement' => $requirement,
+            'analysis' => $analysis,
+            'solution' => $solution,
+            'sector' => $this->requirements->sector($requirement),
         ]);
     }
 }

@@ -1,0 +1,48 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% set locale = app.request.locale %}
+{% block title %}{{ 'analysis.title'|trans }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block seo_links %}{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-b from-brand-50/70 to-white">
+    <div class="container-page max-w-4xl py-8 sm:py-12">
+        {% include 'start/_steps.html.twig' with {current: 'proposal'} %}
+        <div class="card card-body">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <p class="text-sm font-semibold text-brand-600">🤖 {{ 'analysis.recommended'|trans }}</p>
+                    <h1 class="mt-1 text-3xl font-bold">{{ solution ? solution.icon ~ ' ' ~ solution.name(locale) : analysis.solution }}</h1>
+                    {% if solution %}<p class="mt-1 text-slate-600">{{ solution.shortDescription(locale) }}</p>{% endif %}
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="badge-violet">{{ ('analysis.complexity.' ~ analysis.complexity)|trans }}</span>
+                    <span class="badge-blue">⏱ {{ 'catalog.days'|trans({'%count%': analysis.estimatedDevelopmentDays}) }}</span>
+                </div>
+            </div>
+            <p class="mt-6 rounded-xl bg-brand-50/60 p-4 text-slate-700">{{ analysis.recommendation }}</p>
+
+            <h2 class="mt-8 font-semibold">{{ 'analysis.features'|trans }}</h2>
+            <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+                {% for code in analysis.features %}
+                    {% set feature = solution ? solution.feature(code) : null %}
+                    <li class="flex items-center gap-2 text-sm"><span class="text-accent-600">✓</span>{{ feature ? feature.name(locale) : code|replace({'_': ' '})|capitalize }}{% if feature and not feature.included %}<span class="badge-gray">{{ 'catalog.on_request'|trans }}</span>{% endif %}</li>
+                {% endfor %}
+            </ul>
+            {% if analysis.unsupportedFeatures is not empty %}
+                <div class="alert-info mt-6">
+                    <span>{{ 'analysis.custom_notice'|trans({'%features%': analysis.unsupportedFeatures|map(f => f|replace({'_': ' '}))|join(', ')}) }}</span>
+                </div>
+            {% endif %}
+
+            {% block analysis_pricing %}{% endblock %}
+
+            <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-6 text-sm">
+                <a href="{{ path('start_question', {token: requirement.token}) }}" class="btn-ghost">✏️ {{ 'start.summary.edit'|trans }}</a>
+                <span class="text-xs text-slate-400">{{ analysis.engine starts with 'ai:' ? 'analysis.engine_ai'|trans : 'analysis.engine_rules'|trans }}{% if analysis.fallbackUsed %} · {{ 'analysis.fallback'|trans }}{% endif %}</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

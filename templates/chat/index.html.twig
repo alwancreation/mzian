@@ -1,0 +1,50 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'chat.title'|trans }}{% endblock %}
+{% block meta_description %}{{ 'chat.lead'|trans }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-b from-brand-50/70 to-white">
+    <div class="container-page py-6 sm:py-10">
+        <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold sm:text-3xl">🤖 {{ 'chat.title'|trans }}</h1>
+                <p class="mt-1 text-sm text-slate-600">{{ 'chat.lead'|trans }}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                {% if simulated %}<span class="badge-amber" title="{{ 'chat.demo_mode_help'|trans }}">{{ 'chat.demo_mode'|trans }}</span>{% endif %}
+                <a href="{{ path('chat', {new: 1}) }}" class="btn-ghost btn-sm">↺ {{ 'chat.restart'|trans }}</a>
+            </div>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3">
+            <div class="card flex h-[70vh] min-h-[28rem] flex-col lg:col-span-2">
+                <div id="chat-messages" class="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6" aria-live="polite">
+                    {% for message in conversation.messages %}
+                        <div class="{{ message.role.value == 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant' }}">{{ message.content }}</div>
+                    {% endfor %}
+                </div>
+                <form method="post" action="{{ path('chat_message', {token: conversation.token}) }}" class="border-t border-slate-100 p-3 sm:p-4" data-chat-form data-chat-messages="chat-messages" data-error-message="{{ 'chat.error'|trans }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('chat-' ~ conversation.token) }}">
+                    <div class="flex items-end gap-2">
+                        <label for="chat-input" class="sr-only">{{ 'form.message'|trans }}</label>
+                        <textarea id="chat-input" name="message" rows="2" maxlength="2000" required class="form-textarea min-h-0 flex-1 resize-none" placeholder="{{ 'chat.placeholder'|trans }}"></textarea>
+                        <button type="submit" class="btn-primary h-12">{{ 'chat.send'|trans }}</button>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500">{{ 'chat.privacy'|trans }}</p>
+                </form>
+            </div>
+
+            <aside class="space-y-4">
+                <div id="chat-summary">{% include 'chat/_summary.html.twig' %}</div>
+                <form method="post" action="{{ path('chat_proposal', {token: conversation.token}) }}" class="{{ ready ? '' : 'hidden' }}" data-chat-ready>
+                    <input type="hidden" name="_token" value="{{ csrf_token('chat-proposal-' ~ conversation.token) }}">
+                    <button class="btn-primary btn-lg btn-glow w-full">{{ 'chat.get_proposal'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></button>
+                </form>
+                <p class="text-center text-sm text-slate-500">{{ 'chat.or'|trans }} <a href="{{ path('start') }}" class="font-semibold text-brand-700 hover:underline">{{ 'chat.use_questionnaire'|trans }}</a></p>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

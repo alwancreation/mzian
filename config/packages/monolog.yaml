@@ -1,6 +1,9 @@
 monolog:
     channels: # To see all channels, run bin/console debug:autowiring logger
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - ai          # AI calls (task, provider, model, tokens, cost, duration — never prompts with secrets)
+        - agent       # AI agents / pipeline execution
+        - provider    # external provider calls (hosting, domain, payment, deployment...)
 
 when@dev:
     monolog:

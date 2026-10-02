@@ -1,0 +1,100 @@
+# =============================================================================
+# Data used by the deterministic (mock / fallback) AI engine to understand
+# free text in French, English and Arabic, and by every provider to drive the
+# "Describe your project" conversation. Enrich it without touching code.
+# Keywords are matched on lower-cased, accent-free text.
+# =============================================================================
+
+sector_keywords:
+  car_rental: ["location de voiture", "location de voitures", "location auto", "location de vehicule", "agence de location", "loueur", "car rental", "rent a car", "rental agency", "rent-a-car", "كراء السيارات", "كراء سيارات", "تأجير السيارات"]
+  restaurant: ["restaurant", "cafe", "snack", "pizzeria", "traiteur", "brasserie", "مطعم", "مقهى"]
+  hotel: ["hotel", "riad", "maison d'hotes", "maison d hotes", "guest house", "guesthouse", "auberge", "chambres d'hotes", "فندق", "رياض"]
+  travel_agency: ["agence de voyage", "agence de voyages", "excursion", "circuits", "travel agency", "tour operator", "tours", "وكالة أسفار", "رحلات"]
+  beauty: ["coiffure", "coiffeur", "salon de beaute", "institut", "spa", "hammam", "barbier", "esthetique", "hair salon", "barber", "beauty", "nail", "حلاقة", "تجميل", "صالون"]
+  retail: ["boutique", "magasin", "commerce", "vendre mes produits", "shop", "store", "متجر", "محل"]
+  real_estate: ["immobilier", "agence immobiliere", "promoteur", "real estate", "property", "عقار", "عقارات"]
+  craftsman: ["artisan", "plombier", "electricien", "menuisier", "peintre", "macon", "craftsman", "plumber", "electrician", "حرفي", "نجار", "سباك"]
+  professional: ["cabinet", "avocat", "medecin", "dentiste", "consultant", "comptable", "architecte", "freelance", "independant", "lawyer", "doctor", "accountant", "مكتب", "محامي", "طبيب"]
+  association: ["association", "ong", "fondation", "non-profit", "nonprofit", "charity", "جمعية", "مؤسسة خيرية"]
+
+feature_keywords:
+  online_reservations: ["reserver en ligne", "reservation en ligne", "reservations en ligne", "reservent en ligne", "reserve en ligne", "reservations", "reservation", "book online", "booking", "bookings", "حجز", "الحجز"]
+  contracts: ["contrat", "contrats", "contract", "contracts", "عقد", "عقود"]
+  pdf_contracts: ["pdf"]
+  e_signature: ["signature electronique", "signature en ligne", "e-signature", "esignature", "electronic signature", "توقيع إلكتروني", "التوقيع الإلكتروني"]
+  online_payments: ["paiement en ligne", "payer en ligne", "paiements", "paiement", "encaisser", "payment", "payments", "pay online", "الأداء", "الدفع", "أداء"]
+  customer_management: ["gestion des clients", "gerer les clients", "gerer mes clients", "fichier client", "crm", "customer management", "manage customers", "manage my customers", "تدبير الزبناء", "إدارة العملاء", "الزبناء"]
+  vehicle_management: ["gestion des vehicules", "gestion de la flotte", "gerer ma flotte", "gerer les vehicules", "fleet management", "manage vehicles", "أسطول", "تدبير السيارات"]
+  vehicle_tracking: ["suivi des vehicules", "suivre les vehicules", "gps", "geolocalisation", "vehicle tracking", "track vehicles", "تتبع"]
+  statistics: ["statistique", "statistiques", "stats", "rapports", "reporting", "statistics", "analytics", "إحصائيات"]
+  dashboard: ["tableau de bord", "dashboard", "لوحة القيادة"]
+  menu: ["menu", "carte des plats", "notre carte", "قائمة الطعام"]
+  reservation_requests: ["reservation de table", "reserver une table", "table booking", "book a table", "حجز طاولة"]
+  online_ordering: ["commande en ligne", "commander en ligne", "click and collect", "order online", "online ordering", "الطلب عبر الإنترنت"]
+  delivery_management: ["livraison", "livrer", "delivery", "deliver", "توصيل"]
+  gallery: ["galerie", "photos", "portfolio", "realisations", "gallery", "صور"]
+  multilingual: ["multilingue", "plusieurs langues", "en anglais", "en arabe", "trilingue", "bilingue", "multilingual", "several languages", "متعدد اللغات", "لغات"]
+  whatsapp_button: ["whatsapp", "واتساب"]
+  appointments: ["rendez-vous", "rendez vous", "rdv", "appointment", "appointments", "موعد", "مواعيد"]
+  reminders: ["rappel", "rappels", "reminder", "reminders", "تذكير"]
+  online_shop: ["vendre en ligne", "boutique en ligne", "e-commerce", "ecommerce", "sell online", "online shop", "online store", "متجر إلكتروني", "البيع عبر الإنترنت"]
+  inventory: ["stock", "stocks", "inventaire", "inventory", "مخزون"]
+  invoicing: ["facture", "factures", "facturation", "devis et factures", "invoice", "invoices", "invoicing", "فاتورة", "فواتير"]
+  blog: ["blog", "actualites", "articles", "news", "مدونة"]
+  property_listings: ["annonces", "biens", "listings", "properties", "إعلانات"]
+  events: ["evenements", "evenement", "events", "agenda", "فعاليات"]
+  loyalty: ["fidelite", "carte de fidelite", "loyalty", "وفاء"]
+  user_accounts: ["comptes utilisateurs", "espace membre", "connexion des utilisateurs", "user accounts", "members area", "حسابات المستخدمين"]
+  quote_requests: ["devis", "demande de devis", "quote", "quotes", "عرض سعر"]
+  reviews: ["avis", "reviews", "temoignages", "آراء"]
+  integrations: ["integration", "connecter avec", "api", "erp", "synchroniser", "تكامل"]
+
+# Words that, just before a keyword, mean "I do NOT want it".
+negations: ["pas de", "pas d'", "pas besoin", "sans", "aucun", "aucune", "ni ", "no ", "not ", "without", "don't", "dont", "لا ", "بدون", "دون"]
+
+yes_words: ["oui", "ouais", "yes", "yep", "yeah", "ok", "d'accord", "bien sur", "absolument", "exactement", "volontiers", "sure", "of course", "نعم", "أكيد", "ايوه", "واخا"]
+no_words: ["non", "no", "nope", "pas besoin", "pas maintenant", "plus tard", "not now", "لا", "ماشي"]
+
+# Numbers mentioned in free text, e.g. "15 voitures" => fleet_size = 15.
+number_patterns:
+  fleet_size: '(\d{1,4})\s*(?:voitures?|vehicules?|autos?|cars?|vehicles?|سيارات|سيارة)'
+  rooms_count: '(\d{1,4})\s*(?:chambres?|rooms?|suites?|غرف|غرفة)'
+  products_count: '(\d{1,6})\s*(?:produits?|articles|products?|منتجات|منتج)'
+  staff_count: '(\d{1,4})\s*(?:employes?|salaries|coiffeu?r?ses?|personnes|employees|staff|موظفين|موظف)'
+
+cities: ["marrakech", "casablanca", "rabat", "fes", "fez", "tanger", "tangier", "agadir", "essaouira", "meknes", "oujda", "tetouan", "ouarzazate", "chefchaouen", "el jadida", "kenitra", "nador", "laayoune", "dakhla", "safi", "ifrane", "mohammedia", "مراكش", "الدار البيضاء", "الرباط", "فاس", "طنجة", "أكادير", "الصويرة", "مكناس", "وجدة", "تطوان"]
+
+# Follow-up questions asked by the assistant, in order. "requires": only when that
+# feature was confirmed; "sectors": only for those sectors (empty = all).
+# Questions whose prerequisite was just confirmed are asked first.
+follow_up:
+  - { key: sector, question: { fr: "Quel est votre secteur d'activité (restaurant, location de voitures, hôtel, salon, commerce…) ?", en: "What is your industry (restaurant, car rental, hotel, salon, shop…)?", ar: "ما هو قطاع نشاطك (مطعم، كراء السيارات، فندق، صالون، متجر…)؟" } }
+  - { key: online_reservations, sectors: [car_rental, travel_agency, hotel], question: { fr: "Voulez-vous que vos clients réservent en ligne ?", en: "Do you want your customers to book online?", ar: "هل تريد أن يحجز زبناؤك على الإنترنت؟" } }
+  - { key: contracts, sectors: [car_rental], question: { fr: "Voulez-vous une gestion des contrats de location ?", en: "Do you want to manage rental contracts?", ar: "هل تريد تدبير عقود الكراء؟" } }
+  - { key: pdf_contracts, requires: contracts, question: { fr: "Voulez-vous générer automatiquement les contrats PDF ?", en: "Do you want contracts generated automatically as PDF?", ar: "هل تريد إنشاء العقود تلقائيًا بصيغة PDF؟" } }
+  - { key: e_signature, requires: contracts, question: { fr: "Voulez-vous une signature électronique ?", en: "Do you want electronic signature?", ar: "هل تريد التوقيع الإلكتروني؟" } }
+  - { key: customer_management, sectors: [car_rental, travel_agency, professional, real_estate], question: { fr: "Voulez-vous gérer vos clients (fiches, historique) ?", en: "Do you want to manage your customers (files, history)?", ar: "هل تريد تدبير زبنائك (الملفات والسجل)؟" } }
+  - { key: menu, sectors: [restaurant], question: { fr: "Voulez-vous afficher votre menu en ligne ?", en: "Do you want to show your menu online?", ar: "هل تريد عرض قائمة الطعام على الإنترنت؟" } }
+  - { key: reservation_requests, sectors: [restaurant], question: { fr: "Voulez-vous recevoir des réservations de table ?", en: "Do you want to receive table bookings?", ar: "هل تريد استقبال حجوزات الطاولات؟" } }
+  - { key: online_ordering, sectors: [restaurant], question: { fr: "Voulez-vous prendre des commandes en ligne ?", en: "Do you want to take orders online?", ar: "هل تريد استقبال الطلبات على الإنترنت؟" } }
+  - { key: delivery_management, requires: online_ordering, question: { fr: "Faites-vous de la livraison ?", en: "Do you deliver?", ar: "هل تقومون بالتوصيل؟" } }
+  - { key: appointments, sectors: [beauty, professional], question: { fr: "Voulez-vous la prise de rendez-vous en ligne ?", en: "Do you want online appointments?", ar: "هل تريد حجز المواعيد على الإنترنت؟" } }
+  - { key: reminders, requires: appointments, question: { fr: "Voulez-vous envoyer des rappels automatiques à vos clients ?", en: "Do you want to send automatic reminders?", ar: "هل تريد إرسال تذكيرات آلية لزبنائك؟" } }
+  - { key: online_shop, sectors: [retail], question: { fr: "Voulez-vous vendre vos produits en ligne ?", en: "Do you want to sell your products online?", ar: "هل تريد بيع منتجاتك على الإنترنت؟" } }
+  - { key: online_payments, sectors: [car_rental, hotel, travel_agency, beauty, retail, association], question: { fr: "Voulez-vous accepter les paiements en ligne ?", en: "Do you want to accept online payments?", ar: "هل تريد قبول الأداء على الإنترنت؟" } }
+  - { key: statistics, sectors: [car_rental, professional, retail], question: { fr: "Voulez-vous des statistiques sur votre activité ?", en: "Do you want statistics about your business?", ar: "هل تريد إحصائيات حول نشاطك؟" } }
+  - { key: gallery, sectors: [craftsman, hotel, restaurant, real_estate], question: { fr: "Voulez-vous une galerie photos ?", en: "Do you want a photo gallery?", ar: "هل تريد معرض صور؟" } }
+  - { key: multilingual, question: { fr: "Votre site doit-il être en plusieurs langues ?", en: "Should your website be in several languages?", ar: "هل يجب أن يكون موقعك بعدة لغات؟" } }
+
+# A requested feature is satisfied by an equivalent feature of the chosen solution.
+feature_equivalents:
+  online_reservations: [reservation_requests, booking_requests, online_booking, appointments, appointment_requests]
+  online_booking: [online_reservations, booking_requests]
+  reservation_requests: [online_reservations, booking_requests]
+  online_shop: [cart_checkout, online_ordering]
+  customer_management: [contacts]
+  dashboard: [statistics]
+  statistics: [dashboard]
+  vehicle_catalog: [vehicle_management]
+  appointment_requests: [appointments]
+  quote_requests: [contact_form]
