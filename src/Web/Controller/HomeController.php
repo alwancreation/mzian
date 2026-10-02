@@ -6,6 +6,7 @@ namespace App\Web\Controller;
 
 use App\Billing\Repository\SubscriptionPlanRepository;
 use App\Catalog\Service\CatalogProvider;
+use App\Pricing\ProposalBuilder;
 use App\Shared\Routing\LocalizedRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,14 +28,16 @@ final class HomeController extends AbstractController
     }
 
     #[Route(['fr' => '/fr/', 'en' => '/en/', 'ar' => '/ar/'], name: 'home', methods: ['GET'])]
-    public function index(CatalogProvider $catalog, SubscriptionPlanRepository $plans): Response
+    public function index(CatalogProvider $catalog, SubscriptionPlanRepository $plans, ProposalBuilder $proposals): Response
     {
         $solutions = $catalog->enabledSolutions();
         $featured = array_values(array_filter($solutions, static fn ($s) => $s->isFeatured()));
+        $shown = \array_slice([] !== $featured ? $featured : $solutions, 0, 6);
 
         $response = $this->render('web/home.html.twig', [
             'sectors' => $catalog->enabledSectors(),
-            'solutions' => \array_slice([] !== $featured ? $featured : $solutions, 0, 6),
+            'solutions' => $shown,
+            'starting_prices' => $proposals->startingPrices($shown),
             'plans' => $plans->findBy(['enabled' => true], ['position' => 'ASC']),
             'faq_keys' => ['what', 'how_long', 'price', 'ai'],
         ]);

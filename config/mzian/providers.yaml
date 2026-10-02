@@ -48,3 +48,32 @@ providers:
       env: { api_key: ANTHROPIC_API_KEY }
       price_per_million_tokens: { input: 3.0, output: 15.0 }
     capabilities: [requirement_analysis, conversation, content_generation, tool_use]
+
+  # ------------------------------------------------------------------ Hosting
+  - code: mock_hosting
+    type: hosting
+    driver: mock
+    name: "Mock Hosting (simulated, no cost)"
+    provisioning_method: mock
+    enabled: true
+    default: true
+    settings: { region: "eu-simulated", panel_url: "https://panel.mock-hosting.test" }
+    capabilities: [create_account, create_hosting, configure_domain, ssl, email, deploy]
+    hosting_plans:
+      - { code: starter, name: "Starter (10 GB, 1 DB, 5 e-mails)", price: 40, billing_period: year, specs: { storage_gb: 10, databases: 1, email_accounts: 5, php: "8.3" }, capabilities: [ssl, email] }
+      - { code: business, name: "Business (30 GB, 3 DB, 20 e-mails)", price: 72, billing_period: year, specs: { storage_gb: 30, databases: 3, email_accounts: 20, php: "8.3" }, capabilities: [ssl, email, backups] }
+      - { code: pro, name: "Pro (100 GB, 10 DB, 50 e-mails)", price: 120, billing_period: year, specs: { storage_gb: 100, databases: 10, email_accounts: 50, php: "8.3" }, capabilities: [ssl, email, backups, staging] }
+
+  # ------------------------------------------------------------------ Domains
+  - code: mock_domain
+    type: domain
+    driver: mock
+    name: "Mock Registrar (simulated, no cost)"
+    provisioning_method: mock
+    enabled: true
+    default: true
+    settings:
+      # Yearly registration price per TLD (major units). "default" applies to other TLDs.
+      tld_prices: { ".com": 12, ".net": 14, ".org": 13, ".ma": 25, ".fr": 10, "default": 15 }
+      nameservers: ["ns1.mock-registrar.test", "ns2.mock-registrar.test"]
+    capabilities: [check_availability, register, configure_dns]

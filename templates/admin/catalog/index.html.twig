@@ -21,9 +21,9 @@
                     <td class="font-medium">{{ solution.icon }} {{ solution.name('en') }}</td>
                     <td><code class="text-xs">{{ solution.code }}</code></td>
                     <td><span class="badge-gray">{{ solution.category.value }}</span></td>
-                    <td>{{ solution.basePrice|money('USD') }}</td>
+                    <td>{{ solution.basePrice|money }}</td>
                     <td>{{ solution.estimatedDevelopmentDays }}</td>
-                    <td>{{ solution.maintenancePrice|money('USD') }}</td>
+                    <td>{{ solution.maintenancePrice|money }}</td>
                     <td><code class="text-xs">{{ solution.applicationTemplate }}</code></td>
                     <td>{{ solution.features|length }}</td>
                     <td>{{ solution.enabled ? '<span class="badge-green">enabled</span>' : '<span class="badge-gray">disabled</span>' }}</td>
@@ -88,7 +88,7 @@
             {% for plan in plans %}
                 <tr>
                     <td class="font-medium">{{ plan.name('en') }} {% if plan.recommended %}<span class="badge-brand">recommended</span>{% endif %}</td>
-                    <td>{{ plan.price|money('USD') }} / {{ plan.interval.value }}</td>
+                    <td>{{ plan.price|money }} / {{ plan.interval.value }}</td>
                     <td class="text-xs">{{ plan.includes|join(', ') }}</td>
                     <td>{{ plan.enabled ? '<span class="badge-green">enabled</span>' : '<span class="badge-gray">disabled</span>' }}</td>
                     <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_catalog_plan', {id: plan.id}) }}">Edit</a></td>

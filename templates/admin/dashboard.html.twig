@@ -13,9 +13,9 @@
 {% block admin_content %}
 {% set m = metrics %}
 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-    <div class="kpi"><p class="kpi-label">Revenue</p><p class="kpi-value">{{ m.revenue|money('USD') }}</p><p class="mt-1 text-xs text-slate-500">{{ m.paid_orders }} paid orders</p></div>
-    <div class="kpi"><p class="kpi-label">Expected margin</p><p class="kpi-value text-emerald-600">{{ m.expected_margin|money('USD') }}</p><p class="mt-1 text-xs text-slate-500">Actual after costs: {{ m.actual_margin|money('USD') }}</p></div>
-    <div class="kpi"><p class="kpi-label">Infrastructure cost</p><p class="kpi-value">{{ m.infrastructure_cost|money('USD') }}</p><p class="mt-1 text-xs text-slate-500">AI cost: {{ m.ai_cost|money('USD') }}</p></div>
+    <div class="kpi"><p class="kpi-label">Revenue</p><p class="kpi-value">{{ m.revenue|money }}</p><p class="mt-1 text-xs text-slate-500">{{ m.paid_orders }} paid orders</p></div>
+    <div class="kpi"><p class="kpi-label">Expected margin</p><p class="kpi-value text-emerald-600">{{ m.expected_margin|money }}</p><p class="mt-1 text-xs text-slate-500">Actual after costs: {{ m.actual_margin|money }}</p></div>
+    <div class="kpi"><p class="kpi-label">Infrastructure cost</p><p class="kpi-value">{{ m.infrastructure_cost|money }}</p><p class="mt-1 text-xs text-slate-500">AI cost: {{ m.ai_cost|money }}</p></div>
     <div class="kpi"><p class="kpi-label">Projects delivered</p><p class="kpi-value">{{ m.projects_delivered }}</p><p class="mt-1 text-xs text-slate-500">Avg delivery: {{ m.average_delivery_seconds|duration }}</p></div>
     <div class="kpi"><p class="kpi-label">Visitors</p><p class="kpi-value">{{ m.visitors }}</p></div>
     <div class="kpi"><p class="kpi-label">Leads</p><p class="kpi-value">{{ m.leads }}</p><p class="mt-1 text-xs text-slate-500">Conversion: {{ m.lead_conversion_rate is null ? '—' : m.lead_conversion_rate ~ ' %' }}</p></div>

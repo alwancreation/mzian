@@ -1,0 +1,123 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Pricing{% endblock %}
+{% block page_title %}Pricing{% endblock %}
+
+{% block admin_content %}
+<p class="mb-6 max-w-3xl text-sm text-slate-600">
+    Selling price = cost (development × complexity, options, hosting, domain, e-mail, infrastructure, AI, payment fees) + margin.
+    The margin is the highest of the minimum margin, the target margin and the optional rate, and never drops below the minimum margin after fees and rounding.
+    The AI never sets a price.
+</p>
+
+<div class="grid gap-6 xl:grid-cols-5">
+    <section class="card card-body xl:col-span-2" aria-labelledby="policy-title">
+        <div class="flex items-center justify-between gap-3">
+            <h2 id="policy-title" class="font-semibold">Pricing policy ({{ policy.currency }})</h2>
+            {% if not can_edit %}<span class="badge-gray">read only — super admin</span>{% endif %}
+        </div>
+        <div class="mt-4">
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <div class="grid gap-x-4 sm:grid-cols-2">
+                    {% for child in form %}{{ form_row(child) }}{% endfor %}
+                </div>
+                {% if can_edit %}<button class="btn-primary">Save policy</button>{% endif %}
+            {{ form_end(form) }}
+        </div>
+    </section>
+
+    <div class="space-y-6 xl:col-span-3">
+        <section class="card" aria-labelledby="solutions-title">
+            <div class="card-body pb-0"><h2 id="solutions-title" class="font-semibold">Starting price per solution</h2>
+                <p class="mt-1 text-xs text-slate-500">Base price, low complexity, included features, cheapest suitable hosting plan and a domain in the first preferred TLD.</p></div>
+            <div class="table-wrap mt-4">
+                <table class="table">
+                    <thead><tr><th>Solution</th><th class="text-end">Cost</th><th class="text-end">Price</th><th class="text-end">Margin</th><th class="text-end">%</th></tr></thead>
+                    <tbody>
+                    {% for row in solutions %}
+                        {% set b = row.breakdown %}
+                        <tr>
+                            <td><a class="font-medium hover:text-brand-700" href="{{ path('admin_pricing', {solution: row.solution.code}) }}#simulator">{{ row.solution.icon }} {{ row.solution.name('en') }}</a></td>
+                            {% if b %}
+                                <td class="text-end">{{ b.costPrice|money(b.currency) }}</td>
+                                <td class="text-end font-semibold">{{ b.sellingPrice|money(b.currency) }}</td>
+                                <td class="text-end text-emerald-700">{{ b.margin|money(b.currency) }}</td>
+                                <td class="text-end">{{ b.marginPercentage|number_format(1) }}</td>
+                            {% else %}<td colspan="4" class="text-end text-slate-400">—</td>{% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="simulator" class="card card-body" aria-labelledby="simulator-title">
+            <h2 id="simulator-title" class="font-semibold">Simulator</h2>
+            <form method="get" action="{{ path('admin_pricing') }}#simulator" class="mt-4 grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="form-label" for="sim-solution">Solution</label>
+                    <select id="sim-solution" name="solution" class="form-select" data-autosubmit-select>
+                        <option value="">—</option>
+                        {% for s in all_solutions %}<option value="{{ s.code }}" {{ simulation and simulation.params.solution == s ? 'selected' }}>{{ s.name('en') }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="sim-complexity">Complexity</label>
+                    <select id="sim-complexity" name="complexity" class="form-select">
+                        {% for c in complexities %}<option value="{{ c }}" {{ simulation and simulation.params.complexity == c ? 'selected' }}>{{ c }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="sim-custom">Custom features (no template)</label>
+                    <input id="sim-custom" type="number" min="0" max="10" name="custom" value="{{ simulation ? simulation.params.custom : 0 }}" class="form-input">
+                </div>
+                <div>
+                    <label class="form-label" for="sim-emails">Extra e-mail accounts</label>
+                    <input id="sim-emails" type="number" min="0" max="100" name="emails" value="{{ simulation ? simulation.params.emails : 0 }}" class="form-input">
+                </div>
+                <div>
+                    <label class="form-label" for="sim-domain">Domain cost ({{ policy.currency }}, 0 = customer's own)</label>
+                    <input id="sim-domain" type="number" min="0" max="1000" name="domain" value="{{ simulation ? simulation.params.domain / 100 : 0 }}" class="form-input">
+                </div>
+                {% if simulation %}
+                    <fieldset class="sm:col-span-2">
+                        <legend class="form-label">Options</legend>
+                        <div class="grid gap-2 sm:grid-cols-2">
+                            {% for feature in simulation.params.solution.enabledFeatures|filter(f => not f.included) %}
+                                <label class="form-check"><input type="checkbox" name="options[]" value="{{ feature.code }}" {{ feature.code in simulation.params.options ? 'checked' }}> {{ feature.name('en') }} ({{ feature.price|money }})</label>
+                            {% else %}<p class="text-sm text-slate-500">No optional feature.</p>{% endfor %}
+                        </div>
+                    </fieldset>
+                {% endif %}
+                <div class="sm:col-span-2"><button class="btn-secondary">Simulate</button></div>
+            </form>
+
+            {% if simulation %}
+                {% set b = simulation.breakdown %}
+                <div class="table-wrap mt-6">
+                    <table class="table">
+                        <thead><tr><th>Line</th><th>Type</th><th class="text-end">Cost</th><th class="text-end">Customer price</th></tr></thead>
+                        <tbody>
+                        {% for line in b.lines %}
+                            <tr class="{{ line.customerVisible ? '' : 'bg-slate-50 text-slate-500' }}">
+                                <td>{{ line.label }}{% if not line.customerVisible %} <span class="badge-gray">internal</span>{% endif %}{% if line.recurring %} <span class="badge-blue">monthly</span>{% endif %}</td>
+                                <td><code class="text-xs">{{ line.type.value }}</code></td>
+                                <td class="text-end">{{ line.cost|money(b.currency) }}</td>
+                                <td class="text-end">{{ line.price|money(b.currency) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <dl class="mt-4 grid gap-3 sm:grid-cols-4">
+                    <div class="kpi"><dt class="kpi-label">Cost</dt><dd class="kpi-value text-lg">{{ b.costPrice|money(b.currency) }}</dd></div>
+                    <div class="kpi"><dt class="kpi-label">Selling price</dt><dd class="kpi-value text-lg" data-testid="sim-price">{{ b.sellingPrice|money(b.currency) }}</dd></div>
+                    <div class="kpi"><dt class="kpi-label">Margin</dt><dd class="kpi-value text-lg text-emerald-600" data-testid="sim-margin">{{ b.margin|money(b.currency) }} ({{ b.marginPercentage|number_format(1) }} %)</dd></div>
+                    <div class="kpi"><dt class="kpi-label">Agent budget</dt><dd class="kpi-value text-lg">{{ simulation.budget|money(b.currency) }}</dd></div>
+                </dl>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

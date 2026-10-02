@@ -303,6 +303,73 @@ order:
 pricing:
   month: "month"
   year: "year"
+  line:
+    hosting: "Hosting, first year — %plan%"
+    domain: "Domain name %domain% (1 year)"
+    domain_to_choose: "Domain name (1 year, chosen together)"
+    email: "Additional professional e-mail accounts (%count%)"
+    custom: "Custom development: %s"
+    subscription: "%plan% — maintenance and support"
+  warning:
+    custom_features: "Some requests need custom development: they are included in the price and will be confirmed by our team."
+    hosting_plan: "No standard hosting plan covers this need: our team will confirm the hosting before the project starts."
+    domain_taken: "The requested domain name is already taken: we propose an available alternative."
+    domain_to_choose: "The domain name will be chosen with you: the price shown is an estimate."
+  domain:
+    own: "Your existing domain: %domain% (no cost)"
+    register: "%domain% — available, reserved for you"
+    alternative: "%domain% is not available."
+    none: "Free Mzian address (you can add a domain later)"
+    to_choose: "To be chosen together"
+  proposal:
+    title: "Your price"
+    one_time: "One-time payment: build, launch, hosting and domain for the first year."
+    details: "Price details"
+    total: "Total"
+    domain: "Domain name"
+    hosting: "Hosting"
+    then: "Then: %plan% at %price% / month"
+    subscription_optional: "Optional plan, can be changed at any time."
+    validity: "Price valid for %days% days."
+    approval: "No work starts before a Mzian administrator approves your order."
+    order: "Order this solution"
+    question: "Ask a question"
+  page:
+    title: "Transparent pricing"
+    lead: "A price computed from the real costs of your project, with no surprises: build, hosting, domain and launch included."
+    points:
+      transparent:
+        title: "Computed, not improvised"
+        text: "The price is computed by our pricing engine from the catalog, the hosting and the domain. The AI recommends the solution, it never sets the price."
+      included:
+        title: "Everything included the first year"
+        text: "Development, secure hosting (SSL), domain name, tests, launch and access to your customer area."
+      validated:
+        title: "Approved by a human"
+        text: "Every order is reviewed by a Mzian administrator before work starts. You never pay for a project we cannot deliver."
+    solutions: "Starting price per solution"
+    solutions_lead: "The final price depends on your options and the complexity of your project. Get your exact price in 3 minutes."
+    starting_note: "Starting prices for a standard setup (first-year domain and hosting included). Your personalised proposal is valid for %days% days."
+    plans: "Monthly plans"
+    plans_lead: "After delivery, choose the maintenance and support plan that suits you (optional)."
+    faq: "Pricing questions"
+    questions:
+      how:
+        q: "How is the price computed?"
+        a: "We add up the development cost of the solution (according to its complexity), your options, the first year of hosting and domain, then a fixed and transparent margin. The same calculation applies to every customer."
+      own_domain:
+        q: "I already have a domain name, is it cheaper?"
+        a: "Yes. Tell us in the questionnaire: the domain is not charged and we only configure the DNS."
+      custom:
+        q: "What if I need a specific feature?"
+        a: "Requests that no template covers are priced as custom development and reviewed by our team before approval."
+      payment:
+        q: "When do I pay?"
+        a: "After accepting the proposal. If an administrator rejects the project, you are fully refunded."
+      renewal:
+        q: "What happens after the first year?"
+        a: "Hosting and domain are renewed through your monthly plan, or invoiced at cost if you have no plan."
+    cta: "Get my exact price"
 subscription:
   plan: "Plan"
   price: "Price"

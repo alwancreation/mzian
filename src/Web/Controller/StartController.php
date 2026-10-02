@@ -8,6 +8,7 @@ use App\Catalog\Questionnaire\InvalidAnswerException;
 use App\Catalog\Questionnaire\QuestionnaireEngine;
 use App\Catalog\Service\CatalogProvider;
 use App\Lead\Service\LeadService;
+use App\Pricing\ProposalBuilder;
 use App\Requirement\Dto\DetailsData;
 use App\Requirement\Dto\LeadData;
 use App\Requirement\Entity\Requirement;
@@ -210,7 +211,7 @@ final class StartController extends AbstractController
     }
 
     #[Route(['fr' => '/fr/demarrer/{token}/solution', 'en' => '/en/start/{token}/solution', 'ar' => '/ar/start/{token}/solution'], name: 'start_analysis', requirements: ['token' => '[a-f0-9]{32}'], methods: ['GET'])]
-    public function analysis(#[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, RequirementAnalysisService $analysisService): Response
+    public function analysis(#[MapEntity(mapping: ['token' => 'token'])] Requirement $requirement, RequirementAnalysisService $analysisService, ProposalBuilder $proposals): Response
     {
         $this->access->denyUnlessAccessible($requirement);
         $analysis = $analysisService->storedAnalysis($requirement);
@@ -219,11 +220,18 @@ final class StartController extends AbstractController
         }
         $solution = $this->catalog->solution($analysis->solution);
 
+        try {
+            $proposal = null !== $solution ? $proposals->build($requirement, $analysis) : null;
+        } catch (\DomainException) {
+            $proposal = null;
+        }
+
         return $this->render('start/analysis.html.twig', [
             'requirement' => $requirement,
             'analysis' => $analysis,
             'solution' => $solution,
             'sector' => $this->requirements->sector($requirement),
+            'proposal' => $proposal,
         ]);
     }
 }

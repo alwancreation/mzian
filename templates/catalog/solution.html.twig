@@ -48,11 +48,11 @@
         <aside class="card card-body h-fit lg:col-span-2">
             <dl class="space-y-3 text-sm">
                 {% if starting_price is defined and starting_price %}
-                    <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'catalog.from'|trans }}</dt><dd class="text-2xl font-bold">{{ starting_price|money(currency|default('USD'), false) }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'catalog.from'|trans }}</dt><dd class="text-2xl font-bold">{{ starting_price|money(currency|default(null), false) }}</dd></div>
                 {% endif %}
                 <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'catalog.delivery_time'|trans }}</dt><dd class="font-semibold">{{ 'catalog.days'|trans({'%count%': solution.estimatedDevelopmentDays}) }}</dd></div>
                 {% if solution.maintenancePrice > 0 %}
-                    <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'catalog.maintenance'|trans }}</dt><dd class="font-semibold">{{ solution.maintenancePrice|money(currency|default('USD')) }} / {{ 'pricing.month'|trans }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'catalog.maintenance'|trans }}</dt><dd class="font-semibold">{{ solution.maintenancePrice|money(currency|default(null)) }} / {{ 'pricing.month'|trans }}</dd></div>
                 {% endif %}
                 <div class="flex justify-between gap-3"><dt class="text-slate-500">{{ 'catalog.included'|trans }}</dt><dd class="text-end font-semibold">{{ 'catalog.included_value'|trans }}</dd></div>
             </dl>

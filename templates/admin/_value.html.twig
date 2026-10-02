@@ -3,7 +3,7 @@
 {%- if value is null or value is same as('') -%}
     <span class="text-slate-400">—</span>
 {%- elseif column.format == 'money' -%}
-    {{ value|money(column.currencyPath ? admin_value(row, column.currencyPath) : 'USD') }}
+    {{ value|money(column.currencyPath ? admin_value(row, column.currencyPath) : null) }}
 {%- elseif column.format == 'datetime' -%}
     <span class="whitespace-nowrap">{{ value|date('Y-m-d H:i') }}</span>
 {%- elseif column.format == 'date' -%}

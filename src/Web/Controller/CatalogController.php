@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Web\Controller;
 
 use App\Catalog\Service\CatalogProvider;
+use App\Pricing\ProposalBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,14 +16,21 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 final class CatalogController extends AbstractController
 {
-    public function __construct(private readonly CatalogProvider $catalog)
-    {
+    public function __construct(
+        private readonly CatalogProvider $catalog,
+        private readonly ProposalBuilder $proposals,
+    ) {
     }
 
     #[Route(['fr' => '/fr/solutions', 'en' => '/en/solutions', 'ar' => '/ar/solutions'], name: 'solutions_index', methods: ['GET'])]
     public function solutions(): Response
     {
-        return $this->cached($this->render('catalog/solutions.html.twig', ['solutions' => $this->catalog->enabledSolutions()]));
+        $solutions = $this->catalog->enabledSolutions();
+
+        return $this->cached($this->render('catalog/solutions.html.twig', [
+            'solutions' => $solutions,
+            'starting_prices' => $this->proposals->startingPrices($solutions),
+        ]));
     }
 
     #[Route(['fr' => '/fr/solutions/{slug}', 'en' => '/en/solutions/{slug}', 'ar' => '/ar/solutions/{slug}'], name: 'solution_show', requirements: ['slug' => '[a-z0-9-]+'], methods: ['GET'])]
@@ -43,6 +51,8 @@ final class CatalogController extends AbstractController
             'solution' => $solution,
             'sectors' => array_filter(array_map(fn (string $code) => $this->catalog->sector($code), $solution->getSectors())),
             'related' => \array_slice($related, 0, 3),
+            'starting_price' => $this->proposals->startingPrice($solution, $locale)->sellingPrice,
+            'starting_prices' => $this->proposals->startingPrices(\array_slice($related, 0, 3)),
         ]));
     }
 
@@ -61,9 +71,12 @@ final class CatalogController extends AbstractController
             return $this->redirectToRoute('industry_show', ['slug' => $sector->getSlug($locale)], Response::HTTP_MOVED_PERMANENTLY);
         }
 
+        $solutions = $this->catalog->solutionsForSector($sector->getCode());
+
         return $this->cached($this->render('catalog/industry.html.twig', [
             'sector' => $sector,
-            'solutions' => $this->catalog->solutionsForSector($sector->getCode()),
+            'solutions' => $solutions,
+            'starting_prices' => $this->proposals->startingPrices($solutions),
             'default_solution' => $this->catalog->solution($sector->getDefaultSolutionCode()),
         ]));
     }

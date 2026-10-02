@@ -6,6 +6,7 @@ namespace App\Shared\Twig;
 
 use App\Shared\I18n\LocalizedText;
 use App\Shared\Routing\LocalizedRoute;
+use App\Shared\Settings\SettingsService;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Attribute\AsTwigFilter;
@@ -16,15 +17,27 @@ final readonly class AppExtension
     public function __construct(
         private RequestStack $requestStack,
         private UrlGeneratorInterface $urlGenerator,
+        private SettingsService $settings,
     ) {
     }
 
     /**
+     * Currency of the platform prices (Admin > Pricing).
+     */
+    #[AsTwigFunction('platform_currency')]
+    public function platformCurrency(): string
+    {
+        return (string) ($this->settings->get('pricing')['currency'] ?? 'USD');
+    }
+
+    /**
      * Formats an amount in minor units: 23700|money('USD') => "$237.00" / "237,00 $US".
+     * Without a currency, the platform currency is used.
      */
     #[AsTwigFilter('money')]
-    public function money(?int $amount, string $currency = 'USD', bool $decimals = true): string
+    public function money(?int $amount, ?string $currency = null, bool $decimals = true): string
     {
+        $currency ??= $this->platformCurrency();
         $formatter = new \NumberFormatter($this->locale(), \NumberFormatter::CURRENCY);
         if (!$decimals) {
             $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);

@@ -36,7 +36,73 @@
                 </div>
             {% endif %}
 
-            {% block analysis_pricing %}{% endblock %}
+            {% block analysis_pricing %}
+                {% if proposal %}
+                    {% set b = proposal.breakdown %}
+                    <section class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6" aria-labelledby="proposal-price">
+                        <div class="flex flex-wrap items-end justify-between gap-3">
+                            <div>
+                                <h2 id="proposal-price" class="font-semibold">{{ 'pricing.proposal.title'|trans }}</h2>
+                                <p class="text-sm text-slate-500">{{ 'pricing.proposal.one_time'|trans }}</p>
+                            </div>
+                            <p class="text-4xl font-bold text-ink" data-testid="proposal-total">{{ b.sellingPrice|money(b.currency, false) }}</p>
+                        </div>
+
+                        <table class="mt-5 w-full text-sm">
+                            <caption class="sr-only">{{ 'pricing.proposal.details'|trans }}</caption>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for line in b.customerLines %}
+                                    <tr><td class="py-2 pe-3">{{ line.label }}</td><td class="whitespace-nowrap py-2 text-end font-medium">{{ line.price|money(b.currency) }}</td></tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="border-t border-slate-200"><th scope="row" class="pt-3 text-start">{{ 'pricing.proposal.total'|trans }}</th><td class="pt-3 text-end text-lg font-bold">{{ b.sellingPrice|money(b.currency) }}</td></tr>
+                            </tfoot>
+                        </table>
+
+                        <dl class="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+                            <div class="rounded-xl bg-slate-50 p-3">
+                                <dt class="text-slate-500">🌐 {{ 'pricing.proposal.domain'|trans }}</dt>
+                                <dd class="mt-1 font-medium">
+                                    {% if proposal.domainMode == 'own' %}{{ 'pricing.domain.own'|trans({'%domain%': proposal.domain ?? '—'}) }}
+                                    {% elseif proposal.domainMode == 'register' %}{{ 'pricing.domain.register'|trans({'%domain%': proposal.domain}) }}{% if proposal.alternativeDomain %}<span class="block text-xs font-normal text-amber-700">{{ 'pricing.domain.alternative'|trans({'%domain%': proposal.requestedDomain}) }}</span>{% endif %}
+                                    {% elseif proposal.domainMode == 'none' %}{{ 'pricing.domain.none'|trans }}
+                                    {% else %}{{ 'pricing.domain.to_choose'|trans }}{% endif %}
+                                </dd>
+                            </div>
+                            {% if proposal.hostingPlan %}
+                                <div class="rounded-xl bg-slate-50 p-3">
+                                    <dt class="text-slate-500">☁️ {{ 'pricing.proposal.hosting'|trans }}</dt>
+                                    <dd class="mt-1 font-medium">{{ proposal.hostingPlan.name }}</dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+
+                        {% if proposal.subscriptionPlan %}
+                            <div class="mt-4 rounded-xl border border-brand-100 bg-brand-50/50 p-4 text-sm">
+                                <p class="font-semibold">{{ 'pricing.proposal.then'|trans({'%price%': proposal.subscriptionPlan.monthlyPrice|money(b.currency), '%plan%': proposal.subscriptionPlan.name(locale)}) }}</p>
+                                <p class="mt-1 text-slate-600">{{ proposal.subscriptionPlan.description(locale) }} {{ 'pricing.proposal.subscription_optional'|trans }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% for warning in proposal.warnings %}
+                            <div class="alert-info mt-4"><span>{{ warning|trans }}</span></div>
+                        {% endfor %}
+
+                        <p class="mt-5 text-xs text-slate-500">{{ 'pricing.proposal.validity'|trans({'%days%': proposal.policy.quoteValidityDays}) }} {{ 'pricing.proposal.approval'|trans }}</p>
+
+                        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                            {% if route_exists('order_create.fr') %}
+                                <form method="post" action="{{ path('order_create', {token: requirement.token}) }}" class="sm:flex-1">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('order-' ~ requirement.token) }}">
+                                    <button type="submit" class="btn-primary btn-lg w-full">{{ 'pricing.proposal.order'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></button>
+                                </form>
+                            {% endif %}
+                            <a href="{{ path('contact') }}" class="btn-secondary btn-lg sm:flex-1">{{ 'pricing.proposal.question'|trans }}</a>
+                        </div>
+                    </section>
+                {% endif %}
+            {% endblock %}
 
             <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-6 text-sm">
                 <a href="{{ path('start_question', {token: requirement.token}) }}" class="btn-ghost">✏️ {{ 'start.summary.edit'|trans }}</a>

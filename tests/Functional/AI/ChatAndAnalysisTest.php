@@ -62,6 +62,9 @@ final class ChatAndAnalysisTest extends WebTestCase
         $this->client->followRedirect();
 
         self::assertSelectorTextContains('h1', 'Gestion de location de voitures');
+        self::assertSelectorTextContains('#proposal-price', 'Votre prix');
+        self::assertSelectorTextContains('main', 'souss-cars.com — disponible, réservé pour vous');
+        self::assertSelectorTextContains('main', 'Aucun travail ne démarre sans la validation');
         $requirement = static::getContainer()->get(RequirementRepository::class)->findOneBy(['businessName' => 'Souss Cars']);
         self::assertSame(RequirementStatus::Analyzed, $requirement->getStatus());
         self::assertSame('car_rental_management', $requirement->getRecommendedSolution()?->getCode());

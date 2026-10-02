@@ -21,6 +21,7 @@ use App\Catalog\Repository\SolutionRepository;
 use App\Catalog\Service\CatalogProvider;
 use App\Shared\Audit\AuditLogger;
 use App\Shared\Controller\CsrfGuardTrait;
+use App\Shared\Settings\SettingsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
@@ -52,7 +53,13 @@ final class CatalogAdminController extends AbstractController
         private readonly EntityManagerInterface $em,
         private readonly CatalogProvider $catalog,
         private readonly AuditLogger $audit,
+        private readonly SettingsService $settings,
     ) {
+    }
+
+    private function currency(): string
+    {
+        return (string) ($this->settings->get('pricing')['currency'] ?? 'USD');
     }
 
     #[Route('', name: 'admin_catalog', methods: ['GET'])]
@@ -105,9 +112,9 @@ final class CatalogAdminController extends AbstractController
             ->add('description', LocalizedTextType::class, ['label' => 'Description', 'multiline' => true, 'required' => false])
             ->add('slugs', LocalizedTextType::class, ['label' => 'URL slugs'])
             ->add('category', EnumType::class, ['class' => SolutionCategory::class])
-            ->add('basePrice', MoneyType::class, ['currency' => 'USD', 'label' => 'Base price (development & setup)', 'constraints' => [new Assert\PositiveOrZero()]])
+            ->add('basePrice', MoneyType::class, ['currency' => $this->currency(), 'label' => 'Base price (development & setup)', 'constraints' => [new Assert\PositiveOrZero()]])
             ->add('estimatedDevelopmentDays', IntegerType::class, ['constraints' => [new Assert\Positive()]])
-            ->add('maintenancePrice', MoneyType::class, ['currency' => 'USD', 'label' => 'Maintenance / month', 'constraints' => [new Assert\PositiveOrZero()]])
+            ->add('maintenancePrice', MoneyType::class, ['currency' => $this->currency(), 'label' => 'Maintenance / month', 'constraints' => [new Assert\PositiveOrZero()]])
             ->add('applicationTemplate', TextType::class, ['constraints' => [new Assert\Regex('/^[a-z0-9-]+$/')]])
             ->add('sectors', ChoiceType::class, ['choices' => $sectorChoices, 'multiple' => true, 'expanded' => false, 'required' => false, 'attr' => ['size' => 6]])
             ->add('hostingRequirements', JsonTextareaType::class)
@@ -302,7 +309,7 @@ final class CatalogAdminController extends AbstractController
         ])
             ->add('name', LocalizedTextType::class)
             ->add('description', LocalizedTextType::class, ['required' => false])
-            ->add('price', MoneyType::class, ['currency' => 'USD', 'constraints' => [new Assert\PositiveOrZero()]])
+            ->add('price', MoneyType::class, ['currency' => $this->currency(), 'constraints' => [new Assert\PositiveOrZero()]])
             ->add('interval', EnumType::class, ['class' => BillingInterval::class])
             ->add('includes', ChoiceType::class, ['multiple' => true, 'expanded' => true, 'choices' => ['Hosting' => 'hosting', 'Maintenance' => 'maintenance', 'Support' => 'support', 'AI usage' => 'ai_usage', 'Premium features' => 'premium_features']])
             ->add('recommended', CheckboxType::class, ['required' => false])

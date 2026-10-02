@@ -303,6 +303,73 @@ order:
 pricing:
   month: "mois"
   year: "an"
+  line:
+    hosting: "Hébergement 1re année — %plan%"
+    domain: "Nom de domaine %domain% (1 an)"
+    domain_to_choose: "Nom de domaine (1 an, à choisir ensemble)"
+    email: "Comptes e-mail professionnels supplémentaires (%count%)"
+    custom: "Développement sur mesure : %s"
+    subscription: "%plan% — maintenance et support"
+  warning:
+    custom_features: "Certaines demandes nécessitent un développement sur mesure : elles sont incluses au prix et seront confirmées par notre équipe."
+    hosting_plan: "Aucune offre d'hébergement standard ne couvre ce besoin : notre équipe confirmera l'hébergement avant le démarrage."
+    domain_taken: "Le nom de domaine demandé est déjà pris : nous vous proposons une alternative disponible."
+    domain_to_choose: "Le nom de domaine sera choisi avec vous : le prix indiqué est une estimation."
+  domain:
+    own: "Votre domaine existant : %domain% (aucun coût)"
+    register: "%domain% — disponible, réservé pour vous"
+    alternative: "%domain% n'est pas disponible."
+    none: "Adresse Mzian offerte (vous pourrez ajouter un domaine plus tard)"
+    to_choose: "À choisir ensemble"
+  proposal:
+    title: "Votre prix"
+    one_time: "Paiement unique : création, mise en ligne, hébergement et domaine la 1re année."
+    details: "Détail du prix"
+    total: "Total"
+    domain: "Nom de domaine"
+    hosting: "Hébergement"
+    then: "Ensuite : %plan% à %price% / mois"
+    subscription_optional: "Formule facultative, modifiable à tout moment."
+    validity: "Prix valable %days% jours."
+    approval: "Aucun travail ne démarre sans la validation de votre commande par un administrateur Mzian."
+    order: "Commander cette solution"
+    question: "Poser une question"
+  page:
+    title: "Tarifs transparents"
+    lead: "Un prix calculé à partir des coûts réels de votre projet, sans surprise : création, hébergement, domaine et mise en ligne inclus."
+    points:
+      transparent:
+        title: "Calculé, pas improvisé"
+        text: "Le prix est calculé par notre moteur de tarification à partir du catalogue, de l'hébergement et du domaine. L'IA recommande la solution, elle ne fixe jamais le prix."
+      included:
+        title: "Tout est inclus la 1re année"
+        text: "Développement, hébergement sécurisé (SSL), nom de domaine, tests, mise en ligne et accès à votre espace client."
+      validated:
+        title: "Validé par un humain"
+        text: "Chaque commande est vérifiée par un administrateur Mzian avant le démarrage. Vous ne payez jamais pour un projet irréalisable."
+    solutions: "Prix de départ par solution"
+    solutions_lead: "Le prix final dépend de vos options et de la complexité de votre projet. Obtenez votre prix exact en 3 minutes."
+    starting_note: "Prix de départ pour une configuration standard (domaine et hébergement 1re année inclus). Votre proposition personnalisée est valable %days% jours."
+    plans: "Formules mensuelles"
+    plans_lead: "Après la livraison, choisissez la formule de maintenance et de support adaptée (facultatif)."
+    faq: "Questions sur les prix"
+    questions:
+      how:
+        q: "Comment le prix est-il calculé ?"
+        a: "Nous additionnons le coût de développement de la solution (selon sa complexité), les options choisies, l'hébergement et le domaine de la première année, puis une marge fixe et transparente. Le même calcul s'applique à tous nos clients."
+      own_domain:
+        q: "J'ai déjà un nom de domaine, est-ce moins cher ?"
+        a: "Oui. Indiquez-le dans le questionnaire : le domaine n'est pas facturé et nous configurons seulement les DNS."
+      custom:
+        q: "Et si j'ai besoin d'une fonctionnalité spécifique ?"
+        a: "Les demandes qu'aucun modèle ne couvre sont chiffrées comme développement sur mesure et vérifiées par notre équipe avant validation."
+      payment:
+        q: "Quand dois-je payer ?"
+        a: "Après avoir accepté la proposition. Si un administrateur refuse le projet, vous êtes intégralement remboursé."
+      renewal:
+        q: "Que se passe-t-il après la première année ?"
+        a: "L'hébergement et le domaine sont renouvelés via votre formule mensuelle, ou facturés au prix coûtant si vous n'avez pas de formule."
+    cta: "Obtenir mon prix exact"
 subscription:
   plan: "Formule"
   price: "Prix"

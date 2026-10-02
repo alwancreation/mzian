@@ -1,0 +1,92 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% set locale = app.request.locale %}
+{% block title %}{{ 'pricing.page.title'|trans }}{% endblock %}
+{% block meta_description %}{{ 'pricing.page.lead'|trans }}{% endblock %}
+
+{% block structured_data %}
+{% set offers = [] %}
+{% for s in solutions|filter(s => starting_prices[s.code] is defined) %}
+    {% set offers = offers|merge([{
+        '@type': 'Offer',
+        'name': s.name(locale),
+        'url': url('solution_show', {slug: s.slug(locale)}),
+        'priceSpecification': {'@type': 'PriceSpecification', 'minPrice': starting_prices[s.code] / 100, 'priceCurrency': platform_currency()}
+    }]) %}
+{% endfor %}
+<script type="application/ld+json">
+{{ {'@context': 'https://schema.org', '@type': 'OfferCatalog', 'name': 'pricing.page.title'|trans, 'itemListElement': offers}|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}
+</script>
+{% endblock %}
+
+{% block content %}
+{% include 'components/_page_header.html.twig' with {eyebrow: 'nav.pricing'|trans, title: 'pricing.page.title'|trans, lead: 'pricing.page.lead'|trans} %}
+
+<section class="section pt-0">
+    <div class="container-page">
+        <div class="grid gap-6 lg:grid-cols-3">
+            {% for point in ['transparent', 'included', 'validated'] %}
+                <div class="card card-body">
+                    <h2 class="font-semibold">{{ ('pricing.page.points.' ~ point ~ '.title')|trans }}</h2>
+                    <p class="mt-2 text-sm text-slate-600">{{ ('pricing.page.points.' ~ point ~ '.text')|trans }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2 class="section-title mt-16">{{ 'pricing.page.solutions'|trans }}</h2>
+        <p class="section-lead">{{ 'pricing.page.solutions_lead'|trans }}</p>
+        <div class="card mt-8 overflow-hidden">
+            <ul class="divide-y divide-slate-100">
+                {% for solution in solutions %}
+                    <li class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                        <div class="flex items-start gap-3">
+                            <span class="text-2xl" aria-hidden="true">{{ solution.icon }}</span>
+                            <div>
+                                <a href="{{ path('solution_show', {slug: solution.slug(locale)}) }}" class="font-semibold hover:text-brand-700">{{ solution.name(locale) }}</a>
+                                <p class="text-sm text-slate-500">{{ solution.shortDescription(locale) }}</p>
+                                <p class="mt-1 text-xs text-slate-400">⏱ {{ 'catalog.days'|trans({'%count%': solution.estimatedDevelopmentDays}) }}{% if solution.maintenancePrice > 0 %} · {{ 'catalog.maintenance'|trans }} {{ solution.maintenancePrice|money }} / {{ 'pricing.month'|trans }}{% endif %}</p>
+                            </div>
+                        </div>
+                        <div class="shrink-0 sm:text-end">
+                            {% if starting_prices[solution.code] is defined %}
+                                <p class="text-xs text-slate-500">{{ 'catalog.from'|trans }}</p>
+                                <p class="text-2xl font-bold">{{ starting_prices[solution.code]|money(null, false) }}</p>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <p class="mt-3 text-xs text-slate-500">{{ 'pricing.page.starting_note'|trans({'%days%': quote_validity_days}) }}</p>
+    </div>
+</section>
+
+{% if plans is not empty %}
+<section class="section bg-slate-50">
+    <div class="container-page">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="section-title">{{ 'pricing.page.plans'|trans }}</h2>
+            <p class="section-lead">{{ 'pricing.page.plans_lead'|trans }}</p>
+        </div>
+        {% include 'components/_plans.html.twig' %}
+    </div>
+</section>
+{% endif %}
+
+<section class="section">
+    <div class="container-page max-w-3xl">
+        <h2 class="section-title text-center">{{ 'pricing.page.faq'|trans }}</h2>
+        <div class="mt-8 space-y-3">
+            {% for key in ['how', 'own_domain', 'custom', 'payment', 'renewal'] %}
+                <details class="card card-body group">
+                    <summary class="cursor-pointer list-none font-semibold">{{ ('pricing.page.questions.' ~ key ~ '.q')|trans }}</summary>
+                    <p class="mt-3 text-slate-600">{{ ('pricing.page.questions.' ~ key ~ '.a')|trans }}</p>
+                </details>
+            {% endfor %}
+        </div>
+        <div class="mt-12 text-center">
+            <a href="{{ path('start') }}" class="btn-primary btn-lg btn-glow">{{ 'pricing.page.cta'|trans }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
