@@ -1,0 +1,24 @@
+name: "Restaurant"
+version: "1.0.0"
+description: "Restaurant website: menu managed in the admin, table reservation requests, gallery, opening hours."
+theme: { primary: "#b45309", accent: "#16a34a", hero: "🍽️" }
+base_features: [website, pages, responsive, seo_basic, contact_form, menu, reservation_requests, gallery, opening_hours, admin_panel, dashboard]
+hero:
+  fr: { title: "%name%", subtitle: "Une cuisine généreuse au cœur de %city%. Réservez votre table en quelques secondes." }
+  en: { title: "%name%", subtitle: "Generous cooking in the heart of %city%. Book your table in seconds." }
+  ar: { title: "%name%", subtitle: "مطبخ أصيل في قلب %city%. احجز طاولتك في ثوانٍ." }
+highlights:
+  fr: ["Produits frais et de saison", "Cuisine faite maison", "Réservation en ligne"]
+  en: ["Fresh, seasonal produce", "Home-made cooking", "Online booking"]
+  ar: ["منتجات طازجة وموسمية", "طبخ منزلي", "حجز عبر الإنترنت"]
+hours:
+  fr: ["Lundi – Vendredi : 12h – 15h, 19h – 23h", "Samedi – Dimanche : 12h – 23h"]
+  en: ["Monday – Friday: 12pm – 3pm, 7pm – 11pm", "Saturday – Sunday: 12pm – 11pm"]
+  ar: ["الإثنين – الجمعة: 12:00 – 15:00، 19:00 – 23:00", "السبت – الأحد: 12:00 – 23:00"]
+seed:
+  menu_items:
+    - { name: { fr: "Salade de saison", en: "Seasonal salad", ar: "سلطة موسمية" }, category: starters, price: "45.00", available: "1", description: { fr: "Légumes frais du marché.", en: "Fresh vegetables from the market.", ar: "خضر طازجة من السوق." } }
+    - { name: { fr: "Tajine du jour", en: "Tajine of the day", ar: "طاجين اليوم" }, category: mains, price: "95.00", available: "1", description: { fr: "Recette maison, mijotée lentement.", en: "House recipe, slowly simmered.", ar: "وصفة البيت مطهوة على نار هادئة." } }
+    - { name: { fr: "Grillades", en: "Mixed grill", ar: "مشويات" }, category: mains, price: "120.00", available: "1", description: { fr: "Viandes grillées et accompagnements.", en: "Grilled meats with sides.", ar: "لحوم مشوية مع المرافقات." } }
+    - { name: { fr: "Dessert maison", en: "Home-made dessert", ar: "حلوى منزلية" }, category: desserts, price: "40.00", available: "1" }
+    - { name: { fr: "Thé à la menthe", en: "Mint tea", ar: "شاي بالنعناع" }, category: drinks, price: "20.00", available: "1" }

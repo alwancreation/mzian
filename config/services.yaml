@@ -4,9 +4,6 @@ parameters:
     mzian.internal_base_url: '%env(MZIAN_INTERNAL_BASE_URL)%'
     mzian.mail_from: '%env(MZIAN_MAIL_FROM)%'
     mzian.admin_email: '%env(MZIAN_ADMIN_EMAIL)%'
-    mzian.workspaces_dir: '%kernel.project_dir%/var/workspaces'
-    mzian.repositories_dir: '%kernel.project_dir%/var/repositories'
-    mzian.previews_dir: '%kernel.project_dir%/var/previews'
     mzian.application_templates_dir: '%kernel.project_dir%/resources/application-templates'
     mzian.catalog_file: '%kernel.project_dir%/config/mzian/catalog.yaml'
 

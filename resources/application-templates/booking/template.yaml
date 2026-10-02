@@ -1,0 +1,20 @@
+name: "Booking"
+version: "1.0.0"
+description: "Hotels, riads, salons and services: catalog (rooms or services), booking/appointment requests, availability calendar."
+theme: { primary: "#0e7490", accent: "#d97706", hero: "🗓️" }
+base_features: [website, pages, responsive, seo_basic, contact_form, booking_requests, availability_calendar, admin_panel, dashboard]
+hero:
+  fr: { title: "%name%", subtitle: "Réservez en ligne en quelques clics, à %city%." }
+  en: { title: "%name%", subtitle: "Book online in a few clicks, in %city%." }
+  ar: { title: "%name%", subtitle: "احجز عبر الإنترنت في بضع نقرات، في %city%." }
+highlights:
+  fr: ["Réservation simple, 24h/24", "Confirmation rapide", "Un accueil chaleureux"]
+  en: ["Simple booking, 24/7", "Fast confirmation", "A warm welcome"]
+  ar: ["حجز سهل على مدار الساعة", "تأكيد سريع", "استقبال حار"]
+seed:
+  rooms:
+    - { name: { fr: "Chambre double", en: "Double room", ar: "غرفة مزدوجة" }, capacity: 2, price_per_night: "600.00", available: "1", description: { fr: "Lit double, salle de bain privée, petit-déjeuner.", en: "Double bed, private bathroom, breakfast.", ar: "سرير مزدوج، حمام خاص، فطور." } }
+    - { name: { fr: "Suite familiale", en: "Family suite", ar: "جناح عائلي" }, capacity: 4, price_per_night: "1100.00", available: "1", description: { fr: "Deux chambres et un salon.", en: "Two bedrooms and a lounge.", ar: "غرفتان وصالون." } }
+  services:
+    - { name: { fr: "Consultation", en: "Consultation", ar: "استشارة" }, duration_minutes: 30, price: "150.00", description: { fr: "Premier rendez-vous.", en: "First appointment.", ar: "الموعد الأول." } }
+    - { name: { fr: "Prestation complète", en: "Full service", ar: "خدمة كاملة" }, duration_minutes: 60, price: "300.00" }

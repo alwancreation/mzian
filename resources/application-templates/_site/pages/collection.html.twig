@@ -1,0 +1,10 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="wrap section">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    {{ ui.collection(site, page.collection) }}
+    {% if site.cta.file != page.file %}<p class="center"><a class="btn big" href="{{ site.cta.file }}">{{ site.cta.label }}</a></p>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="wrap section">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    <div class="grid two">
+        {{ ui.form(site, page, 'messages', page.form_fields) }}
+        <aside class="stack">
+            <div class="card">
+                {% if site.phone %}<p>📞 <a href="tel:{{ site.phone_link }}">{{ site.phone }}</a></p>{% endif %}
+                {% if site.email %}<p>✉️ <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>{% endif %}
+                {% if site.city %}<p>📍 {{ site.city }}</p>{% endif %}
+                {% if site.whatsapp %}<p><a class="btn ghost" href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener">💬 {{ site.t.whatsapp }}</a></p>{% endif %}
+            </div>
+            {% if site.hours %}<div class="card"><h2>{{ site.t.hours }}</h2>{% for line in site.hours %}<p>{{ line }}</p>{% endfor %}</div>{% endif %}
+            {% if site.map %}
+                <div class="card map"><h2>{{ site.t.find_us }}</h2>
+                    <iframe title="{{ site.t.find_us }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q={{ (site.name ~ ' ' ~ site.city)|url_encode }}&amp;output=embed"></iframe>
+                </div>
+            {% endif %}
+        </aside>
+    </div>
+</section>
+{% endblock %}

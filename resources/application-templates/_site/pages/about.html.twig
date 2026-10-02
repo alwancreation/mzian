@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+{% block content %}
+<section class="wrap section narrow">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ site.content.tagline }}</p>
+    <p>{{ site.content.about }}</p>
+    <h2>{{ site.t.why_us }}</h2>
+    <ul class="checks">{% for line in site.highlights %}<li>✓ {{ line }}</li>{% endfor %}</ul>
+    {% if site.content.services is not empty %}
+        <h2>{{ site.t.our_services }}</h2>
+        <div class="grid two">{% for service in site.content.services %}<article class="card"><h3>{{ service.title }}</h3><p class="muted">{{ service.description }}</p></article>{% endfor %}</div>
+    {% endif %}
+    <p><a class="btn" href="contact.html">{{ site.t.write_us }}</a></p>
+</section>
+{% endblock %}

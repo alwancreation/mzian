@@ -1,0 +1,17 @@
+name: "E-commerce starter"
+version: "1.0.0"
+description: "Online shop: product catalog managed in the admin, cart, checkout (cash on delivery / bank transfer), orders and stock."
+theme: { primary: "#db2777", accent: "#4c3fe6", hero: "🛍️" }
+base_features: [website, pages, responsive, seo_basic, contact_form, product_catalog, online_shop, cart_checkout, order_management, inventory, admin_panel, dashboard]
+hero:
+  fr: { title: "%name%", subtitle: "Commandez en ligne, livraison à %city% et partout au Maroc." }
+  en: { title: "%name%", subtitle: "Order online, delivery in %city% and beyond." }
+  ar: { title: "%name%", subtitle: "اطلب عبر الإنترنت، التوصيل في %city% وكل المغرب." }
+highlights:
+  fr: ["Commande simple et rapide", "Paiement à la livraison", "Service client réactif"]
+  en: ["Simple, fast ordering", "Cash on delivery", "Responsive customer service"]
+  ar: ["طلب سهل وسريع", "الدفع عند التسليم", "خدمة زبناء سريعة"]
+seed:
+  products:
+    - { name: { fr: "Produit exemple 1", en: "Sample product 1", ar: "منتج مثال 1" }, category: "Collection", price: "199.00", stock: 10, active: "1", description: { fr: "Remplacez ce produit par les vôtres dans l'administration.", en: "Replace this product with yours in the admin.", ar: "عوّض هذا المنتج بمنتجاتك في الإدارة." } }
+    - { name: { fr: "Produit exemple 2", en: "Sample product 2", ar: "منتج مثال 2" }, category: "Collection", price: "299.00", stock: 5, active: "1" }

@@ -1,0 +1,18 @@
+name: "Car rental"
+version: "1.0.0"
+description: "Car rental agency: vehicle catalog, online reservation requests, customers, rental contracts (printable), dashboard."
+theme: { primary: "#0f766e", accent: "#f59e0b", hero: "🚗" }
+base_features: [website, pages, responsive, seo_basic, contact_form, vehicle_catalog, booking_requests, whatsapp_button, admin_panel, dashboard]
+hero:
+  fr: { title: "Location de voitures à %city%", subtitle: "%name% : des véhicules récents, des prix clairs et une réservation en quelques clics." }
+  en: { title: "Car rental in %city%", subtitle: "%name%: recent vehicles, clear prices and booking in a few clicks." }
+  ar: { title: "كراء السيارات في %city%", subtitle: "%name%: سيارات حديثة، أثمنة واضحة وحجز في بضع نقرات." }
+highlights:
+  fr: ["Véhicules récents et entretenus", "Livraison possible à l'aéroport", "Assistance 7j/7"]
+  en: ["Recent, well-maintained vehicles", "Airport delivery available", "Assistance 7 days a week"]
+  ar: ["سيارات حديثة ومصانة", "إمكانية التسليم في المطار", "مساعدة طيلة أيام الأسبوع"]
+seed:
+  vehicles:
+    - { name: "Dacia Logan", category: economy, price_per_day: "250.00", seats: 5, transmission: manual, fuel: diesel, available: "1", description: { fr: "Économique et spacieuse.", en: "Economical and roomy.", ar: "اقتصادية وواسعة." } }
+    - { name: "Renault Clio", category: compact, price_per_day: "300.00", seats: 5, transmission: manual, fuel: petrol, available: "1", description: { fr: "Idéale en ville.", en: "Perfect for the city.", ar: "مثالية للمدينة." } }
+    - { name: "Peugeot 3008", category: suv, price_per_day: "550.00", seats: 5, transmission: automatic, fuel: diesel, available: "1", description: { fr: "Confort pour les longs trajets.", en: "Comfort for long trips.", ar: "راحة للمسافات الطويلة." } }

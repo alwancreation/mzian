@@ -1,0 +1,13 @@
+name: "Website starter"
+version: "1.0.0"
+description: "Showcase website: home, services, about, contact form, map, management of the contact requests."
+theme: { primary: "#4c3fe6", accent: "#0ea5e9", hero: "✨" }
+base_features: [website, pages, responsive, seo_basic, contact_form, admin_panel, dashboard]
+hero:
+  fr: { title: "%name%", subtitle: "Votre partenaire de confiance à %city%." }
+  en: { title: "%name%", subtitle: "Your trusted partner in %city%." }
+  ar: { title: "%name%", subtitle: "شريككم الموثوق في %city%." }
+highlights:
+  fr: ["Un accueil attentif et personnalisé", "Des réponses rapides à vos demandes", "Une équipe locale à %city%"]
+  en: ["Attentive, personal service", "Fast answers to your requests", "A local team in %city%"]
+  ar: ["استقبال لطيف وخدمة شخصية", "ردود سريعة على طلباتكم", "فريق محلي في %city%"]

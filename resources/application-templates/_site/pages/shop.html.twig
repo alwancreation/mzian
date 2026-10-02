@@ -1,0 +1,9 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="wrap section">
+    <div class="head"><h1>{{ page.title }}</h1><a class="btn" href="checkout.html">🛒 {{ site.t.checkout }} (<span data-cart-count>0</span>)</a></div>
+    <p class="lead">{{ page.intro }}</p>
+    {{ ui.collection(site, page.collection) }}
+</section>
+{% endblock %}

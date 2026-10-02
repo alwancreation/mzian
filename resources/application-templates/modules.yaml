@@ -1,0 +1,242 @@
+# =============================================================================
+# Application modules — DATA used by App\Development\Generator\ApplicationGenerator.
+#
+# entities  : what the generated management application stores (SQLite) and
+#             shows publicly (pages, forms, JSON feeds).
+#             field syntax: "name:type", "name:type!" (required),
+#             "name:select(a,b,c)"; labels come from "labels"/"options" below.
+# features  : catalog feature code -> how the generated application implements it:
+#             status implemented | configuration (works once the owner configures
+#             an external account) | custom (NOT generated: Mzian developers).
+# Add a feature/entity here and it becomes available to every template.
+# =============================================================================
+
+entities:
+  messages:
+    icon: "✉️"
+    title: full_name
+    fields: ["full_name:text!", "email:email!", "phone:tel", "subject:text", "message:textarea!", "status:select(new,read,answered)"]
+    list: [full_name, email, subject, status]
+    public_form: [full_name, email, phone, subject, message]
+    form_defaults: { status: new }
+  vehicles:
+    icon: "🚗"
+    title: name
+    fields: ["name:text!", "category:select(economy,compact,suv,van,luxury)", "price_per_day:money!", "seats:number", "transmission:select(manual,automatic)", "fuel:select(petrol,diesel,hybrid,electric)", "available:boolean", "description:textarea"]
+    list: [name, category, price_per_day, available]
+    public_list: { fields: [name, category, price_per_day, seats, transmission, fuel, description], filter: { available: "1" } }
+  customers:
+    icon: "👥"
+    title: full_name
+    fields: ["full_name:text!", "email:email", "phone:tel", "company:text", "city:text", "notes:textarea"]
+    list: [full_name, phone, email, city]
+    stats: true
+  reservations:
+    icon: "📅"
+    title: full_name
+    fields: ["full_name:text!", "phone:tel!", "email:email", "item:text", "start_date:date!", "end_date:date", "guests:number", "message:textarea", "status:select(pending,confirmed,cancelled,completed)"]
+    list: [full_name, item, start_date, end_date, status]
+    public_form: [full_name, phone, email, item, start_date, end_date, guests, message]
+    form_defaults: { status: pending }
+    calendar: start_date
+    stats: true
+  contracts:
+    icon: "📄"
+    title: number
+    fields: ["number:text!", "customer:text!", "vehicle:text", "start_date:date!", "end_date:date!", "daily_rate:money", "total:money", "deposit:money", "status:select(draft,active,closed)", "notes:textarea"]
+    list: [number, customer, vehicle, start_date, end_date, total, status]
+    printable: true
+  menu_items:
+    icon: "🍽️"
+    title: name
+    fields: ["name:text!", "category:select(starters,mains,desserts,drinks)!", "price:money!", "description:textarea", "available:boolean"]
+    list: [name, category, price, available]
+    public_list: { fields: [name, category, price, description], filter: { available: "1" } }
+  rooms:
+    icon: "🛏️"
+    title: name
+    fields: ["name:text!", "capacity:number", "price_per_night:money!", "description:textarea", "available:boolean"]
+    list: [name, capacity, price_per_night, available]
+    public_list: { fields: [name, capacity, price_per_night, description], filter: { available: "1" } }
+  services:
+    icon: "💼"
+    title: name
+    fields: ["name:text!", "duration_minutes:number", "price:money", "description:textarea"]
+    list: [name, duration_minutes, price]
+    public_list: { fields: [name, duration_minutes, price, description] }
+  staff:
+    icon: "🧑‍💼"
+    title: full_name
+    fields: ["full_name:text!", "role:text", "phone:tel", "working_days:text", "working_hours:text"]
+    list: [full_name, role, working_days, working_hours]
+  appointments:
+    icon: "🗓️"
+    title: full_name
+    fields: ["full_name:text!", "phone:tel!", "email:email", "service:text", "date:date!", "time:time", "staff:text", "message:textarea", "status:select(pending,confirmed,cancelled,completed)"]
+    list: [full_name, service, date, time, status]
+    public_form: [full_name, phone, email, service, date, time, message]
+    form_defaults: { status: pending }
+    calendar: date
+    stats: true
+  tasks:
+    icon: "✅"
+    title: title
+    fields: ["title:text!", "due_date:date", "priority:select(low,normal,high)", "status:select(todo,doing,done)", "assignee:text", "notes:textarea"]
+    list: [title, due_date, priority, status, assignee]
+    calendar: due_date
+  notes:
+    icon: "📝"
+    title: title
+    fields: ["title:text!", "customer:text", "body:textarea!"]
+    list: [title, customer]
+  deals:
+    icon: "💰"
+    title: title
+    fields: ["title:text!", "customer:text", "amount:money", "stage:select(lead,qualified,proposal,won,lost)"]
+    list: [title, customer, amount, stage]
+    stats: true
+  products:
+    icon: "🛍️"
+    title: name
+    fields: ["name:text!", "category:text", "price:money!", "stock:number", "description:textarea", "active:boolean"]
+    list: [name, category, price, stock, active]
+    public_list: { fields: [name, category, price, description, stock], filter: { active: "1" } }
+  orders:
+    icon: "📦"
+    title: full_name
+    fields: ["full_name:text!", "email:email!", "phone:tel!", "address:textarea!", "items:textarea!", "total:money", "payment_method:select(cash_on_delivery,bank_transfer)", "status:select(new,paid,shipped,delivered,cancelled)", "notes:textarea"]
+    list: [full_name, total, payment_method, status]
+    public_form: [full_name, email, phone, address, items, total, payment_method, notes]
+    form_defaults: { status: new }
+    stats: true
+  reviews:
+    icon: "⭐"
+    title: author
+    fields: ["author:text!", "rating:select(5,4,3,2,1)!", "comment:textarea!", "approved:boolean"]
+    list: [author, rating, approved]
+    public_form: [author, rating, comment]
+    form_defaults: { approved: "0" }
+    public_list: { fields: [author, rating, comment], filter: { approved: "1" } }
+  events:
+    icon: "🎟️"
+    title: title
+    fields: ["title:text!", "date:date!", "time:time", "location:text", "description:textarea"]
+    list: [title, date, time, location]
+    public_list: { fields: [title, date, time, location, description] }
+    calendar: date
+  posts:
+    icon: "📰"
+    title: title
+    fields: ["title:text!", "date:date!", "summary:textarea!", "body:textarea"]
+    list: [title, date]
+    public_list: { fields: [title, date, summary, body] }
+  properties:
+    icon: "🏠"
+    title: title
+    fields: ["title:text!", "type:select(apartment,house,villa,land,office)", "price:money!", "city:text", "surface:number", "description:textarea", "available:boolean"]
+    list: [title, type, price, city, available]
+    public_list: { fields: [title, type, price, city, surface, description], filter: { available: "1" } }
+  quote_requests:
+    icon: "🧾"
+    title: full_name
+    fields: ["full_name:text!", "email:email!", "phone:tel", "need:textarea!", "budget:text", "status:select(new,sent,won,lost)"]
+    list: [full_name, email, budget, status]
+    public_form: [full_name, email, phone, need, budget]
+    form_defaults: { status: new }
+  subscribers:
+    icon: "📬"
+    title: email
+    fields: ["email:email!", "status:select(subscribed,unsubscribed)"]
+    list: [email, status]
+    public_form: [email]
+    form_defaults: { status: subscribed }
+  invoices:
+    icon: "🧮"
+    title: number
+    fields: ["number:text!", "customer:text!", "date:date!", "description:textarea!", "amount:money!", "status:select(draft,sent,paid)"]
+    list: [number, customer, date, amount, status]
+    printable: true
+
+# Public pages a module adds (file name => page type). Core pages (index, about,
+# contact, legal) always exist.
+pages:
+  vehicles: { type: collection, entity: vehicles, nav: true }
+  booking: { type: form, entity: reservations, nav: true }
+  menu: { type: collection, entity: menu_items, nav: true, group_by: category }
+  rooms: { type: collection, entity: rooms, nav: true }
+  services: { type: collection, entity: services, nav: true }
+  appointment: { type: form, entity: appointments, nav: true }
+  shop: { type: shop, entity: products, nav: true }
+  checkout: { type: checkout, entity: orders, nav: false }
+  events: { type: collection, entity: events, nav: true }
+  blog: { type: collection, entity: posts, nav: true }
+  properties: { type: collection, entity: properties, nav: true }
+  quote: { type: form, entity: quote_requests, nav: true }
+  gallery: { type: gallery, nav: true }
+  reviews: { type: reviews, entity: reviews, nav: false }
+
+features:
+  # core website
+  website: { status: implemented }
+  pages: { status: implemented }
+  responsive: { status: implemented }
+  mobile: { status: implemented }
+  seo_basic: { status: implemented }
+  contact_form: { status: implemented, entities: [messages] }
+  google_maps: { status: implemented }
+  gallery: { status: implemented, pages: [gallery] }
+  whatsapp_button: { status: implemented }
+  multilingual: { status: implemented }
+  opening_hours: { status: implemented }
+  testimonials: { status: implemented, entities: [reviews], pages: [reviews] }
+  reviews: { status: implemented, entities: [reviews], pages: [reviews] }
+  newsletter: { status: implemented, entities: [subscribers] }
+  blog: { status: implemented, entities: [posts], pages: [blog] }
+  events: { status: implemented, entities: [events], pages: [events] }
+  property_listings: { status: implemented, entities: [properties], pages: [properties] }
+  quote_requests: { status: implemented, entities: [quote_requests], pages: [quote] }
+  # management application
+  admin_panel: { status: implemented }
+  dashboard: { status: implemented }
+  statistics: { status: implemented }
+  customer_management: { status: implemented, entities: [customers] }
+  contacts: { status: implemented, entities: [customers] }
+  vehicle_catalog: { status: implemented, entities: [vehicles], pages: [vehicles] }
+  vehicle_management: { status: implemented, entities: [vehicles] }
+  online_reservations: { status: implemented, entities: [reservations], pages: [booking] }
+  booking_requests: { status: implemented, entities: [reservations], pages: [booking] }
+  reservation_requests: { status: implemented, entities: [reservations], pages: [booking] }
+  online_booking: { status: implemented, entities: [reservations], pages: [booking] }
+  availability_calendar: { status: implemented, entities: [reservations] }
+  email_confirmations: { status: implemented }
+  contracts: { status: implemented, entities: [contracts] }
+  pdf_contracts: { status: implemented, entities: [contracts] }
+  menu: { status: implemented, entities: [menu_items], pages: [menu] }
+  rooms: { status: implemented, entities: [rooms], pages: [rooms] }
+  services_catalog: { status: implemented, entities: [services], pages: [services] }
+  appointments: { status: implemented, entities: [appointments], pages: [appointment] }
+  appointment_requests: { status: implemented, entities: [appointments], pages: [appointment] }
+  staff_schedule: { status: implemented, entities: [staff] }
+  tasks: { status: implemented, entities: [tasks] }
+  notes: { status: implemented, entities: [notes] }
+  sales_pipeline: { status: implemented, entities: [deals] }
+  invoicing: { status: implemented, entities: [invoices] }
+  product_catalog: { status: implemented, entities: [products], pages: [shop] }
+  online_shop: { status: implemented, entities: [products, orders], pages: [shop, checkout] }
+  inventory: { status: implemented, entities: [products] }
+  cart_checkout: { status: implemented, entities: [orders], pages: [shop, checkout] }
+  order_management: { status: implemented, entities: [orders] }
+  # need an account of the business with an external service
+  online_payments: { status: configuration, note: "Online payment needs the business's own payment account (Stripe, CMI...): orders are taken with cash on delivery / bank transfer until it is configured." }
+  # not generated automatically: done by Mzian developers after delivery
+  e_signature: { status: custom }
+  vehicle_tracking: { status: custom }
+  delivery_management: { status: custom }
+  online_ordering: { status: custom }
+  reminders: { status: custom }
+  loyalty: { status: custom }
+  email_campaigns: { status: custom }
+  promo_codes: { status: custom }
+  integrations: { status: custom }
+  specification: { status: custom }
+  user_accounts: { status: custom }

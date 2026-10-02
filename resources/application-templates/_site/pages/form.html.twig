@@ -1,0 +1,9 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="wrap section narrow">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    {{ ui.form(site, page, page.entity, page.form_fields, page.datalist) }}
+</section>
+{% endblock %}

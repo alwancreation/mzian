@@ -118,3 +118,35 @@ providers:
       iban: ""
       bic: ""
     capabilities: [offline]
+
+  # ------------------------------------------------------------------ Source code
+  - code: local_git
+    type: repository
+    driver: local_git
+    name: "Git repositories on the platform server (var/repositories)"
+    provisioning_method: api
+    enabled: true
+    default_if_env: { MZIAN_REPOSITORY_PROVIDER: local_git }
+    capabilities: [create_repository, push]
+  - code: github
+    type: repository
+    driver: github
+    name: "GitHub (one private repository per customer)"
+    provisioning_method: api
+    enabled_if_env: { MZIAN_REPOSITORY_PROVIDER: github }
+    default_if_env: { MZIAN_REPOSITORY_PROVIDER: github }
+    settings:
+      base_url: "https://api.github.com"
+      private: true
+      env: { token: GITHUB_TOKEN, organization: GITHUB_ORGANIZATION }
+    capabilities: [create_repository, push, webhooks]
+
+  # ------------------------------------------------------------------ Deployment
+  - code: local_apps
+    type: deployment
+    driver: local
+    name: "Mzian apps server (demo hosting, docker service \"apps\")"
+    provisioning_method: mock
+    enabled: true
+    default: true
+    capabilities: [deploy, rollback]

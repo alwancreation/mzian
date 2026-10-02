@@ -1,0 +1,8 @@
+{% extends 'layout.html.twig' %}
+{% block content %}
+<section class="wrap section narrow">
+    <h1>{{ page.title }}</h1>
+    <p>{{ site.t.legal_text|replace({'%name%': site.name, '%city%': site.city ? ', ' ~ site.city : ''}) }}</p>
+    {% if site.email %}<p>✉️ <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>{% endif %}
+</section>
+{% endblock %}

@@ -2,6 +2,10 @@
 # (Admin > Settings / Pricing), which stores the override in the `setting` table.
 # Amounts are in MAJOR units of the platform currency (50 = $50.00).
 parameters:
+    # Where the agents build, version and deploy the customer applications.
+    mzian.builds_dir: '%kernel.project_dir%/var/builds'
+    mzian.repositories_dir: '%kernel.project_dir%/var/repositories'
+    mzian.deployments_dir: '%kernel.project_dir%/var/deployments'
     mzian.settings_defaults:
         pricing:
             currency: USD
@@ -41,3 +45,4 @@ parameters:
         analysis:
             # Recommended solution rules (first match wins); imported from config/mzian/catalog.yaml.
             solution_rules: []
+

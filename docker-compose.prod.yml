@@ -46,3 +46,8 @@ services:
 
   assets:
     profiles: ["dev-tools"]
+
+  # Demo hosting for the "local" deployment provider: off in production (use a real
+  # hosting/deployment provider). Enable with: --profile demo
+  apps:
+    profiles: ["demo"]

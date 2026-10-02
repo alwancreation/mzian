@@ -1,0 +1,50 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="hero">
+    <div class="wrap">
+        <p class="eyebrow">{{ site.theme.hero }} {{ site.content.tagline }}</p>
+        <h1>{{ site.hero.title }}</h1>
+        <p class="lead">{{ site.hero.subtitle }}</p>
+        <div class="actions">
+            <a class="btn big" href="{{ site.cta.file }}">{{ site.cta.label }}</a>
+            {% if site.phone %}<a class="btn ghost big" href="tel:{{ site.phone_link }}">📞 {{ site.t.call_us }}</a>{% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="wrap section">
+    <h2>{{ site.t.why_us }}</h2>
+    <ul class="grid three highlights">{% for line in site.highlights %}<li class="card">✓ {{ line }}</li>{% endfor %}</ul>
+</section>
+
+{% if site.featured %}
+<section class="wrap section">
+    <div class="head"><h2>{{ site.featured.title }}</h2><a href="{{ site.featured.file }}">{{ site.t.see_all }} →</a></div>
+    {{ ui.collection(site, site.featured, 3) }}
+</section>
+{% elseif site.content.services is not empty %}
+<section class="wrap section">
+    <h2>{{ site.t.our_services }}</h2>
+    <div class="grid three">{% for service in site.content.services %}<article class="card"><h3>{{ service.title }}</h3><p class="muted">{{ service.description }}</p></article>{% endfor %}</div>
+</section>
+{% endif %}
+
+<section class="wrap section about">
+    <h2>{{ site.t.about }}</h2>
+    <p>{{ site.content.about }}</p>
+</section>
+
+{% if site.reviews %}
+<section class="wrap section" data-reviews hidden>
+    <h2>{{ site.t.reviews }}</h2>
+    <div class="grid three" data-review-list></div>
+    <p><a href="reviews.html">{{ site.t.leave_review }} →</a></p>
+</section>
+{% endif %}
+
+<section class="wrap section cta">
+    <h2>{{ site.content.call_to_action }}</h2>
+    <a class="btn big" href="{{ site.cta.file }}">{{ site.cta.label }}</a>
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="wrap section">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    <div class="grid two">
+        <div class="card" data-cart>
+            <h2>{{ site.t.cart }}</h2>
+            <ul class="cart-lines" data-cart-lines></ul>
+            <p class="muted" data-cart-empty>{{ site.t.cart_empty }}</p>
+            <p class="total">{{ site.t.total }} : <strong data-cart-total-label>0</strong></p>
+            <p class="muted small">{{ site.t.order_note }}</p>
+            <template data-remove-label>{{ site.t.remove }}</template>
+        </div>
+        {{ ui.form(site, page, 'orders', page.form_fields) }}
+    </div>
+</section>
+{% endblock %}

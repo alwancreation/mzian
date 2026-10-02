@@ -1,0 +1,13 @@
+name: "Custom application (starter)"
+version: "1.0.0"
+description: "Starting point for custom applications: website, contact and the modules the specification maps to. The rest is developed by the Mzian team."
+theme: { primary: "#334155", accent: "#4c3fe6", hero: "🧩" }
+base_features: [website, pages, responsive, seo_basic, contact_form, admin_panel, dashboard]
+hero:
+  fr: { title: "%name%", subtitle: "Bienvenue chez %name%, à %city%." }
+  en: { title: "%name%", subtitle: "Welcome to %name%, in %city%." }
+  ar: { title: "%name%", subtitle: "مرحبًا بكم في %name%، في %city%." }
+highlights:
+  fr: ["Une solution sur mesure", "Un accompagnement personnalisé", "Une équipe réactive"]
+  en: ["A tailored solution", "Personal support", "A responsive team"]
+  ar: ["حل مخصص", "مواكبة شخصية", "فريق سريع الاستجابة"]

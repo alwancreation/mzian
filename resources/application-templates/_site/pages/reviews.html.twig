@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block content %}
+<section class="wrap section">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    <div class="grid three" data-review-list data-always></div>
+    <h2>{{ site.t.leave_review }}</h2>
+    {{ ui.form(site, page, 'reviews', page.form_fields) }}
+</section>
+{% endblock %}

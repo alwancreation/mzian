@@ -19,7 +19,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
         composer install --prefer-dist --no-progress --no-interaction
     fi
 
-    mkdir -p var/cache var/log var/share var/workspaces var/repositories var/previews var/mock-providers
+    mkdir -p var/cache var/log var/share var/builds var/deployments var/repositories
     setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var 2>/dev/null || chmod -R a+rwX var
     setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var 2>/dev/null || true
 

@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+{% block content %}
+<section class="wrap section">
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.intro }}</p>
+    <div class="grid three gallery">
+        {% for i in 1..6 %}<figure class="card"><img src="{{ site.root }}assets/gallery-{{ i }}.svg" alt="{{ site.name }} — {{ page.title }} {{ i }}" width="600" height="400" loading="lazy"></figure>{% endfor %}
+    </div>
+    <p class="muted small">{{ site.t.gallery_note }}</p>
+</section>
+{% endblock %}

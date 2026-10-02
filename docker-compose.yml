@@ -23,6 +23,8 @@ x-php-common: &php-common
     MAILER_DSN: smtp://mailpit:1025
     MZIAN_PUBLIC_BASE_URL: ${MZIAN_PUBLIC_BASE_URL:-http://localhost}
     MZIAN_INTERNAL_BASE_URL: http://nginx
+    MZIAN_APPS_PUBLIC_URL: ${MZIAN_APPS_PUBLIC_URL:-http://localhost:8081}
+    MZIAN_APPS_INTERNAL_URL: http://apps:8081
     MZIAN_MOCK_LATENCY_MS: ${MZIAN_MOCK_LATENCY_MS:-1200}
   depends_on:
     database:
@@ -58,6 +60,26 @@ services:
     depends_on:
       php:
         condition: service_healthy
+
+  # Customer applications deployed by the "local" deployment provider (demo hosting).
+  # Plain PHP image: no platform code, no database credentials, no secrets.
+  apps:
+    image: php:8.3-cli-alpine
+    restart: unless-stopped
+    working_dir: /srv/apps
+    command: ["php", "-S", "0.0.0.0:8081", "/srv/apps/router.php"]
+    environment:
+      MZIAN_DEPLOYMENTS_DIR: /srv/deployments
+    ports:
+      - "${APPS_PORT:-8081}:8081"
+    volumes:
+      - ./docker/apps:/srv/apps:ro
+      - ./var/deployments:/srv/deployments
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8081/healthz') ? 0 : 1);"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   database:
     image: mysql:8.4

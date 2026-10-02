@@ -1,0 +1,63 @@
+{#- Shared fragments of the generated website. -#}
+
+{% macro money(value, site) -%}
+{{ value|number_format(2, ',', ' ') }} {{ site.currency }}
+{%- endmacro %}
+
+{# Public form posting to the management application (honeypot + return page). #}
+{% macro form(site, page, entity, fields, datalist = []) %}
+<form id="form" class="card form" method="post" action="{{ site.root }}admin/index.php?public=submit&amp;entity={{ entity }}" data-form>
+    <div class="alert ok" data-status="sent" hidden role="status">{{ site.t.sent }}</div>
+    <div class="alert ko" data-status="invalid" hidden role="alert">{{ site.t.error }}</div>
+    <div class="alert ko" data-status="throttled" hidden role="alert">{{ site.t.throttled }}</div>
+    <input type="hidden" name="_return" value="../{{ site.prefix ~ page.file }}">
+    <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="fields">
+    {% for field in fields %}
+        <label class="{{ field.type == 'textarea' ? 'wide' : '' }}">{{ field.label }}{{ field.required ? ' *' }}
+            {% if field.type == 'textarea' %}
+                <textarea name="{{ field.name }}" rows="4"{{ field.required ? ' required' }}{{ field.readonly|default(false) ? ' readonly data-cart-summary' }}></textarea>
+            {% elseif field.type == 'select' %}
+                <select name="{{ field.name }}"{{ field.required ? ' required' }}>
+                    {% if not field.required %}<option value=""></option>{% endif %}
+                    {% for value, label in field.options %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                </select>
+            {% else %}
+                <input type="{{ {email: 'email', tel: 'tel', number: 'number', date: 'date', time: 'time', money: 'text'}[field.type]|default('text') }}" name="{{ field.name }}"{{ field.required ? ' required' }}{{ field.name == 'item' and datalist is not empty ? ' list=item-options' }}{{ field.name == 'total' ? ' readonly data-cart-total' }}{{ field.type == 'number' ? ' min=0' }}>
+            {% endif %}
+        </label>
+    {% endfor %}
+    </div>
+    {% if datalist is not empty %}<datalist id="item-options">{% for option in datalist %}<option value="{{ option }}">{% endfor %}</datalist>{% endif %}
+    <p class="muted small">{{ site.t.required_note }}</p>
+    <button class="btn">{{ site.t.send }}</button>
+</form>
+{% endmacro %}
+
+{# One item of a public collection (seed data at generation, refreshed from the live feed). #}
+{% macro item(site, collection, row) %}
+<article class="card item">
+    {% for field in collection.fields %}
+        {% set value = row[field.name]|default('') %}
+        {% if value is not same as('') and value is not null %}
+            {% if loop.first %}<h3>{{ value }}</h3>
+            {% elseif field.type == 'money' %}<p class="price">{{ _self.money(value, site) }}{% if field.name == 'price_per_day' %} {{ site.t.per_day }}{% elseif field.name == 'price_per_night' %} {{ site.t.per_night }}{% endif %}</p>
+            {% elseif field.type == 'select' %}<span class="tag">{{ field.options[value]|default(value) }}</span>
+            {% elseif field.type == 'textarea' %}<p class="muted">{{ value }}</p>
+            {% elseif field.name == 'duration_minutes' %}<span class="tag">{{ value }} {{ site.t.minutes }}</span>
+            {% elseif field.type == 'number' %}<span class="tag">{{ field.label }} : {{ value }}</span>
+            {% else %}<span class="tag">{{ value }}</span>{% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if collection.shop %}<button class="btn small add" type="button" data-add='{{ {id: row.id|default(0), name: row.name|default(''), price: row.price|default(0)}|json_encode }}'>{{ site.t.add_to_cart }}</button>{% endif %}
+</article>
+{% endmacro %}
+
+{# A list of items + the configuration the browser uses to refresh it from the feed. #}
+{% macro collection(site, collection, limit = 0) %}
+<div class="grid" data-feed="{{ collection.entity }}" data-limit="{{ limit }}">
+    {% set rows = limit > 0 ? collection.items|slice(0, limit) : collection.items %}
+    {% for row in rows %}{{ _self.item(site, collection, row|merge({id: row.id|default(loop.index)})) }}{% else %}<p class="muted">{{ site.t.no_items }}</p>{% endfor %}
+</div>
+<script type="application/json" data-feed-config="{{ collection.entity }}">{{ {fields: collection.fields, shop: collection.shop, empty: site.t.no_items, add: site.t.add_to_cart, per_day: site.t.per_day, per_night: site.t.per_night, minutes: site.t.minutes}|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_UNESCAPED_UNICODE'))|raw }}</script>
+{% endmacro %}

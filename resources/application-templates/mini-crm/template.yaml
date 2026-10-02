@@ -1,0 +1,13 @@
+name: "Mini CRM"
+version: "1.0.0"
+description: "Customer relationship management: contacts, tasks, notes, pipeline and statistics, with a simple public page."
+theme: { primary: "#7c3aed", accent: "#0ea5e9", hero: "📇" }
+base_features: [website, responsive, seo_basic, contact_form, customer_management, tasks, notes, dashboard, statistics, admin_panel]
+hero:
+  fr: { title: "%name%", subtitle: "Contactez-nous : notre équipe vous répond rapidement." }
+  en: { title: "%name%", subtitle: "Contact us: our team answers quickly." }
+  ar: { title: "%name%", subtitle: "تواصل معنا: فريقنا يجيبك بسرعة." }
+highlights:
+  fr: ["Un suivi personnalisé", "Des réponses rapides", "Une équipe à votre écoute"]
+  en: ["Personal follow-up", "Fast answers", "A team that listens"]
+  ar: ["متابعة شخصية", "ردود سريعة", "فريق يستمع إليك"]
