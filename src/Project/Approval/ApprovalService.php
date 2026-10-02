@@ -9,6 +9,8 @@ use App\Billing\Service\PaymentService;
 use App\Notification\Enum\NotificationType;
 use App\Notification\NotificationService;
 use App\Project\Entity\Project;
+use App\Project\Entity\ProjectEvent;
+use App\Project\Enum\CostCategory;
 use App\Project\Enum\ProjectStatus;
 use App\Project\Event\ProjectAutomationEvent;
 use App\Project\Workflow\ProjectStateMachine;
@@ -142,6 +144,36 @@ final readonly class ApprovalService
         $this->admin();
         $this->stateMachine->retry($project, $at);
         $this->dispatcher->dispatch(new ProjectAutomationEvent($project, ProjectAutomationEvent::RETRIED));
+    }
+
+    /**
+     * The spending an agent is waiting for (from the last hold), if any.
+     *
+     * @return array{category: string, amount: int, description: string}|null
+     */
+    public function pendingSpending(Project $project): ?array
+    {
+        if (ProjectStatus::WaitingAdminApproval !== $project->getStatus()) {
+            return null;
+        }
+        $hold = $this->em->getRepository(ProjectEvent::class)->findOneBy(['project' => $project, 'transition' => 'hold'], ['id' => 'DESC']);
+        $spending = $hold?->getMetadata()['spending'] ?? null;
+
+        return \is_array($spending) && isset($spending['category'], $spending['amount']) ? ['category' => (string) $spending['category'], 'amount' => (int) $spending['amount'], 'description' => (string) ($spending['description'] ?? '')] : null;
+    }
+
+    /**
+     * Explicit approval of a spending above the automation rules, then resume.
+     */
+    public function approveSpending(Project $project): void
+    {
+        $this->admin();
+        $spending = $this->pendingSpending($project) ?? throw new \InvalidArgumentException('No spending is waiting for approval.');
+        $category = CostCategory::from($spending['category']);
+        $project->approveSpending($category, $spending['amount']);
+        $this->audit->log('budget.spending_approved', $project, null, ['category' => $category->value, 'amount' => $spending['amount']], ['reference' => $project->getReference(), 'description' => $spending['description']]);
+        $this->em->flush();
+        $this->resume($project);
     }
 
     public function pause(Project $project): void

@@ -6,6 +6,8 @@ parameters:
     mzian.builds_dir: '%kernel.project_dir%/var/builds'
     mzian.repositories_dir: '%kernel.project_dir%/var/repositories'
     mzian.deployments_dir: '%kernel.project_dir%/var/deployments'
+    # First retry delay of a failed agent operation (doubled at each attempt).
+    mzian.agent_retry_backoff_seconds: 5
     mzian.settings_defaults:
         pricing:
             currency: USD
@@ -42,6 +44,10 @@ parameters:
             max_attempts: 3
             # QA: in simulated (mock) deployments HTTPS/DNS checks cannot be verified.
             qa_min_score: 70
+        generation:
+            # Currency shown in the generated applications (prices of the customer's business).
+            currency: MAD
+            timezone: Africa/Casablanca
         analysis:
             # Recommended solution rules (first match wins); imported from config/mzian/catalog.yaml.
             solution_rules: []

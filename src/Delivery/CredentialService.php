@@ -47,6 +47,31 @@ final readonly class CredentialService
         return $plain;
     }
 
+    public function find(Project $project, string $type): ?ProjectCredential
+    {
+        foreach ($project->getCredentials() as $credential) {
+            if ($credential->getType() === $type) {
+                return $credential;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * One-way hash of a stored secret, for the deployed application's login
+     * (app/config.php). The clear value never leaves this method.
+     */
+    public function passwordHash(ProjectCredential $credential): string
+    {
+        $plain = $this->secrets->decrypt($credential->getEncryptedSecret());
+        try {
+            return password_hash($plain, \PASSWORD_DEFAULT);
+        } finally {
+            sodium_memzero($plain);
+        }
+    }
+
     public static function generatePassword(int $length = 20): string
     {
         $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%*-_';

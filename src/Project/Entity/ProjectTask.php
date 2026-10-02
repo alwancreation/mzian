@@ -183,6 +183,16 @@ class ProjectTask
         $this->finishedAt = new \DateTimeImmutable();
     }
 
+    /**
+     * Output of a multi-operation step, accumulated operation after operation.
+     *
+     * @param array<string, mixed> $output
+     */
+    public function mergeOutput(array $output): void
+    {
+        $this->output = array_merge($this->output, $output);
+    }
+
     public function fail(string $error): void
     {
         $this->status = ProjectTaskStatus::Failed;

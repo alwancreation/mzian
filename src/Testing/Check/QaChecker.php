@@ -29,7 +29,8 @@ final class QaChecker
     public function run(string $publicUrl, string $internalUrl, array $manifest, string $businessName, bool $simulated, ?string $domain): array
     {
         $checks = new CheckList();
-        $http = $this->http ?? HttpClient::create(['timeout' => 15, 'max_redirects' => 0, 'no_proxy' => '*', 'headers' => ['User-Agent' => 'MzianQA/1.0']]);
+        // Redirects are checked, never followed (e.g. the administration must redirect to its login page).
+        $http = ($this->http ?? HttpClient::create())->withOptions(['timeout' => 15, 'max_redirects' => 0, 'no_proxy' => '*', 'headers' => ['User-Agent' => 'MzianQA/1.0']]);
         $base = rtrim($internalUrl, '/').'/';
 
         $start = microtime(true);

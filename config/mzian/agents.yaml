@@ -1,0 +1,35 @@
+# =============================================================================
+# AI agents of the automation pipeline — imported by `mzian:setup`, then managed
+# in Admin > Agents (enable/disable, max attempts, permissions).
+# Least privilege: each agent only gets what its job needs. Human decisions
+# (approve, reject, resume, refund, budget, providers...) can never be granted.
+# =============================================================================
+agents:
+  - code: hosting
+    name: "Hosting Agent"
+    description: "Chooses the hosting plan, checks the budget, creates the hosting account and website space."
+    permissions: [hosting.provision, budget.spend, credentials.store]
+  - code: domain
+    name: "Domain Agent"
+    description: "Registers the domain (or prepares the DNS of the customer's domain) and points it to the hosting."
+    permissions: [domain.register, domain.dns, budget.spend]
+  - code: development
+    name: "Development Agent"
+    description: "Creates the repository, writes the website copy, generates the application from its template and commits it."
+    permissions: [repository.write, application.generate, ai.content, credentials.store, budget.spend]
+  - code: testing
+    name: "Testing Agent"
+    description: "Runs the automated tests: static analysis and the application started and driven over HTTP."
+    permissions: [tests.run]
+  - code: deployment
+    name: "Deployment Agent"
+    description: "Deploys the tested version with its runtime configuration."
+    permissions: [deployment.deploy, credentials.hash]
+  - code: qa
+    name: "QA Agent"
+    description: "Audits the deployed application (availability, SEO, mobile, admin, security, HTTPS/DNS on real hosting)."
+    permissions: [qa.run]
+  - code: delivery
+    name: "Delivery Agent"
+    description: "Writes the delivery documentation, activates the subscription and closes the project."
+    permissions: [delivery.send]

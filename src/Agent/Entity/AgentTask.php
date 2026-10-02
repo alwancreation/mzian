@@ -157,6 +157,14 @@ class AgentTask
         $this->finishedAt = new \DateTimeImmutable();
     }
 
+    /** An administrator restarted the step: this result no longer counts. */
+    public function supersede(): void
+    {
+        if (AgentTaskStatus::Succeeded === $this->status) {
+            $this->status = AgentTaskStatus::Skipped;
+        }
+    }
+
     public function fail(string $error): void
     {
         $this->status = AgentTaskStatus::Failed;

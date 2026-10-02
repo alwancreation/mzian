@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Support;
 
+use App\Agent\Setup\AgentsSetup;
 use App\Catalog\Import\CatalogImporter;
 use App\Provider\Entity\Provider;
 use App\Provider\Enum\ProviderType;
@@ -20,6 +21,7 @@ trait PlatformFixtureTrait
     {
         static::getContainer()->get(CatalogImporter::class)->import();
         static::getContainer()->get(ProvidersSetup::class)->import();
+        static::getContainer()->get(AgentsSetup::class)->import();
     }
 
     /**

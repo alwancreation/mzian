@@ -185,6 +185,16 @@ class Domain
         $this->status = DomainStatus::Active;
     }
 
+    /**
+     * DNS records the customer has to create at their own registrar (external domain).
+     *
+     * @param list<array{type: string, name: string, value: string, ttl?: int}> $records
+     */
+    public function recordDnsInstructions(array $records): void
+    {
+        $this->dnsRecords = $records;
+    }
+
     public function markFailed(): void
     {
         $this->status = DomainStatus::Failed;

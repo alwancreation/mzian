@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Agent\Entity;
 
+use App\Agent\AgentPermission;
 use App\Agent\Repository\AgentRepository;
 use App\Shared\Entity\TimestampableTrait;
 use Doctrine\DBAL\Types\Types;
@@ -50,6 +51,7 @@ class Agent
      */
     public function __construct(string $code, string $name, string $description, array $permissions)
     {
+        AgentPermission::assertGrantable($permissions);
         $this->code = $code;
         $this->name = $name;
         $this->description = $description;
@@ -108,6 +110,7 @@ class Agent
      */
     public function update(string $name, string $description, array $permissions, int $maxAttempts): void
     {
+        AgentPermission::assertGrantable($permissions);
         $this->name = $name;
         $this->description = $description;
         $this->permissions = $permissions;

@@ -3,3 +3,4 @@ parameters:
     mzian.builds_dir: '%kernel.project_dir%/var/test/builds'
     mzian.repositories_dir: '%kernel.project_dir%/var/test/repositories'
     mzian.deployments_dir: '%kernel.project_dir%/var/test/deployments'
+    mzian.agent_retry_backoff_seconds: 0
