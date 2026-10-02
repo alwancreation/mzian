@@ -1,16 +1,44 @@
 notification:
   action: "Ouvrir mon espace Mzian"
-  welcome: { subject: "Bienvenue sur Mzian", body: "Votre compte est prêt. Vous pouvez suivre vos projets depuis votre espace client." }
-  order_received: { subject: "Commande %order% reçue", body: "Nous avons bien reçu votre commande %order% pour « %project% » (%amount%). Finalisez le paiement pour lancer le projet." }
-  payment_confirmed: { subject: "Paiement confirmé — %order%", body: "Votre paiement de %amount% est confirmé. Votre projet « %project% » est transmis à l'équipe Mzian pour validation." }
-  approval_required: { subject: "Validation requise : %project%", body: "Le projet %project% (%customer%) est payé et attend votre validation." }
-  project_started: { subject: "Votre projet « %project% » est lancé", body: "Bonne nouvelle : votre projet est validé. Les agents Mzian démarrent la réalisation, vous pouvez suivre l'avancement en temps réel." }
-  changes_requested: { subject: "Précisions nécessaires pour « %project% »", body: "L'équipe Mzian a besoin de précisions avant de lancer votre projet :\n%message%" }
-  project_rejected: { subject: "Votre projet « %project% »", body: "Nous ne pouvons malheureusement pas réaliser ce projet :\n%message%\nLe montant payé vous sera remboursé." }
-  development_completed: { subject: "Développement terminé — %project%", body: "Le développement de votre application est terminé. Les tests automatisés sont en cours." }
-  testing_completed: { subject: "Tests réussis — %project%", body: "Les tests automatisés de votre application sont réussis. La mise en ligne commence." }
-  project_deployed: { subject: "Votre application est en ligne — %project%", body: "Votre application est déployée à l'adresse %url%. Le contrôle qualité est en cours." }
-  project_delivered: { subject: "Votre application Mzian est prête !", body: "Votre application « %project% » est livrée.\n\nSite : %url%\nAdministration : %admin_url%\n\nVos accès sont disponibles de manière sécurisée dans votre espace client." }
-  admin_attention_required: { subject: "Action requise : %project%", body: "Le projet %project% nécessite une intervention : %reason%" }
-  contact_received: { subject: "Nouveau message de %name%", body: "%name% (%email%) a écrit :\n%message%" }
-  support_request: { subject: "Demande de support — %customer%", body: "%customer% (%email%), projet %project% :\n%message%" }
+  welcome:
+    subject: "Bienvenue sur Mzian"
+    body: "Votre compte est prêt. Vous pouvez suivre vos projets depuis votre espace client."
+  order_received:
+    subject: "Commande %order% reçue"
+    body: "Nous avons bien reçu votre commande %order% pour « %project% » (%amount%). Finalisez le paiement pour lancer le projet."
+  payment_confirmed:
+    subject: "Paiement confirmé — %order%"
+    body: "Votre paiement de %amount% est confirmé. Votre projet « %project% » est transmis à l'équipe Mzian pour validation."
+  approval_required:
+    subject: "Validation requise : %project%"
+    body: "Le projet %project% (%customer%) est payé et attend votre validation."
+  project_started:
+    subject: "Votre projet « %project% » est lancé"
+    body: "Bonne nouvelle : votre projet est validé. Les agents Mzian démarrent la réalisation, vous pouvez suivre l'avancement en temps réel."
+  changes_requested:
+    subject: "Précisions nécessaires pour « %project% »"
+    body: "L'équipe Mzian a besoin de précisions avant de lancer votre projet :\n%message%"
+  project_rejected:
+    subject: "Votre projet « %project% »"
+    body: "Nous ne pouvons malheureusement pas réaliser ce projet :\n%message%\nLe montant payé vous sera remboursé."
+  development_completed:
+    subject: "Développement terminé — %project%"
+    body: "Le développement de votre application est terminé. Les tests automatisés sont en cours."
+  testing_completed:
+    subject: "Tests réussis — %project%"
+    body: "Les tests automatisés de votre application sont réussis. La mise en ligne commence."
+  project_deployed:
+    subject: "Votre application est en ligne — %project%"
+    body: "Votre application est déployée à l'adresse %url%. Le contrôle qualité est en cours."
+  project_delivered:
+    subject: "Votre application Mzian est prête !"
+    body: "Votre application « %project% » est livrée.\n\nSite : %url%\nAdministration : %admin_url%\n\nVos accès sont disponibles de manière sécurisée dans votre espace client."
+  admin_attention_required:
+    subject: "Action requise : %project%"
+    body: "Le projet %project% nécessite une intervention : %reason%"
+  contact_received:
+    subject: "Nouveau message de %name%"
+    body: "%name% (%email%) a écrit :\n%message%"
+  support_request:
+    subject: "Demande de support — %customer%"
+    body: "%customer% (%email%), projet %project% :\n%message%"

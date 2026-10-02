@@ -1,0 +1,24 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_actions %}<a href="{{ back }}" class="btn-ghost btn-sm">← Back</a>{% endblock %}
+
+{% block admin_content %}
+<div class="card card-body max-w-4xl">
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {% for child in form %}
+            {% if 'localized_text' in child.vars.block_prefixes %}
+                <fieldset class="form-row rounded-xl border border-slate-200 p-4">
+                    <legend class="px-1 text-sm font-semibold">{{ child.vars.label ?: child.vars.name|humanize }}</legend>
+                    <div class="grid gap-x-4 md:grid-cols-3">{% for sub in child %}{{ form_row(sub) }}{% endfor %}</div>
+                </fieldset>
+            {% else %}
+                {{ form_row(child) }}
+            {% endif %}
+        {% endfor %}
+        <button class="btn-primary">Save</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

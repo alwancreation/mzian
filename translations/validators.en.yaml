@@ -3,3 +3,6 @@ registration.password.too_short: "The password must contain at least {{ limit }}
 registration.phone.invalid: "This phone number is not valid."
 registration.terms.required: "You must accept the terms and conditions."
 profile.password.wrong: "The current password is wrong."
+questionnaire:
+  error:
+    domain: "This domain name is not valid."

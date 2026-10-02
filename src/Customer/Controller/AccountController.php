@@ -29,6 +29,7 @@ use App\Security\UserManager;
 use App\Security\Voter\CustomerResourceVoter;
 use App\Security\Voter\ProjectVoter;
 use App\Shared\Audit\AuditLogger;
+use App\Shared\Controller\CsrfGuardTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,6 +48,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_CUSTOMER')]
 final class AccountController extends AbstractController
 {
+    use CsrfGuardTrait;
+
     public function __construct(
         private readonly ProjectRepository $projects,
         private readonly EntityManagerInterface $em,
@@ -109,9 +112,7 @@ final class AccountController extends AbstractController
         if ($credential->getProject() !== $project) {
             throw $this->createNotFoundException();
         }
-        if (!$this->isCsrfTokenValid('reveal-credential-'.$credential->getId(), $request->getPayload()->getString('_token'))) {
-            throw $this->createAccessDeniedException('Invalid CSRF token.');
-        }
+        $this->denyUnlessCsrfValid('reveal-credential-'.$credential->getId(), $request);
         if (!$credentialRevealLimiter->create('user-'.$this->user()->getId())->consume()->isAccepted()) {
             $this->addFlash('error', $this->translator->trans('error.too_many_requests'));
 
@@ -183,9 +184,7 @@ final class AccountController extends AbstractController
     {
         $customer = $this->customer();
         if ($request->isMethod('POST')) {
-            if (!$this->isCsrfTokenValid('support', $request->getPayload()->getString('_token'))) {
-                throw $this->createAccessDeniedException('Invalid CSRF token.');
-            }
+            $this->denyUnlessCsrfValid('support', $request);
             $message = trim($request->getPayload()->getString('message'));
             $reference = $request->getPayload()->getString('project');
             if (mb_strlen($message) < 10 || mb_strlen($message) > 3000) {
@@ -247,9 +246,7 @@ final class AccountController extends AbstractController
 
         $newToken = null;
         if ($request->isMethod('POST') && $request->request->has('create_token')) {
-            if (!$this->isCsrfTokenValid('api-token', $request->getPayload()->getString('_token'))) {
-                throw $this->createAccessDeniedException('Invalid CSRF token.');
-            }
+            $this->denyUnlessCsrfValid('api-token', $request);
             $name = mb_substr(trim($request->getPayload()->getString('token_name')) ?: 'API', 0, 100);
             [, $newToken] = $userManager->createApiToken($user, $name, new \DateTimeImmutable('+1 year'));
         }

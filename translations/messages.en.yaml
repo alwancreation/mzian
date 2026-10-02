@@ -1,7 +1,6 @@
 meta:
   default_title: "Mzian.net — Describe your needs, Mzian builds your web solution"
   default_description: "Websites, bookings, e-commerce, CRM and business apps for small businesses: AI analyses your needs, proposes a solution and delivers it."
-
 nav:
   main: "Main navigation"
   skip_to_content: "Skip to content"
@@ -16,10 +15,8 @@ nav:
   my_account: "My account"
   menu: "Menu"
   language: "Language"
-
 cta:
   start_free: "Start for free"
-
 footer:
   tagline: "The automated web solutions factory for small businesses: describe your needs, AI takes care of the rest."
   product: "Product"
@@ -31,7 +28,6 @@ footer:
   privacy: "Privacy"
   rights: "All rights reserved."
   made_with_ai: "Built with AI, validated by humans."
-
 form:
   first_name: "First name"
   last_name: "Last name"
@@ -45,30 +41,47 @@ form:
   city: "City"
   message: "Message"
   language: "Language"
-
 action:
   copy: "Copy"
   view: "View"
   print: "Print"
   save: "Save"
   revoke: "Revoke"
-
+  continue: "Continue"
+  back: "Back"
 error:
   too_many_requests: "Too many attempts. Please try again in a few minutes."
-
 how:
   title: "How Mzian turns your idea into a live solution"
   lead: "You describe your business, AI proposes the right solution at the right price, a Mzian administrator validates it, then our AI agents build and deliver your application."
   steps:
-    describe: { title: "Describe your business", text: "Choose your industry and explain what you need in your own words, in French, English or Arabic." }
-    questions: { title: "A few targeted questions", text: "Questions adapt to your answers: number of vehicles, bookings, payments, contracts…" }
-    analysis: { title: "AI analysis", text: "AI turns your request into structured requirements and recommends the right solution." }
-    proposal: { title: "Clear proposal and price", text: "Features, hosting, domain name and services: a price computed transparently." }
-    order: { title: "Order and payment", text: "Order online and pay securely." }
-    validation: { title: "Human validation", text: "A Mzian administrator reviews and approves the launch of your project." }
-    build: { title: "Automated build", text: "AI agents book the hosting, configure the domain and build your solution from proven templates." }
-    quality: { title: "Testing and quality control", text: "Real technical checks are executed: pages, HTTPS, domain, assets, mobile display." }
-    delivery: { title: "Delivery", text: "You receive your access, your website address and documentation in your customer area." }
+    describe:
+      title: "Describe your business"
+      text: "Choose your industry and explain what you need in your own words, in French, English or Arabic."
+    questions:
+      title: "A few targeted questions"
+      text: "Questions adapt to your answers: number of vehicles, bookings, payments, contracts…"
+    analysis:
+      title: "AI analysis"
+      text: "AI turns your request into structured requirements and recommends the right solution."
+    proposal:
+      title: "Clear proposal and price"
+      text: "Features, hosting, domain name and services: a price computed transparently."
+    order:
+      title: "Order and payment"
+      text: "Order online and pay securely."
+    validation:
+      title: "Human validation"
+      text: "A Mzian administrator reviews and approves the launch of your project."
+    build:
+      title: "Automated build"
+      text: "AI agents book the hosting, configure the domain and build your solution from proven templates."
+    quality:
+      title: "Testing and quality control"
+      text: "Real technical checks are executed: pages, HTTPS, domain, assets, mobile display."
+    delivery:
+      title: "Delivery"
+      text: "You receive your access, your website address and documentation in your customer area."
   human:
     title: "One human validation, at the right time"
     text: "After your payment, a Mzian administrator approves the build. Then automation takes over: follow the progress live in your account."
@@ -78,23 +91,41 @@ how:
     secrets: "Credentials are encrypted and never sent in clear text to the AI."
     tests: "No delivery if critical tests fail."
     audit: "Every action is recorded in an audit log."
-
 faq:
   title: "Frequently asked questions"
   lead: "Everything you need to know before launching your project with Mzian."
   more_questions: "Another question? Write to us."
   items:
-    what: { q: "What is Mzian?", a: "Mzian is a platform that analyses a small business' needs with AI, proposes a suitable web solution (website, booking, e-commerce, CRM, business app) and builds it automatically." }
-    how_long: { q: "How long does it take to go live?", a: "Most template-based solutions are delivered within a few days after your order is approved. The estimated lead time is shown in your proposal." }
-    price: { q: "How is the price computed?", a: "The price is computed by our pricing engine (not by the AI alone): base solution, features, hosting, domain name and services. Everything is detailed before you order." }
-    ai: { q: "Does the AI decide everything?", a: "No. AI analyses and proposes, a Mzian administrator validates every project and real technical tests check the quality before delivery." }
-    domain: { q: "Can I use my own domain name?", a: "Yes. You can provide an existing domain or let us register a new one for you." }
-    hosting: { q: "Is hosting included?", a: "Yes, the first year of hosting is included in the proposal. Subscription plans then cover hosting, maintenance and support." }
-    changes: { q: "Can I ask for changes?", a: "Yes. Before the build, the administrator may ask you for details; after delivery, support is available from your customer area." }
-    own: { q: "Do I own my website?", a: "Yes, your content and data belong to you. Each project has its own code repository." }
-    payment: { q: "Which payment methods do you accept?", a: "Card payment (through our payment provider) and bank transfer. Available methods are shown at checkout." }
-    languages: { q: "Can my website be multilingual?", a: "Yes: French, English and Arabic (right-to-left) are supported." }
-
+    what:
+      q: "What is Mzian?"
+      a: "Mzian is a platform that analyses a small business' needs with AI, proposes a suitable web solution (website, booking, e-commerce, CRM, business app) and builds it automatically."
+    how_long:
+      q: "How long does it take to go live?"
+      a: "Most template-based solutions are delivered within a few days after your order is approved. The estimated lead time is shown in your proposal."
+    price:
+      q: "How is the price computed?"
+      a: "The price is computed by our pricing engine (not by the AI alone): base solution, features, hosting, domain name and services. Everything is detailed before you order."
+    ai:
+      q: "Does the AI decide everything?"
+      a: "No. AI analyses and proposes, a Mzian administrator validates every project and real technical tests check the quality before delivery."
+    domain:
+      q: "Can I use my own domain name?"
+      a: "Yes. You can provide an existing domain or let us register a new one for you."
+    hosting:
+      q: "Is hosting included?"
+      a: "Yes, the first year of hosting is included in the proposal. Subscription plans then cover hosting, maintenance and support."
+    changes:
+      q: "Can I ask for changes?"
+      a: "Yes. Before the build, the administrator may ask you for details; after delivery, support is available from your customer area."
+    own:
+      q: "Do I own my website?"
+      a: "Yes, your content and data belong to you. Each project has its own code repository."
+    payment:
+      q: "Which payment methods do you accept?"
+      a: "Card payment (through our payment provider) and bank transfer. Available methods are shown at checkout."
+    languages:
+      q: "Can my website be multilingual?"
+      a: "Yes: French, English and Arabic (right-to-left) are supported."
 contact:
   title: "Let's talk about your project"
   lead: "A question before you start? Send us a message, we answer quickly."
@@ -104,24 +135,42 @@ contact:
   faster:
     title: "Fastest: describe your needs"
     text: "In a few minutes, AI analyses your needs and proposes a solution with its price."
-
 legal:
   placeholder_notice: "This text is a template that must be reviewed by a lawyer before going live."
   terms:
     title: "Terms and conditions"
-    service: { title: "The service", text: "Mzian designs and publishes web solutions for small businesses based on the analysis of their needs." }
-    orders: { title: "Orders", text: "An order is placed after accepting a priced proposal. Payment is required before the build." }
-    approval: { title: "Approval", text: "Every project is approved by a Mzian administrator before the build starts. If rejected, the amount paid is refunded." }
-    delivery: { title: "Delivery", text: "Delivery happens after the technical tests and quality control succeed. Access details are shared securely in the customer area." }
-    liability: { title: "Liability", text: "The customer remains responsible for the content published on their solution." }
+    service:
+      title: "The service"
+      text: "Mzian designs and publishes web solutions for small businesses based on the analysis of their needs."
+    orders:
+      title: "Orders"
+      text: "An order is placed after accepting a priced proposal. Payment is required before the build."
+    approval:
+      title: "Approval"
+      text: "Every project is approved by a Mzian administrator before the build starts. If rejected, the amount paid is refunded."
+    delivery:
+      title: "Delivery"
+      text: "Delivery happens after the technical tests and quality control succeed. Access details are shared securely in the customer area."
+    liability:
+      title: "Liability"
+      text: "The customer remains responsible for the content published on their solution."
   privacy:
     title: "Privacy policy"
-    data: { title: "Data we collect", text: "We collect the information needed to study and build your project (contact details, description of your needs, questionnaire answers)." }
-    analytics: { title: "Audience measurement", text: "Our audience measurement uses no cookie and stores no IP address." }
-    ai: { title: "Artificial intelligence", text: "Your description may be analysed by an AI provider. No password or credential is ever sent to it." }
-    security: { title: "Security", text: "Credentials are encrypted, access is logged and protected." }
-    rights: { title: "Your rights", text: "You can request access, correction or deletion of your data by contacting us." }
-
+    data:
+      title: "Data we collect"
+      text: "We collect the information needed to study and build your project (contact details, description of your needs, questionnaire answers)."
+    analytics:
+      title: "Audience measurement"
+      text: "Our audience measurement uses no cookie and stores no IP address."
+    ai:
+      title: "Artificial intelligence"
+      text: "Your description may be analysed by an AI provider. No password or credential is ever sent to it."
+    security:
+      title: "Security"
+      text: "Credentials are encrypted, access is logged and protected."
+    rights:
+      title: "Your rights"
+      text: "You can request access, correction or deletion of your data by contacting us."
 login:
   title: "Log in"
   subtitle: "Access your Mzian account."
@@ -129,7 +178,6 @@ login:
   submit: "Log in"
   no_account: "No account yet?"
   create_account: "Create an account"
-
 registration:
   title: "Create your account"
   subtitle: "To order and follow your project in real time."
@@ -139,7 +187,6 @@ registration:
   success: "Welcome to Mzian! Your account has been created."
   password:
     help: "At least 10 characters."
-
 account:
   hello: "Hello %name%"
   subscriptions: "Subscriptions"
@@ -167,7 +214,6 @@ account:
     domains: "No domain name yet."
     hosting: "No hosting yet."
     notifications: "No notification."
-
 project:
   progress: "Progress"
   simulated: "Simulation"
@@ -234,7 +280,6 @@ project:
     failed: "A check failed: the Mzian team is on it."
     cancelled: "This project was cancelled."
     waiting_admin_approval: "The Mzian team needs to approve the next step."
-
 pipeline:
   step:
     hosting: "Hosting"
@@ -244,7 +289,6 @@ pipeline:
     deployment: "Deployment"
     qa: "Quality"
     delivery: "Delivery"
-
 order:
   number: "Order no."
   project: "Project"
@@ -256,11 +300,9 @@ order:
     paid: "Paid"
     cancelled: "Cancelled"
     refunded: "Refunded"
-
 pricing:
   month: "month"
   year: "year"
-
 subscription:
   plan: "Plan"
   price: "Price"
@@ -270,7 +312,6 @@ subscription:
     active: "Active"
     past_due: "Past due"
     cancelled: "Cancelled"
-
 invoice:
   title: "Invoice"
   number: "Invoice no."
@@ -285,7 +326,6 @@ invoice:
     issued: "Issued"
     paid: "Paid"
     void: "Void"
-
 domain:
   name: "Domain"
   expires: "Expires"
@@ -296,7 +336,6 @@ domain:
     external: "External"
     failed: "Failed"
     expired: "Expired"
-
 hosting:
   region: "Region"
   expires: "Expires"
@@ -306,10 +345,8 @@ hosting:
     failed: "Failed"
     suspended: "Suspended"
     deleted: "Deleted"
-
 notifications:
   mark_all_read: "Mark all as read"
-
 support:
   title: "Contact support"
   lead: "Describe your request, the Mzian team will answer quickly."
@@ -319,7 +356,6 @@ support:
   hours:
     title: "Support hours"
     text: "Monday to Friday, 9am to 6pm. Urgent requests about a live website are handled first."
-
 profile:
   information: "Information"
   saved: "Profile saved."
@@ -333,9 +369,146 @@ profile:
     created: "Token created. Copy it now: it will not be displayed again."
     name: "Token name"
     create: "Create token"
-
 home:
   hero:
     title_1: "Describe your needs."
     title_2: "Mzian builds your web solution."
     lead: "Website, booking, e-commerce, CRM or business app: AI analyses your business, proposes the right solution with its price, then our agents build it and put it online."
+    badge: "Powered by AI, validated by humans"
+    chat: "Describe my project to the AI"
+    reassurance: "Free, no commitment · Proposal in minutes"
+  examples:
+    title: "They describe, Mzian proposes"
+    lead: "A few examples of requests and the proposed solutions."
+    proposed: "Proposed solution"
+    car_rental:
+      who: "Car rental agency in Marrakech"
+      request: "I own a car rental agency in Marrakech with 15 cars and I want customers to book online."
+      solution: "Car Rental Management"
+      features: "Vehicles, customers, bookings, contracts, dashboard and public website."
+    restaurant:
+      who: "Restaurant in Casablanca"
+      request: "I want to show my menu and take table bookings."
+      solution: "Restaurant Website"
+      features: "Online menu, table booking, gallery, opening hours and map."
+    salon:
+      who: "Hair salon in Rabat"
+      request: "My customers want to book without calling me."
+      solution: "Appointment Management"
+      features: "Online appointments, schedule, services and automatic reminders."
+  how:
+    lead: "Four simple steps, a single human validation."
+    more: "See every step"
+  solutions:
+    title: "Solutions ready for your business"
+    lead: "Built from proven templates, customised for your business."
+    all: "All solutions"
+  pricing:
+    title: "Simple plans after delivery"
+    lead: "Hosting, maintenance and support: choose your plan."
+    more: "See pricing"
+  ai:
+    eyebrow: "AI for small businesses"
+    title: "An AI that understands your business"
+    lead: "Mzian turns a natural-language request into structured requirements, then into a delivered application."
+    demo_reply: "Do you also want to manage contracts and customers?"
+    points:
+      analysis: "A structured, validated analysis of your needs."
+      pricing: "Prices computed by a transparent engine, not improvised by the AI."
+      human: "An administrator approves before anything is built."
+      quality: "Real technical tests before every delivery."
+  testimonials:
+    title: "Designed for small businesses"
+    notice: "Illustrative examples."
+    one:
+      quote: "I described my agency in five minutes and received a clear proposal with the price."
+      name: "Karim"
+      business: "Car rental"
+    two:
+      quote: "Bookings now come in directly, without commission."
+      name: "Salma"
+      business: "Riad"
+    three:
+      quote: "I follow the progress of my website in real time, it is reassuring."
+      name: "Youssef"
+      business: "Craftsman"
+  faq:
+    all: "All questions"
+  cta:
+    title: "Ready to take your business online?"
+    lead: "Describe your needs and get a priced proposal in minutes."
+start:
+  steps:
+    label: "Steps"
+    sector: "Industry"
+    questions: "Questions"
+    details: "Project"
+    contact: "Contact"
+    proposal: "Proposal"
+  sector:
+    title: "What is your industry?"
+    lead: "Choose your business: the next questions adapt to your trade."
+    required: "Please choose an industry."
+    or_chat: "Prefer to explain in your own words?"
+    chat_link: "Describe your project to the AI"
+  question:
+    progress: "Question %current% / %total%"
+  details:
+    title: "Tell us about your project"
+    lead: "A few details to tailor the proposal."
+    business_name: "Business name"
+    description: "Describe your needs"
+    description_help: "In your own words: your business, your customers, what the website must do."
+    description_placeholder: "E.g.: I own a car rental agency in Marrakech with 15 cars…"
+    domain: "Desired domain name (optional)"
+    domain_help: "We will check its availability."
+  contact:
+    title: "Where should we send the proposal?"
+    lead: "Your contact details to receive and find your proposal."
+    accept_privacy: "I agree that Mzian uses this information to study my project."
+    marketing: "I want to receive tips and offers from Mzian."
+    submit: "See the summary"
+    reassurance:
+      free: "Free"
+      no_commitment: "No commitment"
+      no_spam: "No spam"
+  summary:
+    title: "Summary of your needs"
+    lead: "Check the information before the AI analysis."
+    edit: "Edit my answers"
+    analyze: "Analyse my needs"
+questionnaire:
+  error:
+    choose_option: "Please choose an answer."
+    number: "Please enter a valid number."
+    required: "This field is required."
+    too_long: "Answer too long (255 characters max)."
+catalog:
+  popular: "Popular"
+  discover: "Discover"
+  from: "From"
+  get_proposal: "Get my proposal"
+  delivery_time: "Estimated lead time"
+  days: "%count% days"
+  maintenance: "Maintenance"
+  included: "Included"
+  included_value: "1-year hosting, domain, SSL"
+  included_features: "Included features"
+  options: "Available options"
+  on_request: "Optional"
+  no_options: "No option."
+  for_sectors: "Ideal for"
+  related: "Related solutions"
+  solutions:
+    title: "Our web solutions"
+    lead: "Websites, bookings, e-commerce, CRM and business apps for small businesses."
+  not_sure:
+    title: "Not sure which solution to choose?"
+    text: "Answer a few questions, AI recommends the right solution."
+  industries:
+    title: "Solutions for every industry"
+    lead: "Restaurants, car rental, riads, salons, shops, craftsmen…"
+  industry:
+    title: "Web solutions for %sector%"
+    recommended: "Recommended solution"
+    solutions: "Suitable solutions"

@@ -1,0 +1,178 @@
+# =============================================================================
+# Dynamic questionnaire — imported into the database (Admin > Catalog > Questions).
+#
+# - sector: null => asked for every sector; otherwise only for that sector.
+# - type: single_choice | multiple_choice | boolean | number | text
+# - boolean questions: "features_if_yes" lists the feature codes implied by "yes".
+# - choice options: { value, label, features }.
+# - condition: Symfony ExpressionLanguage evaluated against previous answers,
+#   e.g. "answers['contracts'] == 'yes'". Hidden questions are skipped.
+# Enrich the questionnaire here (then `mzian:catalog:import --update`) or in the admin.
+# =============================================================================
+
+questions:
+  # ---------------------------------------------------------------- global
+  - code: goal
+    sector: null
+    type: multiple_choice
+    position: 10
+    label: { fr: "Que voulez-vous faire ?", en: "What do you want to do?", ar: "ماذا تريد أن تفعل؟" }
+    help: { fr: "Plusieurs réponses possibles.", en: "Several answers possible.", ar: "يمكن اختيار عدة أجوبة." }
+    options:
+      - { value: present, features: [], label: { fr: "Présenter mon activité", en: "Present my business", ar: "تقديم نشاطي" } }
+      - { value: receive_bookings, features: [online_reservations], label: { fr: "Recevoir des réservations", en: "Receive bookings", ar: "استقبال الحجوزات" } }
+      - { value: sell_online, features: [online_shop], label: { fr: "Vendre en ligne", en: "Sell online", ar: "البيع على الإنترنت" } }
+      - { value: manage_customers, features: [customer_management], label: { fr: "Gérer mes clients", en: "Manage my customers", ar: "تدبير زبنائي" } }
+      - { value: manage_operations, features: [dashboard], label: { fr: "Gérer mon activité au quotidien", en: "Manage my daily operations", ar: "تسيير نشاطي اليومي" } }
+
+  - code: languages
+    sector: null
+    type: single_choice
+    position: 70
+    label: { fr: "Dans combien de langues ?", en: "In how many languages?", ar: "بكم لغة؟" }
+    options:
+      - { value: one, features: [], label: { fr: "Une seule langue", en: "One language", ar: "لغة واحدة" } }
+      - { value: several, features: [multilingual], label: { fr: "Deux langues ou plus (français, anglais, arabe…)", en: "Two or more languages (French, English, Arabic…)", ar: "لغتان أو أكثر (العربية، الفرنسية، الإنجليزية…)" } }
+
+  - code: whatsapp
+    sector: null
+    type: boolean
+    position: 75
+    label: { fr: "Voulez-vous être contacté sur WhatsApp ?", en: "Do you want to be contacted on WhatsApp?", ar: "هل تريد أن يتواصل معك الزبناء عبر واتساب؟" }
+    features_if_yes: [whatsapp_button]
+
+  - code: has_domain
+    sector: null
+    type: single_choice
+    position: 80
+    label: { fr: "Avez-vous déjà un nom de domaine ?", en: "Do you already have a domain name?", ar: "هل لديك اسم نطاق؟" }
+    options:
+      - { value: "yes", features: [], label: { fr: "Oui", en: "Yes", ar: "نعم" } }
+      - { value: "no", features: [], label: { fr: "Non, réservez-en un pour moi", en: "No, register one for me", ar: "لا، احجزوا لي واحدًا" } }
+
+  - code: domain_name
+    sector: null
+    type: text
+    position: 81
+    condition: "answers['has_domain'] == 'yes'"
+    label: { fr: "Quel est votre nom de domaine ?", en: "What is your domain name?", ar: "ما هو اسم نطاقك؟" }
+    help: { fr: "Par exemple : mon-entreprise.ma", en: "For example: my-business.com", ar: "مثال: my-business.ma" }
+
+  # ---------------------------------------------------------------- car rental
+  - { code: fleet_size, sector: car_rental, type: number, position: 20,
+      label: { fr: "Combien de véhicules avez-vous ?", en: "How many vehicles do you have?", ar: "كم عدد السيارات لديك؟" } }
+  - { code: show_vehicles, sector: car_rental, type: boolean, position: 21, features_if_yes: [vehicle_catalog],
+      label: { fr: "Voulez-vous afficher les véhicules ?", en: "Do you want to display your vehicles?", ar: "هل تريد عرض السيارات؟" } }
+  - { code: online_reservations, sector: car_rental, type: boolean, position: 22, features_if_yes: [online_reservations],
+      label: { fr: "Voulez-vous recevoir des réservations ?", en: "Do you want to receive bookings?", ar: "هل تريد استقبال الحجوزات؟" } }
+  - { code: contracts, sector: car_rental, type: boolean, position: 23, features_if_yes: [contracts],
+      label: { fr: "Voulez-vous gérer les contrats ?", en: "Do you want to manage contracts?", ar: "هل تريد تدبير العقود؟" } }
+  - { code: pdf_contracts, sector: car_rental, type: boolean, position: 24, features_if_yes: [pdf_contracts], condition: "answers['contracts'] == 'yes'",
+      label: { fr: "Voulez-vous générer automatiquement les contrats PDF ?", en: "Do you want contracts generated automatically as PDF?", ar: "هل تريد إنشاء العقود تلقائيًا بصيغة PDF؟" } }
+  - { code: customer_management, sector: car_rental, type: boolean, position: 25, features_if_yes: [customer_management],
+      label: { fr: "Voulez-vous gérer les clients ?", en: "Do you want to manage customers?", ar: "هل تريد تدبير الزبناء؟" } }
+  - { code: payments, sector: car_rental, type: boolean, position: 26, features_if_yes: [online_payments],
+      label: { fr: "Voulez-vous gérer les paiements ?", en: "Do you want to manage payments?", ar: "هل تريد تدبير الأداءات؟" } }
+  - { code: vehicle_tracking, sector: car_rental, type: boolean, position: 27, features_if_yes: [vehicle_tracking],
+      label: { fr: "Voulez-vous suivre les véhicules ?", en: "Do you want to track your vehicles?", ar: "هل تريد تتبع السيارات؟" } }
+  - { code: statistics, sector: car_rental, type: boolean, position: 28, features_if_yes: [statistics],
+      label: { fr: "Voulez-vous avoir des statistiques ?", en: "Do you want statistics?", ar: "هل تريد إحصائيات؟" } }
+
+  # ---------------------------------------------------------------- restaurant
+  - { code: menu_online, sector: restaurant, type: boolean, position: 20, features_if_yes: [menu],
+      label: { fr: "Voulez-vous afficher votre menu en ligne ?", en: "Do you want to display your menu online?", ar: "هل تريد عرض قائمة الطعام على الإنترنت؟" } }
+  - { code: table_booking, sector: restaurant, type: boolean, position: 21, features_if_yes: [reservation_requests],
+      label: { fr: "Voulez-vous recevoir des réservations de table ?", en: "Do you want to receive table bookings?", ar: "هل تريد استقبال حجوزات الطاولات؟" } }
+  - { code: online_ordering, sector: restaurant, type: boolean, position: 22, features_if_yes: [online_ordering],
+      label: { fr: "Voulez-vous prendre des commandes en ligne ?", en: "Do you want to take orders online?", ar: "هل تريد استقبال الطلبات على الإنترنت؟" } }
+  - { code: delivery, sector: restaurant, type: boolean, position: 23, features_if_yes: [delivery_management], condition: "answers['online_ordering'] == 'yes'",
+      label: { fr: "Livrez-vous à domicile ?", en: "Do you deliver?", ar: "هل توصلون إلى المنازل؟" } }
+  - { code: reviews, sector: restaurant, type: boolean, position: 24, features_if_yes: [reviews],
+      label: { fr: "Voulez-vous afficher les avis clients ?", en: "Do you want to display customer reviews?", ar: "هل تريد عرض آراء الزبناء؟" } }
+
+  # ---------------------------------------------------------------- hotel
+  - { code: rooms_count, sector: hotel, type: number, position: 20,
+      label: { fr: "Combien de chambres avez-vous ?", en: "How many rooms do you have?", ar: "كم عدد الغرف لديك؟" } }
+  - { code: availability, sector: hotel, type: boolean, position: 21, features_if_yes: [online_booking],
+      label: { fr: "Voulez-vous un calendrier de disponibilités en ligne ?", en: "Do you want an online availability calendar?", ar: "هل تريد تقويم التوفر على الإنترنت؟" } }
+  - { code: payments, sector: hotel, type: boolean, position: 22, features_if_yes: [online_payments],
+      label: { fr: "Voulez-vous encaisser des acomptes en ligne ?", en: "Do you want to collect deposits online?", ar: "هل تريد استخلاص العربون على الإنترنت؟" } }
+  - { code: reviews, sector: hotel, type: boolean, position: 23, features_if_yes: [reviews],
+      label: { fr: "Voulez-vous afficher les avis clients ?", en: "Do you want to display guest reviews?", ar: "هل تريد عرض آراء النزلاء؟" } }
+
+  # ---------------------------------------------------------------- travel agency
+  - { code: offers_count, sector: travel_agency, type: number, position: 20,
+      label: { fr: "Combien de circuits ou excursions proposez-vous ?", en: "How many tours or excursions do you offer?", ar: "كم عدد الجولات أو الرحلات التي تقترحها؟" } }
+  - { code: online_booking, sector: travel_agency, type: boolean, position: 21, features_if_yes: [online_reservations],
+      label: { fr: "Voulez-vous que vos clients réservent en ligne ?", en: "Do you want customers to book online?", ar: "هل تريد أن يحجز زبناؤك على الإنترنت؟" } }
+  - { code: payments, sector: travel_agency, type: boolean, position: 22, features_if_yes: [online_payments],
+      label: { fr: "Voulez-vous encaisser en ligne ?", en: "Do you want to get paid online?", ar: "هل تريد الأداء على الإنترنت؟" } }
+  - { code: customer_management, sector: travel_agency, type: boolean, position: 23, features_if_yes: [customer_management],
+      label: { fr: "Voulez-vous gérer vos clients ?", en: "Do you want to manage customers?", ar: "هل تريد تدبير الزبناء؟" } }
+
+  # ---------------------------------------------------------------- beauty
+  - { code: staff_count, sector: beauty, type: number, position: 20,
+      label: { fr: "Combien de personnes travaillent dans votre établissement ?", en: "How many people work in your business?", ar: "كم عدد العاملين في مؤسستك؟" } }
+  - { code: appointments, sector: beauty, type: boolean, position: 21, features_if_yes: [appointments],
+      label: { fr: "Voulez-vous la prise de rendez-vous en ligne ?", en: "Do you want online appointments?", ar: "هل تريد حجز المواعيد على الإنترنت؟" } }
+  - { code: reminders, sector: beauty, type: boolean, position: 22, features_if_yes: [reminders], condition: "answers['appointments'] == 'yes'",
+      label: { fr: "Voulez-vous envoyer des rappels automatiques ?", en: "Do you want automatic reminders?", ar: "هل تريد إرسال تذكيرات آلية؟" } }
+  - { code: payments, sector: beauty, type: boolean, position: 23, features_if_yes: [online_payments],
+      label: { fr: "Voulez-vous encaisser en ligne ?", en: "Do you want to get paid online?", ar: "هل تريد الأداء على الإنترنت؟" } }
+  - { code: loyalty, sector: beauty, type: boolean, position: 24, features_if_yes: [loyalty],
+      label: { fr: "Voulez-vous un programme de fidélité ?", en: "Do you want a loyalty program?", ar: "هل تريد برنامج وفاء؟" } }
+
+  # ---------------------------------------------------------------- retail
+  - code: products_count
+    sector: retail
+    type: single_choice
+    position: 20
+    label: { fr: "Combien de produits vendez-vous ?", en: "How many products do you sell?", ar: "كم عدد المنتجات التي تبيعها؟" }
+    options:
+      - { value: small, features: [], label: { fr: "Moins de 50", en: "Less than 50", ar: "أقل من 50" } }
+      - { value: medium, features: [], label: { fr: "De 50 à 500", en: "50 to 500", ar: "من 50 إلى 500" } }
+      - { value: large, features: [inventory], label: { fr: "Plus de 500", en: "More than 500", ar: "أكثر من 500" } }
+  - code: sell_online
+    sector: retail
+    type: single_choice
+    position: 21
+    label: { fr: "Voulez-vous vendre en ligne ?", en: "Do you want to sell online?", ar: "هل تريد البيع على الإنترنت؟" }
+    options:
+      - { value: "yes", features: [online_shop, cart_checkout], label: { fr: "Oui, avec paiement en ligne", en: "Yes, with online payment", ar: "نعم، مع الأداء على الإنترنت" } }
+      - { value: "no", features: [no_online_sales, pages], label: { fr: "Non, seulement présenter mes produits", en: "No, only showcase my products", ar: "لا، فقط عرض منتجاتي" } }
+  - { code: delivery, sector: retail, type: boolean, position: 22, features_if_yes: [delivery_management], condition: "answers['sell_online'] == 'yes'",
+      label: { fr: "Livrez-vous vos clients ?", en: "Do you deliver your customers?", ar: "هل توصل الطلبات لزبنائك؟" } }
+  - { code: promo_codes, sector: retail, type: boolean, position: 23, features_if_yes: [promo_codes], condition: "answers['sell_online'] == 'yes'",
+      label: { fr: "Voulez-vous des codes promo ?", en: "Do you want promo codes?", ar: "هل تريد رموز التخفيض؟" } }
+
+  # ---------------------------------------------------------------- real estate
+  - { code: listings, sector: real_estate, type: boolean, position: 20, features_if_yes: [property_listings],
+      label: { fr: "Voulez-vous publier vos annonces ?", en: "Do you want to publish your listings?", ar: "هل تريد نشر إعلاناتك؟" } }
+  - { code: customer_management, sector: real_estate, type: boolean, position: 21, features_if_yes: [customer_management],
+      label: { fr: "Voulez-vous suivre vos clients et prospects ?", en: "Do you want to track customers and prospects?", ar: "هل تريد تتبع زبنائك والمحتملين؟" } }
+
+  # ---------------------------------------------------------------- craftsman
+  - { code: show_work, sector: craftsman, type: boolean, position: 20, features_if_yes: [gallery],
+      label: { fr: "Voulez-vous montrer vos réalisations ?", en: "Do you want to show your work?", ar: "هل تريد عرض أعمالك؟" } }
+  - { code: quotes, sector: craftsman, type: boolean, position: 21, features_if_yes: [quote_requests],
+      label: { fr: "Voulez-vous recevoir des demandes de devis ?", en: "Do you want to receive quote requests?", ar: "هل تريد استقبال طلبات عروض الأسعار؟" } }
+
+  # ---------------------------------------------------------------- professional
+  - { code: appointment_requests, sector: professional, type: boolean, position: 20, features_if_yes: [appointment_requests],
+      label: { fr: "Voulez-vous recevoir des demandes de rendez-vous ?", en: "Do you want to receive appointment requests?", ar: "هل تريد استقبال طلبات المواعيد؟" } }
+  - { code: customer_management, sector: professional, type: boolean, position: 21, features_if_yes: [customer_management],
+      label: { fr: "Voulez-vous gérer vos clients ?", en: "Do you want to manage your clients?", ar: "هل تريد تدبير زبنائك؟" } }
+  - { code: invoicing, sector: professional, type: boolean, position: 22, features_if_yes: [invoicing],
+      label: { fr: "Voulez-vous faire vos devis et factures ?", en: "Do you want to create quotes and invoices?", ar: "هل تريد إعداد عروض الأسعار والفواتير؟" } }
+
+  # ---------------------------------------------------------------- association
+  - { code: events, sector: association, type: boolean, position: 20, features_if_yes: [events],
+      label: { fr: "Voulez-vous publier vos événements ?", en: "Do you want to publish your events?", ar: "هل تريد نشر فعالياتك؟" } }
+  - { code: donations, sector: association, type: boolean, position: 21, features_if_yes: [online_payments],
+      label: { fr: "Voulez-vous collecter des dons en ligne ?", en: "Do you want to collect donations online?", ar: "هل تريد جمع التبرعات على الإنترنت؟" } }
+
+  # ---------------------------------------------------------------- other
+  - { code: user_accounts, sector: other, type: boolean, position: 20, features_if_yes: [user_accounts],
+      label: { fr: "Vos utilisateurs doivent-ils se connecter ?", en: "Do your users need to log in?", ar: "هل يحتاج مستخدموك إلى تسجيل الدخول؟" } }
+  - { code: integrations, sector: other, type: boolean, position: 21, features_if_yes: [integrations],
+      label: { fr: "Faut-il connecter d'autres logiciels ?", en: "Do other software tools need to be connected?", ar: "هل يجب ربط برامج أخرى؟" } }

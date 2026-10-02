@@ -11,3 +11,13 @@ framework:
             cache.analytics:
                 adapter: cache.app
                 default_lifetime: 86400
+
+when@test:
+    framework:
+        cache:
+            pools:
+                cache.catalog:
+                    adapter: cache.adapter.array
+                    tags: true
+                cache.analytics:
+                    adapter: cache.adapter.array

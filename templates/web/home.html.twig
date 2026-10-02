@@ -1,14 +1,191 @@
 {% extends 'layouts/public.html.twig' %}
 
+{% set locale = app.request.locale %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ [
+    {'@context': 'https://schema.org', '@type': 'Organization', 'name': 'Mzian.net', 'url': url('home'), 'logo': absolute_url(asset('favicon.svg'))},
+    {'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Mzian.net', 'url': url('home'), 'inLanguage': locale}
+]|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}
+</script>
+{% endblock %}
+
 {% block content %}
+{# ---------------------------------------------------------------- Hero #}
 <section class="relative overflow-hidden">
     <div class="absolute inset-0 bg-grid" aria-hidden="true"></div>
-    <div class="container-page relative section text-center">
-        <h1 class="mx-auto max-w-4xl text-4xl font-extrabold sm:text-6xl">{{ 'home.hero.title_1'|trans }} <span class="gradient-text">{{ 'home.hero.title_2'|trans }}</span></h1>
+    <div class="absolute -top-40 start-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-brand-400/30 blur-3xl" aria-hidden="true"></div>
+    <div class="container-page relative py-16 text-center sm:py-24">
+        <p class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm font-medium text-brand-700 shadow-sm ring-1 ring-brand-100">🤖 {{ 'home.hero.badge'|trans }}</p>
+        <h1 class="mx-auto mt-6 max-w-4xl text-4xl font-extrabold sm:text-6xl">{{ 'home.hero.title_1'|trans }}<br><span class="gradient-text">{{ 'home.hero.title_2'|trans }}</span></h1>
         <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-600">{{ 'home.hero.lead'|trans }}</p>
-        <div class="mt-8 flex justify-center gap-3">
-            <a href="{{ path('register') }}" class="btn-primary btn-lg btn-glow">{{ 'cta.start_free'|trans }}</a>
-            <a href="{{ path('how_it_works') }}" class="btn-secondary btn-lg">{{ 'nav.how_it_works'|trans }}</a>
+        <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <a href="{{ path('start') }}" class="btn-primary btn-lg btn-glow">{{ 'cta.start_free'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></a>
+            {% if route_exists('chat.fr') %}<a href="{{ path('chat') }}" class="btn-secondary btn-lg">💬 {{ 'home.hero.chat'|trans }}</a>{% endif %}
+        </div>
+        <p class="mt-4 text-sm text-slate-500">{{ 'home.hero.reassurance'|trans }}</p>
+
+        <div class="mx-auto mt-12 grid max-w-4xl grid-cols-3 gap-3 sm:grid-cols-6">
+            {% for sector in sectors|slice(0, 6) %}
+                <a href="{{ path('start', {sector: sector.code}) }}" class="card flex flex-col items-center gap-1 px-2 py-4 text-sm font-medium card-hover">
+                    <span class="text-2xl">{{ sector.icon }}</span>
+                    <span class="text-center leading-tight">{{ sector.name(locale) }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- Examples #}
+<section class="section bg-slate-50">
+    <div class="container-page">
+        <div class="max-w-2xl">
+            <h2 class="section-title">{{ 'home.examples.title'|trans }}</h2>
+            <p class="section-lead">{{ 'home.examples.lead'|trans }}</p>
+        </div>
+        <div class="mt-10 grid gap-6 lg:grid-cols-3">
+            {% for example in ['car_rental', 'restaurant', 'salon'] %}
+                <article class="card card-body">
+                    <p class="text-sm font-semibold text-brand-600">{{ ('home.examples.' ~ example ~ '.who')|trans }}</p>
+                    <blockquote class="mt-3 rounded-xl bg-slate-50 p-4 text-sm italic text-slate-700">“{{ ('home.examples.' ~ example ~ '.request')|trans }}”</blockquote>
+                    <p class="mt-4 text-xs font-semibold tracking-wide text-slate-500 uppercase">{{ 'home.examples.proposed'|trans }}</p>
+                    <p class="mt-1 font-semibold">{{ ('home.examples.' ~ example ~ '.solution')|trans }}</p>
+                    <p class="mt-1 text-sm text-slate-600">{{ ('home.examples.' ~ example ~ '.features')|trans }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- How it works #}
+<section class="section">
+    <div class="container-page">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="section-title">{{ 'how.title'|trans }}</h2>
+            <p class="section-lead">{{ 'home.how.lead'|trans }}</p>
+        </div>
+        <ol class="mt-12 grid gap-6 md:grid-cols-4">
+            {% for step in ['describe', 'proposal', 'validation', 'delivery'] %}
+                <li class="relative card card-body">
+                    <span class="stepper-dot bg-gradient-to-br from-brand-600 to-accent-500 text-white">{{ loop.index }}</span>
+                    <h3 class="mt-4 font-semibold">{{ ('how.steps.' ~ step ~ '.title')|trans }}</h3>
+                    <p class="mt-2 text-sm text-slate-600">{{ ('how.steps.' ~ step ~ '.text')|trans }}</p>
+                </li>
+            {% endfor %}
+        </ol>
+        <p class="mt-8 text-center"><a href="{{ path('how_it_works') }}" class="font-semibold text-brand-700 hover:underline">{{ 'home.how.more'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></a></p>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- Solutions #}
+<section class="section bg-slate-50">
+    <div class="container-page">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <div class="max-w-2xl">
+                <h2 class="section-title">{{ 'home.solutions.title'|trans }}</h2>
+                <p class="section-lead">{{ 'home.solutions.lead'|trans }}</p>
+            </div>
+            <a href="{{ path('solutions_index') }}" class="btn-secondary">{{ 'home.solutions.all'|trans }}</a>
+        </div>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for solution in solutions %}{% include 'catalog/_solution_card.html.twig' %}{% endfor %}
+        </div>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- Plans #}
+{% if plans is not empty %}
+<section class="section">
+    <div class="container-page">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="section-title">{{ 'home.pricing.title'|trans }}</h2>
+            <p class="section-lead">{{ 'home.pricing.lead'|trans }}</p>
+        </div>
+        <div class="mx-auto mt-10 grid max-w-5xl gap-6 md:grid-cols-3">
+            {% for plan in plans %}
+                <div class="card card-body {{ plan.recommended ? 'ring-2 ring-brand-500' : '' }}">
+                    {% if plan.recommended %}<span class="badge-brand mb-3">{{ 'catalog.popular'|trans }}</span>{% endif %}
+                    <h3 class="text-lg font-semibold">{{ plan.name(locale) }}</h3>
+                    <p class="mt-1 text-sm text-slate-600">{{ plan.description(locale) }}</p>
+                    <p class="mt-4"><span class="text-3xl font-bold">{{ plan.price|money('USD', false) }}</span> <span class="text-slate-500">/ {{ ('pricing.' ~ plan.interval.value)|trans }}</span></p>
+                    <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                        {% for feature in plan.features(locale) %}<li class="flex gap-2"><span class="text-accent-600">✓</span>{{ feature }}</li>{% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+        {% if route_exists('pricing.fr') %}<p class="mt-8 text-center"><a href="{{ path('pricing') }}" class="font-semibold text-brand-700 hover:underline">{{ 'home.pricing.more'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></a></p>{% endif %}
+    </div>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------------- AI explanation #}
+<section class="section bg-slate-950 text-white">
+    <div class="container-page grid items-center gap-12 lg:grid-cols-2">
+        <div>
+            <p class="text-sm font-semibold text-accent-300">{{ 'home.ai.eyebrow'|trans }}</p>
+            <h2 class="mt-2 text-3xl font-bold text-white sm:text-4xl">{{ 'home.ai.title'|trans }}</h2>
+            <p class="mt-4 text-lg text-slate-300">{{ 'home.ai.lead'|trans }}</p>
+            <ul class="mt-6 space-y-3 text-slate-200">
+                {% for point in ['analysis', 'pricing', 'human', 'quality'] %}
+                    <li class="flex gap-3"><span class="text-accent-400">◆</span>{{ ('home.ai.points.' ~ point)|trans }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
+            <div class="space-y-3 text-sm">
+                <div class="chat-bubble-user">{{ 'home.examples.car_rental.request'|trans }}</div>
+                <div class="chat-bubble me-auto bg-white/10 text-white">{{ 'home.ai.demo_reply'|trans }}</div>
+                <div class="rounded-xl bg-white/10 p-4">
+                    <p class="text-xs tracking-wide text-slate-400 uppercase">{{ 'home.examples.proposed'|trans }}</p>
+                    <p class="mt-1 font-semibold">{{ 'home.examples.car_rental.solution'|trans }}</p>
+                    <p class="mt-1 text-slate-300">{{ 'home.examples.car_rental.features'|trans }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- Testimonials (illustrative) #}
+<section class="section">
+    <div class="container-page">
+        <h2 class="section-title text-center">{{ 'home.testimonials.title'|trans }}</h2>
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+            {% for key in ['one', 'two', 'three'] %}
+                <figure class="card card-body">
+                    <blockquote class="text-slate-700">“{{ ('home.testimonials.' ~ key ~ '.quote')|trans }}”</blockquote>
+                    <figcaption class="mt-4 text-sm"><span class="font-semibold">{{ ('home.testimonials.' ~ key ~ '.name')|trans }}</span> — <span class="text-slate-500">{{ ('home.testimonials.' ~ key ~ '.business')|trans }}</span></figcaption>
+                </figure>
+            {% endfor %}
+        </div>
+        <p class="mt-4 text-center text-xs text-slate-400">{{ 'home.testimonials.notice'|trans }}</p>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- FAQ #}
+<section class="section bg-slate-50">
+    <div class="container-page max-w-3xl">
+        <h2 class="section-title text-center">{{ 'faq.title'|trans }}</h2>
+        <div class="mt-8 space-y-3">
+            {% for key in faq_keys %}
+                <details class="card group card-body">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">{{ ('faq.items.' ~ key ~ '.q')|trans }}<span class="text-brand-600 transition group-open:rotate-45">+</span></summary>
+                    <p class="mt-3 text-slate-600">{{ ('faq.items.' ~ key ~ '.a')|trans }}</p>
+                </details>
+            {% endfor %}
+        </div>
+        <p class="mt-6 text-center"><a href="{{ path('faq') }}" class="font-semibold text-brand-700 hover:underline">{{ 'home.faq.all'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></a></p>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- CTA #}
+<section class="section">
+    <div class="container-page">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 via-brand-600 to-accent-600 px-6 py-14 text-center text-white sm:px-12">
+            <h2 class="text-3xl font-bold text-white sm:text-4xl">{{ 'home.cta.title'|trans }}</h2>
+            <p class="mx-auto mt-4 max-w-xl text-brand-100">{{ 'home.cta.lead'|trans }}</p>
+            <a href="{{ path('start') }}" class="btn btn-lg mt-8 bg-white text-brand-700 hover:bg-brand-50">{{ 'cta.start_free'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></a>
         </div>
     </div>
 </section>

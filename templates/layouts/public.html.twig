@@ -5,10 +5,12 @@
 {% block body %}
 {% set route = app.request.attributes.get('_canonical_route') ?? app.request.attributes.get('_route') %}
 {% set nav_items = [
+    {route: 'solutions_index', label: 'nav.solutions'},
+    {route: 'industries_index', label: 'nav.industries'},
+    {route: 'pricing', label: 'nav.pricing'},
     {route: 'how_it_works', label: 'nav.how_it_works'},
     {route: 'faq', label: 'nav.faq'},
-    {route: 'contact', label: 'nav.contact'},
-] %}
+]|filter(item => route_exists(item.route ~ '.fr')) %}
 <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-50 btn-primary">{{ 'nav.skip_to_content'|trans }}</a>
 <header class="sticky top-0 z-40 border-b border-slate-100 bg-white/85 backdrop-blur">
     <div class="container-page flex h-16 items-center justify-between gap-4">
@@ -25,7 +27,7 @@
             {% else %}
                 <a href="{{ path('login') }}" class="nav-link hidden sm:inline-flex">{{ 'nav.login'|trans }}</a>
             {% endif %}
-            <a href="{{ path('register') }}" class="btn-primary hidden sm:inline-flex">{{ 'cta.start_free'|trans }}</a>
+            <a href="{{ path('start') }}" class="btn-primary hidden sm:inline-flex">{{ 'cta.start_free'|trans }}</a>
             <button type="button" class="btn-ghost lg:hidden" data-toggle="mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="{{ 'nav.menu'|trans }}">
                 <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
             </button>
@@ -41,7 +43,7 @@
             {% else %}
                 <a href="{{ path('login') }}" class="nav-link">{{ 'nav.login'|trans }}</a>
             {% endif %}
-            <a href="{{ path('register') }}" class="btn-primary mt-2">{{ 'cta.start_free'|trans }}</a>
+            <a href="{{ path('start') }}" class="btn-primary mt-2">{{ 'cta.start_free'|trans }}</a>
         </nav>
     </div>
 </header>
@@ -62,13 +64,17 @@
         <div>
             <p class="text-sm font-semibold">{{ 'footer.product'|trans }}</p>
             <ul class="mt-3 space-y-2 text-sm text-slate-600">
-                <li><a class="hover:text-brand-700" href="{{ path('how_it_works') }}">{{ 'nav.how_it_works'|trans }}</a></li>
+                <li><a class="hover:text-brand-700" href="{{ path('solutions_index') }}">{{ 'nav.solutions'|trans }}</a></li>
+                {% if route_exists('pricing.fr') %}<li><a class="hover:text-brand-700" href="{{ path('pricing') }}">{{ 'nav.pricing'|trans }}</a></li>{% endif %}
+                <li><a class="hover:text-brand-700" href="{{ path('start') }}">{{ 'footer.questionnaire'|trans }}</a></li>
+                {% if route_exists('chat.fr') %}<li><a class="hover:text-brand-700" href="{{ path('chat') }}">{{ 'footer.ai_chat'|trans }}</a></li>{% endif %}
             </ul>
         </div>
         <div>
             <p class="text-sm font-semibold">{{ 'footer.company'|trans }}</p>
             <ul class="mt-3 space-y-2 text-sm text-slate-600">
                 <li><a class="hover:text-brand-700" href="{{ path('how_it_works') }}">{{ 'nav.how_it_works'|trans }}</a></li>
+                <li><a class="hover:text-brand-700" href="{{ path('industries_index') }}">{{ 'nav.industries'|trans }}</a></li>
                 <li><a class="hover:text-brand-700" href="{{ path('faq') }}">{{ 'nav.faq'|trans }}</a></li>
                 <li><a class="hover:text-brand-700" href="{{ path('contact') }}">{{ 'nav.contact'|trans }}</a></li>
             </ul>

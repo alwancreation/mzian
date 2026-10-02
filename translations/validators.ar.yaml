@@ -3,3 +3,6 @@ registration.password.too_short: "يجب أن تحتوي كلمة المرور �
 registration.phone.invalid: "رقم الهاتف غير صالح."
 registration.terms.required: "يجب الموافقة على الشروط العامة."
 profile.password.wrong: "كلمة المرور الحالية غير صحيحة."
+questionnaire:
+  error:
+    domain: "اسم النطاق غير صالح."

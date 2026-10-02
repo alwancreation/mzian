@@ -1,0 +1,73 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ question.label(app.request.locale) }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block seo_links %}{% endblock %}
+
+{% block content %}
+{% set type = question.type.value %}
+<section class="bg-gradient-to-b from-brand-50/70 to-white">
+    <div class="container-page max-w-2xl py-8 sm:py-12">
+        {% include 'start/_steps.html.twig' with {current: 'questions'} %}
+        <div class="mb-6">
+            <div class="mb-1 flex justify-between text-xs text-slate-500">
+                <span>{% if sector %}{{ sector.icon }} {{ sector.name(app.request.locale) }}{% endif %}</span>
+                <span>{{ 'start.question.progress'|trans({'%current%': progress.answered + 1, '%total%': max(progress.total, progress.answered + 1)}) }}</span>
+            </div>
+            <div class="progress"><div class="progress-bar" style="width: {{ progress.percent }}%"></div></div>
+        </div>
+
+        <form method="post" class="card card-body" {{ type in ['boolean', 'single_choice'] ? 'data-autosubmit' }}>
+            <input type="hidden" name="_token" value="{{ csrf_token('questionnaire-' ~ requirement.token) }}">
+            <input type="hidden" name="question" value="{{ question.code }}">
+            <h1 class="text-2xl font-bold">{{ question.label(app.request.locale) }}</h1>
+            {% if question.help(app.request.locale) %}<p class="mt-1 text-sm text-slate-500">{{ question.help(app.request.locale) }}</p>{% endif %}
+            {% if error %}<div class="alert-error mt-4" role="alert">{{ error|trans }}</div>{% endif %}
+
+            <div class="mt-6">
+                {% if type == 'boolean' %}
+                    <div class="grid grid-cols-2 gap-3">
+                        {% for option in question.localizedOptions(app.request.locale) %}
+                            <label class="choice justify-center py-5 text-lg font-semibold">
+                                <input type="radio" name="answer" value="{{ option.value }}" class="sr-only" {{ current == option.value ? 'checked' }} required>
+                                {{ option.value == 'yes' ? '👍' : '👎' }} {{ option.label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% elseif type == 'single_choice' %}
+                    <div class="grid gap-2">
+                        {% for option in question.localizedOptions(app.request.locale) %}
+                            <label class="choice">
+                                <input type="radio" name="answer" value="{{ option.value }}" class="form-check" {{ current == option.value ? 'checked' }} required>
+                                <span class="font-medium">{{ option.label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% elseif type == 'multiple_choice' %}
+                    <div class="grid gap-2">
+                        {% for option in question.localizedOptions(app.request.locale) %}
+                            <label class="choice">
+                                <input type="checkbox" name="answer[]" value="{{ option.value }}" class="form-check" {{ current is iterable and option.value in current ? 'checked' }}>
+                                <span class="font-medium">{{ option.label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% elseif type == 'number' %}
+                    <input type="number" name="answer" min="0" max="100000" inputmode="numeric" class="form-input text-lg" value="{{ current }}" required autofocus>
+                {% else %}
+                    <input type="text" name="answer" maxlength="255" class="form-input text-lg" value="{{ current }}" {{ question.required ? 'required' }} autofocus>
+                {% endif %}
+            </div>
+
+            <div class="mt-8 flex items-center justify-between gap-3">
+                {% if previous %}
+                    <a href="{{ path('start_question', {token: requirement.token, edit: previous.code}) }}" class="btn-ghost"><span class="inline-block rtl:-scale-x-100" aria-hidden="true">←</span> {{ 'action.back'|trans }}</a>
+                {% else %}
+                    <a href="{{ path('start', {sector: requirement.sector}) }}" class="btn-ghost"><span class="inline-block rtl:-scale-x-100" aria-hidden="true">←</span> {{ 'action.back'|trans }}</a>
+                {% endif %}
+                <button class="btn-primary btn-lg">{{ 'action.continue'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

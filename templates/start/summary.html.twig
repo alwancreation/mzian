@@ -1,0 +1,45 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'start.summary.title'|trans }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block seo_links %}{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-b from-brand-50/70 to-white">
+    <div class="container-page max-w-3xl py-8 sm:py-12">
+        {% include 'start/_steps.html.twig' with {current: 'proposal'} %}
+        <div class="card card-body">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h1 class="text-2xl font-bold">{{ 'start.summary.title'|trans }}</h1>
+                    <p class="mt-1 text-sm text-slate-600">{{ 'start.summary.lead'|trans }}</p>
+                </div>
+                {% if sector %}<span class="badge-brand">{{ sector.icon }} {{ sector.name(app.request.locale) }}</span>{% endif %}
+            </div>
+
+            <dl class="mt-6 grid gap-4 text-sm sm:grid-cols-2">
+                <div><dt class="text-slate-500">{{ 'start.details.business_name'|trans }}</dt><dd class="font-medium">{{ requirement.businessName }}</dd></div>
+                <div><dt class="text-slate-500">{{ 'form.city'|trans }}</dt><dd class="font-medium">{{ requirement.city ?: '—' }}</dd></div>
+                {% for row in answered %}
+                    <div><dt class="text-slate-500">{{ row.question.label(app.request.locale) }}</dt><dd class="font-medium">{{ row.value ?: '—' }}</dd></div>
+                {% endfor %}
+            </dl>
+            {% if requirement.description %}
+                <div class="mt-6 rounded-xl bg-slate-50 p-4 text-sm whitespace-pre-line text-slate-700">{{ requirement.description }}</div>
+            {% endif %}
+
+            {% block summary_actions %}
+                <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-6">
+                    <a href="{{ path('start_question', {token: requirement.token}) }}" class="btn-ghost">✏️ {{ 'start.summary.edit'|trans }}</a>
+                    {% if route_exists('start_analyze.fr') %}
+                        <form method="post" action="{{ path('start_analyze', {token: requirement.token}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('analyze-' ~ requirement.token) }}">
+                            <button class="btn-primary btn-lg btn-glow">🤖 {{ 'start.summary.analyze'|trans }}</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+</section>
+{% endblock %}

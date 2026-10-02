@@ -1,0 +1,101 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Solution catalog{% endblock %}
+{% block page_title %}Solution catalog{% endblock %}
+
+{% block admin_content %}
+<nav class="mb-6 flex gap-1 overflow-x-auto">
+    {% for key, label in {solutions: 'Solutions', sectors: 'Sectors', questions: 'Questionnaire', plans: 'Subscription plans'} %}
+        <a href="{{ path('admin_catalog', {tab: key}) }}" class="{{ tab == key ? 'nav-link-active' : 'nav-link' }}">{{ label }}</a>
+    {% endfor %}
+</nav>
+
+{% if tab == 'solutions' %}
+    <p class="mb-4 text-sm text-slate-600">Prices are data: edit them here, never in code. Selling prices are computed by the pricing engine (see Pricing).</p>
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>Solution</th><th>Code</th><th>Category</th><th>Base price</th><th>Days</th><th>Maintenance</th><th>Template</th><th>Features</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            {% for solution in solutions %}
+                <tr>
+                    <td class="font-medium">{{ solution.icon }} {{ solution.name('en') }}</td>
+                    <td><code class="text-xs">{{ solution.code }}</code></td>
+                    <td><span class="badge-gray">{{ solution.category.value }}</span></td>
+                    <td>{{ solution.basePrice|money('USD') }}</td>
+                    <td>{{ solution.estimatedDevelopmentDays }}</td>
+                    <td>{{ solution.maintenancePrice|money('USD') }}</td>
+                    <td><code class="text-xs">{{ solution.applicationTemplate }}</code></td>
+                    <td>{{ solution.features|length }}</td>
+                    <td>{{ solution.enabled ? '<span class="badge-green">enabled</span>' : '<span class="badge-gray">disabled</span>' }}</td>
+                    <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_catalog_solution', {id: solution.id}) }}">Edit</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elseif tab == 'sectors' %}
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>Sector</th><th>Code</th><th>Default solution</th><th>Position</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            {% for sector in sectors %}
+                <tr>
+                    <td class="font-medium">{{ sector.icon }} {{ sector.name('en') }}</td>
+                    <td><code class="text-xs">{{ sector.code }}</code></td>
+                    <td><code class="text-xs">{{ sector.defaultSolutionCode }}</code></td>
+                    <td>{{ sector.position }}</td>
+                    <td>{{ sector.enabled ? '<span class="badge-green">enabled</span>' : '<span class="badge-gray">disabled</span>' }}</td>
+                    <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_catalog_sector', {id: sector.id}) }}">Edit</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elseif tab == 'questions' %}
+    <p class="mb-4 text-sm text-slate-600">Questions are asked in position order; conditions hide a question until they are true. Answers imply feature codes used by the AI analysis.</p>
+    {% for sector_code, items in questions %}
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">{{ sector_code == '_all' ? 'All sectors' : sector_code }}</h2>
+                <a class="btn-secondary btn-sm" href="{{ path('admin_catalog_question_new', {sector: sector_code == '_all' ? '' : sector_code}) }}">+ Question</a>
+            </div>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead><tr><th>#</th><th>Code</th><th>Question</th><th>Type</th><th>Condition</th><th>Features</th><th>Status</th><th></th></tr></thead>
+                    <tbody>
+                    {% for question in items %}
+                        <tr>
+                            <td>{{ question.position }}</td>
+                            <td><code class="text-xs">{{ question.code }}</code></td>
+                            <td>{{ question.label('en') }}</td>
+                            <td><span class="badge-gray">{{ question.type.value }}</span></td>
+                            <td><code class="text-xs">{{ question.condition ?: '—' }}</code></td>
+                            <td class="text-xs">{{ question.options|map(o => o.features|default([])|join(', '))|filter(f => f)|join(' / ') ?: '—' }}</td>
+                            <td>{{ question.enabled ? '<span class="badge-green">on</span>' : '<span class="badge-gray">off</span>' }}</td>
+                            <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_catalog_question', {id: question.id}) }}">Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>Plan</th><th>Price</th><th>Includes</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            {% for plan in plans %}
+                <tr>
+                    <td class="font-medium">{{ plan.name('en') }} {% if plan.recommended %}<span class="badge-brand">recommended</span>{% endif %}</td>
+                    <td>{{ plan.price|money('USD') }} / {{ plan.interval.value }}</td>
+                    <td class="text-xs">{{ plan.includes|join(', ') }}</td>
+                    <td>{{ plan.enabled ? '<span class="badge-green">enabled</span>' : '<span class="badge-gray">disabled</span>' }}</td>
+                    <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_catalog_plan', {id: plan.id}) }}">Edit</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

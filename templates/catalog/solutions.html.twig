@@ -1,0 +1,24 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'catalog.solutions.title'|trans }}{% endblock %}
+{% block meta_description %}{{ 'catalog.solutions.lead'|trans }}{% endblock %}
+
+{% block content %}
+{% include 'components/_page_header.html.twig' with {eyebrow: 'nav.solutions'|trans, title: 'catalog.solutions.title'|trans, lead: 'catalog.solutions.lead'|trans} %}
+<section class="section">
+    <div class="container-page">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for solution in solutions %}
+                {% include 'catalog/_solution_card.html.twig' %}
+            {% endfor %}
+        </div>
+        <div class="mt-14 card card-body flex flex-col items-start gap-4 bg-gradient-to-r from-brand-600 to-brand-500 text-white sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xl font-bold">{{ 'catalog.not_sure.title'|trans }}</p>
+                <p class="text-brand-100">{{ 'catalog.not_sure.text'|trans }}</p>
+            </div>
+            <a href="{{ path('start') }}" class="btn bg-white text-brand-700 hover:bg-brand-50">{{ 'cta.start_free'|trans }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

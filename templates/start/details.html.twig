@@ -1,0 +1,35 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% block title %}{{ 'start.details.title'|trans }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block seo_links %}{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-b from-brand-50/70 to-white">
+    <div class="container-page max-w-2xl py-8 sm:py-12">
+        {% include 'start/_steps.html.twig' with {current: 'details'} %}
+        <div class="card card-body">
+            <h1 class="text-2xl font-bold">{{ 'start.details.title'|trans }}</h1>
+            <p class="mt-1 text-sm text-slate-600">{{ 'start.details.lead'|trans }}</p>
+            <div class="mt-6">
+                {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+                    <div class="grid gap-x-5 sm:grid-cols-2">
+                        {{ form_row(form.businessName) }}
+                        {{ form_row(form.city) }}
+                    </div>
+                    {{ form_row(form.description) }}
+                    {% if has_domain %}
+                        {% do form.desiredDomain.setRendered() %}
+                    {% else %}
+                        {{ form_row(form.desiredDomain) }}
+                    {% endif %}
+                    <div class="flex items-center justify-between gap-3">
+                        <a href="{{ path('start_question', {token: requirement.token}) }}" class="btn-ghost"><span class="inline-block rtl:-scale-x-100" aria-hidden="true">←</span> {{ 'action.back'|trans }}</a>
+                        <button class="btn-primary btn-lg">{{ 'action.continue'|trans }} <span class="inline-block rtl:-scale-x-100" aria-hidden="true">→</span></button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

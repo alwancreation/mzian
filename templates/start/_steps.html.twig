@@ -1,0 +1,11 @@
+{# Funnel step indicator: sector > questions > project > contact > proposal #}
+{% set steps = ['sector', 'questions', 'details', 'contact', 'proposal'] %}
+<ol class="mb-6 flex items-center gap-2 text-xs font-medium text-slate-500" aria-label="{{ 'start.steps.label'|trans }}">
+    {% for step in steps %}
+        <li class="flex items-center gap-2 {{ step == current ? 'text-brand-700' : '' }}">
+            <span class="flex size-6 items-center justify-center rounded-full {{ loop.index0 < steps|filter(s => s == current)|keys|first|default(0) ? 'bg-brand-600 text-white' : (step == current ? 'bg-brand-100 text-brand-700 ring-2 ring-brand-500' : 'bg-slate-100') }}">{{ loop.index }}</span>
+            <span class="hidden sm:inline">{{ ('start.steps.' ~ step)|trans }}</span>
+            {% if not loop.last %}<span class="hidden h-px w-6 bg-slate-200 sm:block" aria-hidden="true"></span>{% endif %}
+        </li>
+    {% endfor %}
+</ol>

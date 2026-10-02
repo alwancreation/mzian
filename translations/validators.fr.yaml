@@ -3,3 +3,6 @@ registration.password.too_short: "Le mot de passe doit contenir au moins {{ limi
 registration.phone.invalid: "Ce numéro de téléphone n'est pas valide."
 registration.terms.required: "Vous devez accepter les conditions générales."
 profile.password.wrong: "Le mot de passe actuel est incorrect."
+questionnaire:
+  error:
+    domain: "Ce nom de domaine n'est pas valide."

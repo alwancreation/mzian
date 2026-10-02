@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{% for entry in entries %}
+{% for locale, url in entry.urls %}
+    <url>
+        <loc>{{ url }}</loc>
+{% for alt_locale, alt_url in entry.urls %}
+        <xhtml:link rel="alternate" hreflang="{{ alt_locale }}" href="{{ alt_url }}"/>
+{% endfor %}
+{% if entry.lastmod %}        <lastmod>{{ entry.lastmod }}</lastmod>
+{% endif %}
+    </url>
+{% endfor %}
+{% endfor %}
+</urlset>

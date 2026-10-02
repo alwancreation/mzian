@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Web\Controller;
 
+use App\Billing\Repository\SubscriptionPlanRepository;
+use App\Catalog\Service\CatalogProvider;
 use App\Shared\Routing\LocalizedRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,8 +27,22 @@ final class HomeController extends AbstractController
     }
 
     #[Route(['fr' => '/fr/', 'en' => '/en/', 'ar' => '/ar/'], name: 'home', methods: ['GET'])]
-    public function index(): Response
+    public function index(CatalogProvider $catalog, SubscriptionPlanRepository $plans): Response
     {
-        return $this->render('web/home.html.twig');
+        $solutions = $catalog->enabledSolutions();
+        $featured = array_values(array_filter($solutions, static fn ($s) => $s->isFeatured()));
+
+        $response = $this->render('web/home.html.twig', [
+            'sectors' => $catalog->enabledSectors(),
+            'solutions' => \array_slice([] !== $featured ? $featured : $solutions, 0, 6),
+            'plans' => $plans->findBy(['enabled' => true], ['position' => 'ASC']),
+            'faq_keys' => ['what', 'how_long', 'price', 'ai'],
+        ]);
+        if (null === $this->getUser()) {
+            $response->setPublic();
+            $response->setMaxAge(300);
+        }
+
+        return $response;
     }
 }

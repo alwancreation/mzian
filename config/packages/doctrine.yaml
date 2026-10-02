@@ -23,6 +23,10 @@ doctrine:
                 alias: App
         controller_resolver:
             auto_mapping: false
+        # Result cache used for catalog reads (invalidated when the catalog changes).
+        result_cache_driver:
+            type: pool
+            pool: cache.catalog
 
 when@prod:
     doctrine:
@@ -32,14 +36,9 @@ when@prod:
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool
-            result_cache_driver:
-                type: pool
-                pool: doctrine.result_cache_pool
 
     framework:
         cache:
             pools:
-                doctrine.result_cache_pool:
-                    adapter: cache.app
                 doctrine.system_cache_pool:
                     adapter: cache.system

@@ -1,0 +1,71 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}{{ solution.name('en') }}{% endblock %}
+{% block page_title %}{{ solution.icon }} {{ solution.name('en') }} <code class="text-xs font-normal text-slate-500">{{ solution.code }}</code>{% endblock %}
+{% block page_actions %}<a href="{{ path('admin_catalog') }}" class="btn-ghost btn-sm">← Catalog</a>{% endblock %}
+
+{% block admin_content %}
+<div class="grid gap-6 2xl:grid-cols-2">
+    <div class="card card-body">
+        <h2 class="mb-4 font-semibold">Solution</h2>
+        {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {% for name in ['name', 'shortDescription', 'description', 'slugs'] %}
+                <fieldset class="form-row rounded-xl border border-slate-200 p-4">
+                    <legend class="px-1 text-sm font-semibold">{{ form[name].vars.label ?: name|humanize }}</legend>
+                    <div class="grid gap-x-4 md:grid-cols-3">{% for sub in form[name] %}{{ form_row(sub) }}{% endfor %}</div>
+                </fieldset>
+            {% endfor %}
+            <div class="grid gap-x-4 md:grid-cols-3">
+                {{ form_row(form.category) }}
+                {{ form_row(form.basePrice) }}
+                {{ form_row(form.maintenancePrice) }}
+                {{ form_row(form.estimatedDevelopmentDays) }}
+                {{ form_row(form.applicationTemplate) }}
+                {{ form_row(form.icon) }}
+            </div>
+            {{ form_row(form.sectors) }}
+            <div class="grid gap-x-4 md:grid-cols-2">
+                {{ form_row(form.hostingRequirements) }}
+                {{ form_row(form.domainRequirements) }}
+            </div>
+            <div class="flex flex-wrap gap-6">{{ form_row(form.position) }}{{ form_row(form.featured) }}{{ form_row(form.enabled) }}</div>
+            <button class="btn-primary">Save solution</button>
+        {{ form_end(form) }}
+    </div>
+
+    <form method="post" action="{{ path('admin_catalog_features', {id: solution.id}) }}" class="card h-fit">
+        <div class="card-header"><h2 class="card-title">Features</h2><button class="btn-primary btn-sm">Save features</button></div>
+        <input type="hidden" name="_token" value="{{ csrf_token('features-' ~ solution.id) }}">
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>Code</th><th>Name (fr / en / ar)</th><th>Included</th><th>Option price</th><th>Weight</th><th>On</th><th>Pos.</th></tr></thead>
+                <tbody>
+                {% for feature in solution.features %}
+                    <tr>
+                        <td><code class="text-xs">{{ feature.code }}</code></td>
+                        <td class="space-y-1">
+                            <input class="form-input py-1 text-xs" name="features[{{ feature.id }}][name_fr]" value="{{ feature.name('fr') }}">
+                            <input class="form-input py-1 text-xs" name="features[{{ feature.id }}][name_en]" value="{{ feature.name('en') }}">
+                            <input class="form-input py-1 text-xs" dir="rtl" name="features[{{ feature.id }}][name_ar]" value="{{ feature.name('ar') }}">
+                        </td>
+                        <td><input type="checkbox" class="form-check" name="features[{{ feature.id }}][included]" {{ feature.included ? 'checked' }}></td>
+                        <td><input type="number" step="0.01" min="0" class="form-input w-24 py-1" name="features[{{ feature.id }}][price]" value="{{ feature.price / 100 }}"></td>
+                        <td><input type="number" min="1" max="5" class="form-input w-16 py-1" name="features[{{ feature.id }}][weight]" value="{{ feature.complexityWeight }}"></td>
+                        <td><input type="checkbox" class="form-check" name="features[{{ feature.id }}][enabled]" {{ feature.enabled ? 'checked' }}></td>
+                        <td><input type="number" class="form-input w-16 py-1" name="features[{{ feature.id }}][position]" value="{{ feature.position }}"></td>
+                    </tr>
+                {% endfor %}
+                <tr class="bg-slate-50">
+                    <td><input class="form-input py-1 text-xs" name="new_code" placeholder="new_feature_code" pattern="[a-z0-9_]{2,80}"></td>
+                    <td><input class="form-input py-1 text-xs" name="new_name" placeholder="Name (fr)"></td>
+                    <td class="text-xs text-slate-500">option</td>
+                    <td><input type="number" step="0.01" min="0" class="form-input w-24 py-1" name="new_price" placeholder="0"></td>
+                    <td colspan="3" class="text-xs text-slate-500">Add a feature</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+{% endblock %}

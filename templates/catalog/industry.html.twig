@@ -1,0 +1,29 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% set locale = app.request.locale %}
+{% set alternate_overrides = {fr: {slug: sector.slug('fr')}, en: {slug: sector.slug('en')}, ar: {slug: sector.slug('ar')}} %}
+
+{% block title %}{{ 'catalog.industry.title'|trans({'%sector%': sector.name(locale)}) }}{% endblock %}
+{% block meta_description %}{{ sector.description(locale) }}{% endblock %}
+
+{% block content %}
+{% include 'components/_page_header.html.twig' with {eyebrow: sector.icon ~ ' ' ~ 'nav.industries'|trans, title: 'catalog.industry.title'|trans({'%sector%': sector.name(locale)}), lead: sector.description(locale)} %}
+<section class="section">
+    <div class="container-page">
+        {% if default_solution %}
+            <div class="card card-body mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-brand-600">{{ 'catalog.industry.recommended'|trans }}</p>
+                    <p class="text-xl font-bold">{{ default_solution.icon }} {{ default_solution.name(locale) }}</p>
+                    <p class="text-sm text-slate-600">{{ default_solution.shortDescription(locale) }}</p>
+                </div>
+                <a href="{{ path('start', {sector: sector.code}) }}" class="btn-primary btn-lg">{{ 'catalog.get_proposal'|trans }}</a>
+            </div>
+        {% endif %}
+        <h2 class="text-2xl font-bold">{{ 'catalog.industry.solutions'|trans }}</h2>
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for solution in solutions %}{% include 'catalog/_solution_card.html.twig' %}{% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

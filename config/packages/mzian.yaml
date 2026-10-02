@@ -1,0 +1,43 @@
+# Default business settings. Every value can be overridden by an administrator
+# (Admin > Settings / Pricing), which stores the override in the `setting` table.
+# Amounts are in MAJOR units of the platform currency (50 = $50.00).
+parameters:
+    mzian.settings_defaults:
+        pricing:
+            currency: USD
+            # Margin guaranteed on every order, and the margin we aim for.
+            minimum_margin: 50
+            target_margin: 80
+            # Optional additional margin as a % of the cost (0 = disabled).
+            target_margin_rate: 0
+            # Payment provider fees, paid by Mzian on the selling price.
+            payment_fee_percent: 2.9
+            payment_fee_fixed: 0.30
+            # Fixed infrastructure cost per project (CI, monitoring, backups, previews).
+            infrastructure_cost: 10
+            # Professional e-mail cost per account and per year.
+            email_cost_per_account: 2
+            # Estimated AI/API cost per project by complexity.
+            ai_cost: { low: 3, medium: 5, high: 8 }
+            # Development effort multiplier applied to the base solution price.
+            complexity_multipliers: { low: 1.0, medium: 1.25, high: 1.6 }
+            # Price/cost of a requested feature that no template supports yet.
+            custom_feature_price: 80
+            # Selling prices are rounded up to this step (1 = whole units).
+            rounding: 1
+            quote_validity_days: 30
+            # Project budget = expected cost + this safety buffer.
+            budget_buffer_percent: 15
+        automation_policy:
+            # Above these limits an agent stops and the project goes to WAITING_ADMIN_APPROVAL.
+            max_hosting_cost: 100
+            max_domain_cost: 30
+            max_monthly_cost: 30
+            require_admin_approval_above: 100
+            # Automatic retries of a failed step before asking an administrator.
+            max_attempts: 3
+            # QA: in simulated (mock) deployments HTTPS/DNS checks cannot be verified.
+            qa_min_score: 70
+        analysis:
+            # Recommended solution rules (first match wins); imported from config/mzian/catalog.yaml.
+            solution_rules: []

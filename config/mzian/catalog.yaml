@@ -1,0 +1,403 @@
+# =============================================================================
+# Mzian catalog seed — imported by `bin/console mzian:setup` (or mzian:catalog:import).
+#
+# This file is DATA, not code: prices, features, sectors and questions can be
+# changed here (then re-imported with --update) or directly in Admin > Catalog.
+# Prices are in the platform currency, in MAJOR units (e.g. 120 = $120.00).
+# Feature codes link questionnaire answers, the AI analysis and the solutions.
+# =============================================================================
+
+currency: USD
+
+sectors:
+  - { code: restaurant, icon: "🍽️", default_solution: restaurant_website, position: 10,
+      name: { fr: "Restaurant / Café", en: "Restaurant / Café", ar: "مطعم / مقهى" },
+      slugs: { fr: restaurant, en: restaurant, ar: restaurant },
+      description: { fr: "Menu en ligne, réservations, commandes et avis pour remplir votre salle.", en: "Online menu, bookings, orders and reviews to fill your tables.", ar: "قائمة طعام على الإنترنت، حجوزات، طلبات وآراء لملء طاولاتك." } }
+  - { code: car_rental, icon: "🚗", default_solution: car_rental_website, position: 20,
+      name: { fr: "Location de voitures", en: "Car rental", ar: "كراء السيارات" },
+      slugs: { fr: location-voiture, en: car-rental, ar: car-rental },
+      description: { fr: "Flotte en ligne, réservations, contrats, clients et paiements dans un seul outil.", en: "Online fleet, bookings, contracts, customers and payments in one tool.", ar: "أسطول على الإنترنت، حجوزات، عقود، زبناء وأداءات في أداة واحدة." } }
+  - { code: hotel, icon: "🏨", default_solution: hotel_website, position: 30,
+      name: { fr: "Hôtel / Riad", en: "Hotel / Riad", ar: "فندق / رياض" },
+      slugs: { fr: hotel-riad, en: hotel-riad, ar: hotel-riad },
+      description: { fr: "Chambres, galerie et réservations directes, sans commission.", en: "Rooms, gallery and direct bookings, commission-free.", ar: "غرف، معرض صور وحجوزات مباشرة بدون عمولة." } }
+  - { code: travel_agency, icon: "✈️", default_solution: booking_system, position: 40,
+      name: { fr: "Agence de voyage", en: "Travel agency", ar: "وكالة أسفار" },
+      slugs: { fr: agence-voyage, en: travel-agency, ar: travel-agency },
+      description: { fr: "Circuits, excursions et réservations en ligne.", en: "Tours, excursions and online bookings.", ar: "جولات، رحلات وحجوزات على الإنترنت." } }
+  - { code: beauty, icon: "💇", default_solution: appointment_management, position: 50,
+      name: { fr: "Coiffure / Spa / Beauté", en: "Hair salon / Spa / Beauty", ar: "حلاقة / سبا / تجميل" },
+      slugs: { fr: coiffure-spa, en: salon-spa, ar: salon-spa },
+      description: { fr: "Prise de rendez-vous en ligne, rappels et fidélité.", en: "Online appointments, reminders and loyalty.", ar: "حجز المواعيد على الإنترنت، تذكيرات وبرنامج وفاء." } }
+  - { code: retail, icon: "🛍️", default_solution: ecommerce_starter, position: 60,
+      name: { fr: "Commerce / Boutique", en: "Shop / Retail", ar: "تجارة / متجر" },
+      slugs: { fr: commerce, en: retail, ar: retail },
+      description: { fr: "Vendez en ligne : catalogue, panier, paiement et livraison.", en: "Sell online: catalogue, cart, payment and delivery.", ar: "بِع على الإنترنت: كتالوج، سلة، أداء وتوصيل." } }
+  - { code: real_estate, icon: "🏠", default_solution: business_website, position: 70,
+      name: { fr: "Immobilier", en: "Real estate", ar: "عقار" },
+      slugs: { fr: immobilier, en: real-estate, ar: real-estate },
+      description: { fr: "Présentez vos biens et recevez des demandes qualifiées.", en: "Showcase your properties and receive qualified requests.", ar: "اعرض عقاراتك وتوصل بطلبات مؤهلة." } }
+  - { code: craftsman, icon: "🔨", default_solution: website_starter, position: 80,
+      name: { fr: "Artisan", en: "Craftsman", ar: "حرفي" },
+      slugs: { fr: artisan, en: craftsman, ar: craftsman },
+      description: { fr: "Un site simple pour montrer vos réalisations et recevoir des devis.", en: "A simple website to show your work and receive quote requests.", ar: "موقع بسيط لعرض أعمالك والتوصل بطلبات عروض الأسعار." } }
+  - { code: professional, icon: "💼", default_solution: business_website, position: 90,
+      name: { fr: "Cabinet / Indépendant", en: "Firm / Freelancer", ar: "مكتب / مستقل" },
+      slugs: { fr: cabinet-independant, en: firm-freelancer, ar: firm-freelancer },
+      description: { fr: "Crédibilité, prise de contact et gestion de vos clients.", en: "Credibility, contact requests and customer management.", ar: "المصداقية، طلبات التواصل وإدارة الزبناء." } }
+  - { code: association, icon: "🤝", default_solution: website_starter, position: 100,
+      name: { fr: "Association", en: "Non-profit", ar: "جمعية" },
+      slugs: { fr: association, en: non-profit, ar: non-profit },
+      description: { fr: "Présentez vos actions, vos événements et collectez des dons.", en: "Present your actions and events, and collect donations.", ar: "قدّم أنشطتك وفعالياتك واجمع التبرعات." } }
+  - { code: other, icon: "✨", default_solution: business_website, position: 110,
+      name: { fr: "Autre activité", en: "Other business", ar: "نشاط آخر" },
+      slugs: { fr: autre, en: other, ar: other },
+      description: { fr: "Une petite entreprise avec un besoin spécifique.", en: "A small business with a specific need.", ar: "مقاولة صغيرة بحاجة خاصة." } }
+
+solutions:
+  - code: website_starter
+    slugs: { fr: site-vitrine, en: showcase-website, ar: showcase-website }
+    name: { fr: "Site vitrine Starter", en: "Website Starter", ar: "موقع تعريفي أساسي" }
+    short_description: { fr: "Un site professionnel de 5 pages, rapide et optimisé mobile.", en: "A fast, mobile-first 5-page professional website.", ar: "موقع احترافي من 5 صفحات، سريع ومناسب للهاتف." }
+    description: { fr: "Idéal pour les artisans, indépendants et petites entreprises : présentez votre activité, vos services et recevez des demandes de contact. Inclut l'hébergement, le nom de domaine et le référencement de base.", en: "Ideal for craftsmen, freelancers and small businesses: present your business and services and receive contact requests. Includes hosting, domain name and basic SEO.", ar: "مثالي للحرفيين والمستقلين والمقاولات الصغيرة: قدّم نشاطك وخدماتك وتوصل بطلبات التواصل. يشمل الاستضافة واسم النطاق وتحسين محركات البحث الأساسي." }
+    category: website
+    base_price: 90
+    estimated_development_days: 2
+    maintenance_price: 9
+    application_template: website-starter
+    icon: "🌐"
+    featured: true
+    sectors: [craftsman, association, other]
+    hosting_requirements: { storage_gb: 5, database: false, ssl: true, email_accounts: 1 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: pages, included: true, weight: 1, name: { fr: "5 pages personnalisées", en: "5 custom pages", ar: "5 صفحات مخصصة" } }
+      - { code: contact_form, included: true, weight: 1, name: { fr: "Formulaire de contact", en: "Contact form", ar: "استمارة التواصل" } }
+      - { code: responsive, included: true, weight: 1, name: { fr: "Design responsive (mobile)", en: "Responsive design (mobile)", ar: "تصميم متجاوب (هاتف)" } }
+      - { code: seo_basic, included: true, weight: 1, name: { fr: "Référencement de base", en: "Basic SEO", ar: "تحسين أساسي لمحركات البحث" } }
+      - { code: google_maps, included: true, weight: 1, name: { fr: "Carte Google Maps", en: "Google Maps", ar: "خريطة Google" } }
+      - { code: gallery, included: false, price: 20, weight: 1, name: { fr: "Galerie de réalisations", en: "Portfolio gallery", ar: "معرض الأعمال" } }
+      - { code: whatsapp_button, included: false, price: 10, weight: 1, name: { fr: "Bouton WhatsApp", en: "WhatsApp button", ar: "زر واتساب" } }
+      - { code: multilingual, included: false, price: 40, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+      - { code: blog, included: false, price: 40, weight: 2, name: { fr: "Blog / actualités", en: "Blog / news", ar: "مدونة / أخبار" } }
+      - { code: quote_requests, included: false, price: 25, weight: 1, name: { fr: "Demandes de devis", en: "Quote requests", ar: "طلبات عروض الأسعار" } }
+      - { code: events, included: false, price: 30, weight: 2, name: { fr: "Agenda des événements", en: "Events calendar", ar: "أجندة الفعاليات" } }
+      - { code: online_payments, included: false, price: 80, weight: 3, name: { fr: "Paiement / dons en ligne", en: "Online payments / donations", ar: "أداء / تبرعات على الإنترنت" } }
+
+  - code: business_website
+    slugs: { fr: site-business, en: business-website, ar: business-website }
+    name: { fr: "Site Business", en: "Business Website", ar: "موقع الأعمال" }
+    short_description: { fr: "Site + formulaires + espace d'administration pour gérer vos contenus.", en: "Website + forms + admin area to manage your content.", ar: "موقع + استمارات + لوحة إدارة لتسيير محتواك." }
+    description: { fr: "Pour les entreprises qui veulent gérer elles-mêmes leurs contenus : pages, actualités, témoignages et demandes clients depuis une administration simple.", en: "For businesses that want to manage their own content: pages, news, testimonials and customer requests from a simple admin area.", ar: "للمقاولات التي تريد تسيير محتواها بنفسها: صفحات، أخبار، شهادات وطلبات الزبناء من لوحة إدارة بسيطة." }
+    category: website
+    base_price: 150
+    estimated_development_days: 3
+    maintenance_price: 15
+    application_template: website-starter
+    icon: "💼"
+    featured: true
+    sectors: [professional, real_estate, other, craftsman]
+    hosting_requirements: { storage_gb: 10, database: true, ssl: true, email_accounts: 3 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: pages, included: true, weight: 1, name: { fr: "Pages illimitées", en: "Unlimited pages", ar: "صفحات غير محدودة" } }
+      - { code: contact_form, included: true, weight: 1, name: { fr: "Formulaires de contact", en: "Contact forms", ar: "استمارات التواصل" } }
+      - { code: admin_panel, included: true, weight: 2, name: { fr: "Administration des contenus", en: "Content administration", ar: "إدارة المحتوى" } }
+      - { code: seo_basic, included: true, weight: 1, name: { fr: "Référencement optimisé", en: "Optimised SEO", ar: "تحسين محركات البحث" } }
+      - { code: google_maps, included: true, weight: 1, name: { fr: "Carte Google Maps", en: "Google Maps", ar: "خريطة Google" } }
+      - { code: testimonials, included: true, weight: 1, name: { fr: "Témoignages clients", en: "Customer testimonials", ar: "شهادات الزبناء" } }
+      - { code: multilingual, included: false, price: 50, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+      - { code: blog, included: false, price: 40, weight: 2, name: { fr: "Blog / actualités", en: "Blog / news", ar: "مدونة / أخبار" } }
+      - { code: newsletter, included: false, price: 30, weight: 1, name: { fr: "Newsletter", en: "Newsletter", ar: "النشرة الإخبارية" } }
+      - { code: appointment_requests, included: false, price: 40, weight: 2, name: { fr: "Demandes de rendez-vous", en: "Appointment requests", ar: "طلبات المواعيد" } }
+      - { code: property_listings, included: false, price: 90, weight: 3, name: { fr: "Annonces immobilières", en: "Property listings", ar: "إعلانات عقارية" } }
+      - { code: customer_management, included: false, price: 60, weight: 3, name: { fr: "Gestion des clients", en: "Customer management", ar: "إدارة الزبناء" } }
+      - { code: invoicing, included: false, price: 90, weight: 3, name: { fr: "Facturation", en: "Invoicing", ar: "الفوترة" } }
+      - { code: whatsapp_button, included: false, price: 10, weight: 1, name: { fr: "Bouton WhatsApp", en: "WhatsApp button", ar: "زر واتساب" } }
+
+  - code: restaurant_website
+    slugs: { fr: restaurant, en: restaurant-website, ar: restaurant-website }
+    name: { fr: "Site Restaurant", en: "Restaurant Website", ar: "موقع المطعم" }
+    short_description: { fr: "Menu en ligne, réservations et galerie pour votre restaurant ou café.", en: "Online menu, bookings and gallery for your restaurant or café.", ar: "قائمة طعام، حجوزات ومعرض صور لمطعمك أو مقهاك." }
+    description: { fr: "Votre carte toujours à jour, les réservations de table, les horaires et la localisation : tout ce qu'il faut pour attirer de nouveaux clients.", en: "Your menu always up to date, table bookings, opening hours and location: everything you need to attract new customers.", ar: "قائمتك محيّنة دائمًا، حجز الطاولات، أوقات العمل والموقع: كل ما تحتاجه لجذب زبناء جدد." }
+    category: website
+    base_price: 140
+    estimated_development_days: 3
+    maintenance_price: 12
+    application_template: restaurant
+    icon: "🍽️"
+    featured: true
+    sectors: [restaurant]
+    hosting_requirements: { storage_gb: 10, database: true, ssl: true, email_accounts: 2 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: menu, included: true, weight: 2, name: { fr: "Menu en ligne", en: "Online menu", ar: "قائمة الطعام على الإنترنت" } }
+      - { code: reservation_requests, included: true, weight: 2, name: { fr: "Réservation de table", en: "Table booking", ar: "حجز الطاولات" } }
+      - { code: gallery, included: true, weight: 1, name: { fr: "Galerie photos", en: "Photo gallery", ar: "معرض الصور" } }
+      - { code: opening_hours, included: true, weight: 1, name: { fr: "Horaires et localisation", en: "Opening hours and location", ar: "أوقات العمل والموقع" } }
+      - { code: contact_form, included: true, weight: 1, name: { fr: "Formulaire de contact", en: "Contact form", ar: "استمارة التواصل" } }
+      - { code: online_ordering, included: false, price: 120, weight: 4, name: { fr: "Commande en ligne", en: "Online ordering", ar: "الطلب على الإنترنت" } }
+      - { code: delivery_management, included: false, price: 60, weight: 3, name: { fr: "Gestion des livraisons", en: "Delivery management", ar: "تدبير التوصيل" } }
+      - { code: multilingual, included: false, price: 40, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+      - { code: reviews, included: false, price: 20, weight: 1, name: { fr: "Avis clients", en: "Customer reviews", ar: "آراء الزبناء" } }
+      - { code: whatsapp_button, included: false, price: 10, weight: 1, name: { fr: "Bouton WhatsApp", en: "WhatsApp button", ar: "زر واتساب" } }
+
+  - code: hotel_website
+    slugs: { fr: site-hotel-riad, en: hotel-website, ar: hotel-website }
+    name: { fr: "Site Hôtel / Riad", en: "Hotel Website", ar: "موقع الفندق / الرياض" }
+    short_description: { fr: "Chambres, galerie, demandes de réservation directes et site multilingue.", en: "Rooms, gallery, direct booking requests and a multilingual website.", ar: "غرف، معرض صور، طلبات حجز مباشرة وموقع متعدد اللغات." }
+    description: { fr: "Recevez des réservations en direct, sans commission : présentation des chambres, galerie, services et calendrier de disponibilités en option.", en: "Receive direct, commission-free bookings: rooms, gallery, services and an optional availability calendar.", ar: "توصل بحجوزات مباشرة بدون عمولة: الغرف، الصور، الخدمات وتقويم التوفر اختياريًا." }
+    category: booking
+    base_price: 180
+    estimated_development_days: 4
+    maintenance_price: 19
+    application_template: booking
+    icon: "🏨"
+    featured: false
+    sectors: [hotel]
+    hosting_requirements: { storage_gb: 15, database: true, ssl: true, email_accounts: 3 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: rooms, included: true, weight: 2, name: { fr: "Présentation des chambres", en: "Rooms presentation", ar: "تقديم الغرف" } }
+      - { code: gallery, included: true, weight: 1, name: { fr: "Galerie photos", en: "Photo gallery", ar: "معرض الصور" } }
+      - { code: booking_requests, included: true, weight: 2, name: { fr: "Demandes de réservation", en: "Booking requests", ar: "طلبات الحجز" } }
+      - { code: multilingual, included: true, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+      - { code: google_maps, included: true, weight: 1, name: { fr: "Carte Google Maps", en: "Google Maps", ar: "خريطة Google" } }
+      - { code: online_booking, included: false, price: 120, weight: 4, name: { fr: "Réservation avec disponibilités", en: "Booking with availability", ar: "حجز حسب التوفر" } }
+      - { code: online_payments, included: false, price: 80, weight: 3, name: { fr: "Paiement en ligne", en: "Online payment", ar: "الأداء على الإنترنت" } }
+      - { code: reviews, included: false, price: 20, weight: 1, name: { fr: "Avis clients", en: "Customer reviews", ar: "آراء الزبناء" } }
+
+  - code: car_rental_website
+    slugs: { fr: location-voiture, en: car-rental-website, ar: car-rental-website }
+    name: { fr: "Site Location de voitures", en: "Car Rental Website", ar: "موقع كراء السيارات" }
+    short_description: { fr: "Votre flotte en ligne et des demandes de réservation par site et WhatsApp.", en: "Your fleet online and booking requests through the website and WhatsApp.", ar: "أسطولك على الإنترنت وطلبات الحجز عبر الموقع وواتساب." }
+    description: { fr: "Présentez vos véhicules avec photos, prix et caractéristiques, et recevez des demandes de réservation qualifiées.", en: "Showcase your vehicles with photos, prices and specs, and receive qualified booking requests.", ar: "اعرض سياراتك بالصور والأسعار والمواصفات وتوصل بطلبات حجز مؤهلة." }
+    category: website
+    base_price: 160
+    estimated_development_days: 3
+    maintenance_price: 15
+    application_template: car-rental
+    icon: "🚗"
+    featured: false
+    sectors: [car_rental]
+    hosting_requirements: { storage_gb: 10, database: true, ssl: true, email_accounts: 2 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: vehicle_catalog, included: true, weight: 2, name: { fr: "Catalogue des véhicules", en: "Vehicle catalogue", ar: "كتالوج السيارات" } }
+      - { code: booking_requests, included: true, weight: 2, name: { fr: "Demandes de réservation", en: "Booking requests", ar: "طلبات الحجز" } }
+      - { code: contact_form, included: true, weight: 1, name: { fr: "Formulaire de contact", en: "Contact form", ar: "استمارة التواصل" } }
+      - { code: whatsapp_button, included: true, weight: 1, name: { fr: "Bouton WhatsApp", en: "WhatsApp button", ar: "زر واتساب" } }
+      - { code: online_reservations, included: false, price: 100, weight: 4, name: { fr: "Réservation en ligne avec disponibilités", en: "Online booking with availability", ar: "حجز على الإنترنت حسب التوفر" } }
+      - { code: online_payments, included: false, price: 80, weight: 3, name: { fr: "Paiement en ligne", en: "Online payment", ar: "الأداء على الإنترنت" } }
+      - { code: multilingual, included: false, price: 40, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+
+  - code: car_rental_management
+    slugs: { fr: gestion-location-voiture, en: car-rental-management, ar: car-rental-management }
+    name: { fr: "Gestion de location de voitures", en: "Car Rental Management", ar: "تدبير كراء السيارات" }
+    short_description: { fr: "Site + gestion des véhicules, clients, réservations, contrats et tableau de bord.", en: "Website + vehicles, customers, bookings, contracts and dashboard management.", ar: "موقع + تدبير السيارات والزبناء والحجوزات والعقود ولوحة القيادة." }
+    description: { fr: "L'outil complet de l'agence de location : flotte, disponibilités, réservations, fiches clients, contrats, paiements et statistiques, avec un site public pour vos clients.", en: "The complete tool for rental agencies: fleet, availability, bookings, customer files, contracts, payments and statistics, plus a public website for your customers.", ar: "الأداة الكاملة لوكالات الكراء: الأسطول، التوفر، الحجوزات، ملفات الزبناء، العقود، الأداءات والإحصائيات، مع موقع عمومي لزبنائك." }
+    category: management
+    base_price: 320
+    estimated_development_days: 6
+    maintenance_price: 29
+    application_template: car-rental
+    icon: "🚙"
+    featured: true
+    sectors: [car_rental]
+    hosting_requirements: { storage_gb: 20, database: true, ssl: true, email_accounts: 5 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: website, included: true, weight: 2, name: { fr: "Site public", en: "Public website", ar: "موقع عمومي" } }
+      - { code: vehicle_management, included: true, weight: 3, name: { fr: "Gestion des véhicules", en: "Vehicle management", ar: "تدبير السيارات" } }
+      - { code: vehicle_catalog, included: true, weight: 1, name: { fr: "Catalogue des véhicules", en: "Vehicle catalogue", ar: "كتالوج السيارات" } }
+      - { code: customer_management, included: true, weight: 3, name: { fr: "Gestion des clients", en: "Customer management", ar: "تدبير الزبناء" } }
+      - { code: online_reservations, included: true, weight: 3, name: { fr: "Réservations", en: "Reservations", ar: "الحجوزات" } }
+      - { code: contracts, included: true, weight: 3, name: { fr: "Contrats de location", en: "Rental contracts", ar: "عقود الكراء" } }
+      - { code: dashboard, included: true, weight: 2, name: { fr: "Tableau de bord", en: "Dashboard", ar: "لوحة القيادة" } }
+      - { code: pdf_contracts, included: false, price: 40, weight: 2, name: { fr: "Contrats PDF automatiques", en: "Automatic PDF contracts", ar: "عقود PDF آلية" } }
+      - { code: e_signature, included: false, price: 80, weight: 3, name: { fr: "Signature électronique", en: "E-signature", ar: "التوقيع الإلكتروني" } }
+      - { code: online_payments, included: false, price: 80, weight: 3, name: { fr: "Gestion des paiements", en: "Payment management", ar: "تدبير الأداءات" } }
+      - { code: vehicle_tracking, included: false, price: 120, weight: 4, name: { fr: "Suivi des véhicules", en: "Vehicle tracking", ar: "تتبع السيارات" } }
+      - { code: statistics, included: false, price: 50, weight: 2, name: { fr: "Statistiques avancées", en: "Advanced statistics", ar: "إحصائيات متقدمة" } }
+      - { code: multilingual, included: false, price: 40, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+
+  - code: booking_system
+    slugs: { fr: reservation, en: booking-system, ar: booking-system }
+    name: { fr: "Système de réservation", en: "Booking System", ar: "نظام الحجز" }
+    short_description: { fr: "Calendrier de disponibilités, réservations en ligne et confirmations automatiques.", en: "Availability calendar, online bookings and automatic confirmations.", ar: "تقويم التوفر، حجوزات على الإنترنت وتأكيدات آلية." }
+    description: { fr: "Pour toute activité qui vit de réservations : excursions, activités, salles, équipements. Vos clients réservent en ligne, vous gérez tout depuis une administration.", en: "For any business living from bookings: tours, activities, rooms, equipment. Customers book online, you manage everything from an admin area.", ar: "لكل نشاط يعتمد على الحجوزات: رحلات، أنشطة، قاعات، معدات. يحجز زبناؤك على الإنترنت وتسيّر كل شيء من لوحة إدارة." }
+    category: booking
+    base_price: 220
+    estimated_development_days: 4
+    maintenance_price: 19
+    application_template: booking
+    icon: "📅"
+    featured: true
+    sectors: [travel_agency, hotel]
+    hosting_requirements: { storage_gb: 15, database: true, ssl: true, email_accounts: 3 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: availability_calendar, included: true, weight: 3, name: { fr: "Calendrier de disponibilités", en: "Availability calendar", ar: "تقويم التوفر" } }
+      - { code: online_reservations, included: true, weight: 3, name: { fr: "Réservations en ligne", en: "Online reservations", ar: "حجوزات على الإنترنت" } }
+      - { code: booking_requests, included: true, weight: 1, name: { fr: "Demandes de réservation", en: "Booking requests", ar: "طلبات الحجز" } }
+      - { code: email_confirmations, included: true, weight: 1, name: { fr: "Confirmations par e-mail", en: "E-mail confirmations", ar: "تأكيدات بالبريد" } }
+      - { code: admin_panel, included: true, weight: 2, name: { fr: "Administration", en: "Administration", ar: "لوحة الإدارة" } }
+      - { code: online_booking, included: true, weight: 1, name: { fr: "Réservation avec disponibilités", en: "Booking with availability", ar: "حجز حسب التوفر" } }
+      - { code: online_payments, included: false, price: 80, weight: 3, name: { fr: "Paiement en ligne", en: "Online payment", ar: "الأداء على الإنترنت" } }
+      - { code: reminders, included: false, price: 40, weight: 2, name: { fr: "Rappels automatiques", en: "Automatic reminders", ar: "تذكيرات آلية" } }
+      - { code: customer_management, included: false, price: 60, weight: 3, name: { fr: "Gestion des clients", en: "Customer management", ar: "تدبير الزبناء" } }
+      - { code: multilingual, included: false, price: 40, weight: 2, name: { fr: "Site multilingue", en: "Multilingual website", ar: "موقع متعدد اللغات" } }
+
+  - code: appointment_management
+    slugs: { fr: rendez-vous, en: appointment-management, ar: appointment-management }
+    name: { fr: "Gestion des rendez-vous", en: "Appointment Management", ar: "تدبير المواعيد" }
+    short_description: { fr: "Prise de rendez-vous en ligne, planning du personnel et rappels.", en: "Online appointments, staff schedule and reminders.", ar: "حجز المواعيد على الإنترنت، جدول الموظفين وتذكيرات." }
+    description: { fr: "Pour les salons de coiffure, spas, instituts et cabinets : vos clients prennent rendez-vous 24h/24, vous réduisez les absences grâce aux rappels.", en: "For hair salons, spas, beauty institutes and practices: customers book 24/7, reminders reduce no-shows.", ar: "لصالونات الحلاقة والسبا ومعاهد التجميل والعيادات: يحجز زبناؤك على مدار الساعة وتقلل التذكيرات من الغياب." }
+    category: booking
+    base_price: 190
+    estimated_development_days: 4
+    maintenance_price: 19
+    application_template: booking
+    icon: "💇"
+    featured: false
+    sectors: [beauty, professional]
+    hosting_requirements: { storage_gb: 10, database: true, ssl: true, email_accounts: 2 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: appointments, included: true, weight: 3, name: { fr: "Prise de rendez-vous en ligne", en: "Online appointments", ar: "حجز المواعيد على الإنترنت" } }
+      - { code: services_catalog, included: true, weight: 1, name: { fr: "Catalogue des prestations", en: "Services catalogue", ar: "كتالوج الخدمات" } }
+      - { code: staff_schedule, included: true, weight: 2, name: { fr: "Planning du personnel", en: "Staff schedule", ar: "جدول الموظفين" } }
+      - { code: reminders, included: true, weight: 2, name: { fr: "Rappels automatiques", en: "Automatic reminders", ar: "تذكيرات آلية" } }
+      - { code: appointment_requests, included: true, weight: 1, name: { fr: "Demandes de rendez-vous", en: "Appointment requests", ar: "طلبات المواعيد" } }
+      - { code: online_payments, included: false, price: 80, weight: 3, name: { fr: "Paiement en ligne", en: "Online payment", ar: "الأداء على الإنترنت" } }
+      - { code: customer_management, included: false, price: 60, weight: 3, name: { fr: "Fiches clients", en: "Customer files", ar: "ملفات الزبناء" } }
+      - { code: loyalty, included: false, price: 60, weight: 2, name: { fr: "Programme de fidélité", en: "Loyalty program", ar: "برنامج الوفاء" } }
+
+  - code: mini_crm
+    slugs: { fr: mini-crm, en: mini-crm, ar: mini-crm }
+    name: { fr: "Mini CRM", en: "Mini CRM", ar: "نظام صغير لإدارة العملاء" }
+    short_description: { fr: "Clients, contacts, tâches, notes et statistiques dans un outil simple.", en: "Customers, contacts, tasks, notes and statistics in one simple tool.", ar: "الزبناء، جهات الاتصال، المهام، الملاحظات والإحصائيات في أداة بسيطة." }
+    description: { fr: "Centralisez vos clients et prospects, suivez vos échanges et vos tâches, et pilotez votre activité avec des statistiques claires.", en: "Centralise customers and prospects, track interactions and tasks, and steer your business with clear statistics.", ar: "اجمع زبناءك والمحتملين، تتبع التفاعلات والمهام، وسيّر نشاطك بإحصائيات واضحة." }
+    category: crm
+    base_price: 260
+    estimated_development_days: 5
+    maintenance_price: 25
+    application_template: mini-crm
+    icon: "📇"
+    featured: true
+    sectors: [professional, real_estate, other]
+    hosting_requirements: { storage_gb: 10, database: true, ssl: true, email_accounts: 3 }
+    domain_requirements: { required: false, preferred_tlds: [".com"] }
+    features:
+      - { code: customer_management, included: true, weight: 3, name: { fr: "Gestion des clients", en: "Customer management", ar: "تدبير الزبناء" } }
+      - { code: contacts, included: true, weight: 2, name: { fr: "Contacts", en: "Contacts", ar: "جهات الاتصال" } }
+      - { code: tasks, included: true, weight: 2, name: { fr: "Tâches", en: "Tasks", ar: "المهام" } }
+      - { code: notes, included: true, weight: 1, name: { fr: "Notes", en: "Notes", ar: "الملاحظات" } }
+      - { code: statistics, included: true, weight: 2, name: { fr: "Statistiques", en: "Statistics", ar: "الإحصائيات" } }
+      - { code: dashboard, included: true, weight: 1, name: { fr: "Tableau de bord", en: "Dashboard", ar: "لوحة القيادة" } }
+      - { code: invoicing, included: false, price: 90, weight: 3, name: { fr: "Devis et factures", en: "Quotes and invoices", ar: "عروض الأسعار والفواتير" } }
+      - { code: email_campaigns, included: false, price: 70, weight: 3, name: { fr: "Campagnes e-mail", en: "E-mail campaigns", ar: "حملات البريد" } }
+      - { code: sales_pipeline, included: false, price: 60, weight: 2, name: { fr: "Pipeline commercial", en: "Sales pipeline", ar: "مسار المبيعات" } }
+
+  - code: ecommerce_starter
+    slugs: { fr: boutique-en-ligne, en: ecommerce-starter, ar: ecommerce-starter }
+    name: { fr: "Boutique en ligne", en: "E-commerce Starter", ar: "متجر إلكتروني" }
+    short_description: { fr: "Catalogue, panier, paiement en ligne et gestion des commandes.", en: "Catalogue, cart, online payment and order management.", ar: "كتالوج، سلة، أداء على الإنترنت وتدبير الطلبات." }
+    description: { fr: "Lancez votre boutique : fiches produits, panier, paiement sécurisé, suivi des commandes et des stocks.", en: "Launch your shop: product pages, cart, secure payment, order and stock tracking.", ar: "أطلق متجرك: صفحات المنتجات، السلة، أداء آمن، تتبع الطلبات والمخزون." }
+    category: ecommerce
+    base_price: 290
+    estimated_development_days: 5
+    maintenance_price: 29
+    application_template: ecommerce
+    icon: "🛒"
+    featured: true
+    sectors: [retail]
+    hosting_requirements: { storage_gb: 20, database: true, ssl: true, email_accounts: 3 }
+    domain_requirements: { required: true, preferred_tlds: [".com", ".ma"] }
+    features:
+      - { code: product_catalog, included: true, weight: 2, name: { fr: "Catalogue produits", en: "Product catalogue", ar: "كتالوج المنتجات" } }
+      - { code: online_shop, included: true, weight: 1, name: { fr: "Boutique en ligne", en: "Online shop", ar: "متجر على الإنترنت" } }
+      - { code: cart_checkout, included: true, weight: 3, name: { fr: "Panier et commande", en: "Cart and checkout", ar: "السلة والطلب" } }
+      - { code: online_payments, included: true, weight: 3, name: { fr: "Paiement en ligne", en: "Online payment", ar: "الأداء على الإنترنت" } }
+      - { code: order_management, included: true, weight: 2, name: { fr: "Gestion des commandes", en: "Order management", ar: "تدبير الطلبات" } }
+      - { code: inventory, included: true, weight: 2, name: { fr: "Gestion des stocks", en: "Stock management", ar: "تدبير المخزون" } }
+      - { code: delivery_management, included: false, price: 60, weight: 3, name: { fr: "Gestion des livraisons", en: "Delivery management", ar: "تدبير التوصيل" } }
+      - { code: promo_codes, included: false, price: 30, weight: 1, name: { fr: "Codes promo", en: "Promo codes", ar: "رموز التخفيض" } }
+      - { code: multilingual, included: false, price: 40, weight: 2, name: { fr: "Boutique multilingue", en: "Multilingual shop", ar: "متجر متعدد اللغات" } }
+
+  - code: custom_web_application
+    slugs: { fr: application-sur-mesure, en: custom-web-application, ar: custom-web-application }
+    name: { fr: "Application web sur mesure", en: "Custom Web Application", ar: "تطبيق ويب حسب الطلب" }
+    short_description: { fr: "Pour les besoins non couverts par nos modèles : étude et développement dédiés.", en: "For needs not covered by our templates: dedicated study and development.", ar: "للاحتياجات غير المشمولة بنماذجنا: دراسة وتطوير مخصصان." }
+    description: { fr: "Une application métier conçue pour votre besoin spécifique. L'IA rédige un cahier des charges, l'équipe Mzian valide la faisabilité avant toute réalisation.", en: "A business application designed for your specific need. AI drafts the specification, the Mzian team validates feasibility before any build.", ar: "تطبيق أعمال مصمم لحاجتك الخاصة. يحرر الذكاء الاصطناعي دفتر التحملات ويتحقق فريق مزيان من الجدوى قبل أي إنجاز." }
+    category: custom
+    base_price: 600
+    estimated_development_days: 15
+    maintenance_price: 49
+    application_template: custom
+    icon: "🧩"
+    featured: false
+    sectors: [other]
+    hosting_requirements: { storage_gb: 20, database: true, ssl: true, email_accounts: 5 }
+    domain_requirements: { required: true, preferred_tlds: [".com"] }
+    features:
+      - { code: specification, included: true, weight: 2, name: { fr: "Cahier des charges", en: "Specification", ar: "دفتر التحملات" } }
+      - { code: admin_panel, included: true, weight: 2, name: { fr: "Administration", en: "Administration", ar: "لوحة الإدارة" } }
+      - { code: user_accounts, included: true, weight: 3, name: { fr: "Comptes utilisateurs", en: "User accounts", ar: "حسابات المستخدمين" } }
+      - { code: integrations, included: false, price: 150, weight: 4, name: { fr: "Intégrations externes", en: "External integrations", ar: "تكاملات خارجية" } }
+
+# Ordered rules used to recommend a solution (first match wins). Expressions use
+# Symfony ExpressionLanguage with: sector (string), has('feature'),
+# features_count, unknown_count (features no solution supports).
+solution_rules:
+  - { solution: custom_web_application, when: "unknown_count >= 3" }
+  - { solution: car_rental_management, when: "sector == 'car_rental' and (has('contracts') or has('customer_management') or has('vehicle_tracking') or has('statistics') or has('online_payments') or has('vehicle_management'))" }
+  - { solution: car_rental_website, when: "sector == 'car_rental'" }
+  - { solution: restaurant_website, when: "sector == 'restaurant'" }
+  - { solution: hotel_website, when: "sector == 'hotel' and not has('availability_calendar')" }
+  - { solution: booking_system, when: "sector == 'hotel'" }
+  - { solution: appointment_management, when: "sector == 'beauty' or has('appointments')" }
+  - { solution: booking_system, when: "sector == 'travel_agency' or has('online_reservations') or has('online_booking')" }
+  - { solution: ecommerce_starter, when: "has('online_shop') or has('cart_checkout') or (sector == 'retail' and not has('no_online_sales'))" }
+  - { solution: mini_crm, when: "has('customer_management') and not has('pages')" }
+  - { solution: business_website, when: "sector in ['professional', 'real_estate', 'other'] or features_count >= 3" }
+  - { solution: website_starter, when: "true" }
+
+subscription_plans:
+  - code: starter
+    name: { fr: "Mzian Starter", en: "Mzian Starter", ar: "مزيان ستارتر" }
+    description: { fr: "Hébergement et maintenance de base.", en: "Hosting and basic maintenance.", ar: "الاستضافة والصيانة الأساسية." }
+    price: 15
+    interval: month
+    position: 10
+    includes: [hosting, maintenance]
+    features:
+      - { fr: "Hébergement sécurisé (SSL)", en: "Secure hosting (SSL)", ar: "استضافة آمنة (SSL)" }
+      - { fr: "Mises à jour de sécurité", en: "Security updates", ar: "تحديثات الأمان" }
+      - { fr: "Sauvegardes hebdomadaires", en: "Weekly backups", ar: "نسخ احتياطية أسبوعية" }
+  - code: business
+    name: { fr: "Mzian Business", en: "Mzian Business", ar: "مزيان بيزنس" }
+    description: { fr: "Hébergement, maintenance et support prioritaire.", en: "Hosting, maintenance and priority support.", ar: "الاستضافة، الصيانة ودعم ذو أولوية." }
+    price: 29
+    interval: month
+    recommended: true
+    position: 20
+    includes: [hosting, maintenance, support]
+    features:
+      - { fr: "Tout Starter", en: "Everything in Starter", ar: "كل ما في ستارتر" }
+      - { fr: "Support prioritaire", en: "Priority support", ar: "دعم ذو أولوية" }
+      - { fr: "Sauvegardes quotidiennes", en: "Daily backups", ar: "نسخ احتياطية يومية" }
+      - { fr: "1 h de modifications / mois", en: "1h of changes / month", ar: "ساعة تعديلات شهريًا" }
+  - code: pro
+    name: { fr: "Mzian Pro", en: "Mzian Pro", ar: "مزيان برو" }
+    description: { fr: "Pour les applications métier : support, IA et fonctionnalités premium.", en: "For business apps: support, AI and premium features.", ar: "لتطبيقات الأعمال: الدعم، الذكاء الاصطناعي والميزات المتقدمة." }
+    price: 49
+    interval: month
+    position: 30
+    includes: [hosting, maintenance, support, ai_usage, premium_features]
+    features:
+      - { fr: "Tout Business", en: "Everything in Business", ar: "كل ما في بيزنس" }
+      - { fr: "Assistant IA pour vos contenus", en: "AI assistant for your content", ar: "مساعد ذكي لمحتواك" }
+      - { fr: "Fonctionnalités premium", en: "Premium features", ar: "ميزات متقدمة" }
+      - { fr: "3 h de modifications / mois", en: "3h of changes / month", ar: "3 ساعات تعديلات شهريًا" }
