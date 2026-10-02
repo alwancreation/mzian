@@ -1,0 +1,22 @@
+{
+  "name": "mzian",
+  "private": true,
+  "type": "module",
+  "description": "Mzian.net frontend assets (Tailwind CSS + vanilla JS)",
+  "scripts": {
+    "build": "node assets/build.mjs",
+    "watch": "node assets/build.mjs --watch",
+    "lint": "eslint assets"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@tailwindcss/cli": "^4.1.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.39.0",
+    "globals": "^16.0.0",
+    "tailwindcss": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

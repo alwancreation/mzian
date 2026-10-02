@@ -1,0 +1,35 @@
+# Developer extras on top of docker-compose.yml:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# - rebuilds CSS/JS on every change (Tailwind + esbuild watch mode)
+# - exposes MySQL (3306) and Redis (6379) on the host
+# - Adminer database UI on http://localhost:8080
+
+services:
+  php:
+    environment:
+      APP_ENV: dev
+      MZIAN_MOCK_LATENCY_MS: ${MZIAN_MOCK_LATENCY_MS:-1500}
+
+  assets:
+    command: ["sh", "-c", "npm ci --no-audit --no-fund && npm run watch"]
+    restart: unless-stopped
+
+  database:
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+
+  redis:
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: database
+    depends_on:
+      - database

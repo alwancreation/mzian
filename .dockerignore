@@ -1,0 +1,16 @@
+.git
+.github
+.idea
+.vscode
+.env.local
+.env.*.local
+.phpunit.cache
+.php-cs-fixer.cache
+docker/data
+node_modules
+public/build
+public/bundles
+var
+vendor
+*.pem
+*.key

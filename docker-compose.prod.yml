@@ -1,0 +1,48 @@
+# Production-like stack: immutable images, no bind mounts, APP_ENV=prod.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Secrets (APP_SECRET, MZIAN_ENCRYPTION_KEY, API keys, DB passwords) must be
+# provided through the environment (e.g. an untracked .env file next to this one
+# or your orchestrator's secret store) — never committed.
+
+x-php-prod: &php-prod
+  build:
+    context: .
+    target: php_prod
+  image: ${MZIAN_IMAGE:-mzian-php}:${MZIAN_IMAGE_TAG:-latest}
+  volumes: !reset []
+
+services:
+  php:
+    <<: *php-prod
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
+      MZIAN_ENCRYPTION_KEY: ${MZIAN_ENCRYPTION_KEY:?MZIAN_ENCRYPTION_KEY must be set}
+      MZIAN_WEBHOOK_SECRET: ${MZIAN_WEBHOOK_SECRET:?MZIAN_WEBHOOK_SECRET must be set}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+      MZIAN_MOCK_LATENCY_MS: 0
+
+  worker:
+    <<: *php-prod
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
+      MZIAN_ENCRYPTION_KEY: ${MZIAN_ENCRYPTION_KEY:?MZIAN_ENCRYPTION_KEY must be set}
+      MZIAN_WEBHOOK_SECRET: ${MZIAN_WEBHOOK_SECRET:?MZIAN_WEBHOOK_SECRET must be set}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+      MZIAN_MOCK_LATENCY_MS: 0
+
+  nginx:
+    build:
+      context: .
+      target: nginx
+    image: ${MZIAN_NGINX_IMAGE:-mzian-nginx}:${MZIAN_IMAGE_TAG:-latest}
+    volumes: !reset []
+
+  mailpit:
+    profiles: ["dev-tools"]
+
+  assets:
+    profiles: ["dev-tools"]

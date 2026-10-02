@@ -1,0 +1,113 @@
+# Mzian.net — local stack.
+#
+#   docker compose up -d          -> http://localhost (app), http://localhost:8025 (Mailpit)
+#
+# The "php" container installs dependencies (if needed), runs the migrations and
+# `mzian:setup --demo` on start-up, so the whole workflow is usable right away
+# with mock providers (no money spent, no external API called).
+
+x-php-common: &php-common
+  build:
+    context: .
+    target: php_dev
+  image: mzian-php:dev
+  restart: unless-stopped
+  volumes:
+    - ./:/srv/app
+  environment: &php-env
+    APP_ENV: ${APP_ENV:-dev}
+    DATABASE_URL: mysql://${MYSQL_USER:-mzian}:${MYSQL_PASSWORD:-mzian}@database:3306/${MYSQL_DATABASE:-mzian}?serverVersion=8.4.0&charset=utf8mb4
+    MESSENGER_TRANSPORT_DSN: redis://redis:6379/async
+    MESSENGER_NOTIFICATIONS_TRANSPORT_DSN: redis://redis:6379/notifications
+    LOCK_DSN: redis://redis:6379
+    MAILER_DSN: smtp://mailpit:1025
+    MZIAN_PUBLIC_BASE_URL: ${MZIAN_PUBLIC_BASE_URL:-http://localhost}
+    MZIAN_INTERNAL_BASE_URL: http://nginx
+    MZIAN_MOCK_LATENCY_MS: ${MZIAN_MOCK_LATENCY_MS:-1200}
+  depends_on:
+    database:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  php:
+    <<: *php-common
+    environment:
+      <<: *php-env
+      CONTAINER_ROLE: app
+
+  worker:
+    <<: *php-common
+    command: ["php", "bin/console", "messenger:consume", "async", "notifications", "--time-limit=3600", "--memory-limit=256M", "-vv"]
+    environment:
+      <<: *php-env
+      CONTAINER_ROLE: worker
+    depends_on:
+      php:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/srv/app/public:ro
+    depends_on:
+      php:
+        condition: service_healthy
+
+  database:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mzian}
+      MYSQL_USER: ${MYSQL_USER:-mzian}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-mzian}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root-dev-only}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root-dev-only}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    volumes:
+      - database_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - redis_data:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "${MAILPIT_PORT:-8025}:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  # One-shot job: installs npm dependencies and builds Tailwind CSS + JS into public/build.
+  assets:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: ["sh", "-c", "npm ci --no-audit --no-fund && npm run build"]
+    restart: "no"
+
+volumes:
+  database_data:
+  redis_data:
