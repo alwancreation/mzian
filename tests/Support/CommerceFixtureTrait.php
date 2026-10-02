@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Support;
 
 use App\AI\Analysis\RequirementAnalysis;
+use App\Billing\Payment\Dto\CheckoutUrls;
+use App\Billing\Payment\Dto\PaymentEvent;
+use App\Billing\Service\PaymentService;
 use App\Customer\Entity\Customer;
 use App\Order\Entity\Order;
 use App\Order\Entity\Quote;
@@ -53,6 +56,21 @@ trait CommerceFixtureTrait
         $quote ??= $this->issueQuote($customer);
 
         return $this->as(self::customerActor($customer), fn () => static::getContainer()->get(OrderService::class)->place($quote, $customer, $subscription));
+    }
+
+    /**
+     * Pays an order through the mock gateway path (verified event, as a webhook).
+     */
+    protected function payOrder(Order $order): Order
+    {
+        $payments = static::getContainer()->get(PaymentService::class);
+        $payment = $payments->start($order, 'mock_payment', new CheckoutUrls('https://mzian.test/ok', 'https://mzian.test/ko'));
+        $this->as(Actor::webhook('mock_payment'), fn () => $payments->handle(
+            $payments->provider('mock_payment'),
+            new PaymentEvent('evt_'.bin2hex(random_bytes(4)), PaymentEvent::SUCCEEDED, 'payment.succeeded', $payment->getIdempotencyKey(), null, $payment->getAmount(), $payment->getCurrency()),
+        ));
+
+        return $order;
     }
 
     /**

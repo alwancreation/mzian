@@ -1,0 +1,28 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Projects{% endblock %}
+{% block page_title %}Projects <span class="text-sm font-normal text-slate-500">({{ projects|length }})</span>{% endblock %}
+
+{% block admin_content %}
+<nav class="mb-4 flex gap-1 overflow-x-auto pb-1 text-sm">
+    <a href="{{ path('admin_projects') }}" class="{{ status is null ? 'nav-link-active' : 'nav-link' }}">All</a>
+    {% for s in statuses %}
+        {% if counts[s.value] is defined %}
+            <a href="{{ path('admin_projects', {status: s.value}) }}" class="{{ status == s ? 'nav-link-active' : 'nav-link' }} whitespace-nowrap">{{ s.value }} <span class="text-xs opacity-70">{{ counts[s.value] }}</span></a>
+        {% endif %}
+    {% endfor %}
+</nav>
+<form method="get" class="mb-4 flex gap-2">
+    {% if status %}<input type="hidden" name="status" value="{{ status.value }}">{% endif %}
+    <input type="search" name="q" value="{{ query }}" class="form-input max-w-xs" placeholder="Reference, name, domain…">
+    <button class="btn-secondary">Search</button>
+</form>
+<div class="card table-wrap">
+    <table class="table">
+        <thead><tr><th>Project</th><th>Customer</th><th>Solution</th><th>Price</th><th>Risk</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+        <tbody>
+        {% for project in projects %}{% include 'admin/projects/_row.html.twig' %}{% else %}<tr><td colspan="8" class="py-6 text-center text-slate-500">No project.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

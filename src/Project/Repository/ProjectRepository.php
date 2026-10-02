@@ -70,9 +70,4 @@ class ProjectRepository extends ServiceEntityRepository
 
         return $counts;
     }
-
-    public function nextSequence(): int
-    {
-        return (int) $this->createQueryBuilder('p')->select('COALESCE(MAX(p.id), 0)')->getQuery()->getSingleScalarResult() + 1;
-    }
 }

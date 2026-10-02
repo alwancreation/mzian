@@ -26,9 +26,4 @@ class OrderRepository extends ServiceEntityRepository
     {
         return $this->findBy(['customer' => $customer], ['id' => 'DESC']);
     }
-
-    public function nextSequence(): int
-    {
-        return (int) $this->createQueryBuilder('o')->select('COALESCE(MAX(o.id), 0)')->getQuery()->getSingleScalarResult() + 1;
-    }
 }

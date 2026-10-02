@@ -1,0 +1,11 @@
+{# Project row. Expects: project #}
+<tr>
+    <td><a href="{{ path('admin_project', {id: project.id}) }}" class="font-medium hover:text-brand-700">{{ project.name }}</a><span class="block font-mono text-xs text-slate-500">{{ project.reference }}</span></td>
+    <td>{{ project.customer ? project.customer.displayName : '—' }}</td>
+    <td>{{ project.solution ? project.solution.icon ~ ' ' ~ project.solution.name('en') : '—' }}</td>
+    <td>{% if project.order %}{{ project.order.total|money(project.order.currency) }}<span class="block text-xs text-emerald-700">margin {{ project.order.margin|money(project.order.currency) }}</span>{% else %}—{% endif %}</td>
+    <td><span class="{{ project.risk == 'high' ? 'badge-red' : (project.risk == 'medium' ? 'badge-amber' : 'badge-green') }}">{{ project.risk }}</span></td>
+    <td><span class="{{ project.status.badge }}">{{ project.status.value }}</span>{% if project.automationPaused %} <span class="badge-gray">paused</span>{% endif %}{% if project.holdReason %}<span class="block max-w-xs truncate text-xs text-slate-500" title="{{ project.holdReason }}">{{ project.holdReason }}</span>{% endif %}</td>
+    <td class="whitespace-nowrap text-xs text-slate-500">{{ project.updatedAt|format_datetime('short', 'short', locale: 'en') }}</td>
+    <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_project', {id: project.id}) }}">Open</a></td>
+</tr>

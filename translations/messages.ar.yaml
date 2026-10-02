@@ -280,6 +280,13 @@ project:
     failed: "فشل أحد الاختبارات: فريق مزيان يتدخل."
     cancelled: "تم إلغاء هذا المشروع."
     waiting_admin_approval: "يلزم موافقة فريق مزيان للمتابعة."
+  changes:
+    title: "يحتاج فريق مزيان إلى توضيحات"
+    answer: "جوابك"
+    submit: "إرسال جوابي"
+    sent: "شكرًا! تم إرسال جوابك إلى فريق مزيان."
+    error: "تعذر إرسال جوابك."
+  cancelled_reason: "تم إلغاء المشروع: %reason%"
 pipeline:
   step:
     hosting: "الاستضافة"

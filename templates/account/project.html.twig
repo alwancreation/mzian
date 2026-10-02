@@ -28,6 +28,21 @@
         </div>
     </div>
 
+    {% if status.value == 'CHANGES_REQUESTED' %}
+        <div class="card card-body mt-6 border-2 border-amber-200" data-testid="changes-requested">
+            <h2 class="font-semibold">{{ 'project.changes.title'|trans }}</h2>
+            <p class="mt-2 whitespace-pre-line rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{{ project.changesRequested }}</p>
+            <form method="post" action="{{ path('account_project_answer', {reference: project.reference}) }}" class="mt-4 space-y-3">
+                <input type="hidden" name="_token" value="{{ csrf_token('answer-' ~ project.reference) }}">
+                <label class="form-label" for="changes-answer">{{ 'project.changes.answer'|trans }}</label>
+                <textarea id="changes-answer" name="message" rows="4" class="form-textarea" required maxlength="2000"></textarea>
+                <button class="btn-primary">{{ 'project.changes.submit'|trans }}</button>
+            </form>
+        </div>
+    {% elseif status.value == 'CANCELLED' and project.rejectionReason %}
+        <div class="alert-warning mt-6"><span>{{ 'project.cancelled_reason'|trans({'%reason%': project.rejectionReason}) }}</span></div>
+    {% endif %}
+
     {% if project.tasks is not empty %}
         <div class="card mt-6">
             <div class="card-header"><h2 class="card-title">{{ 'project.pipeline'|trans }}</h2></div>

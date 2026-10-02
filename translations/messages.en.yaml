@@ -280,6 +280,13 @@ project:
     failed: "A check failed: the Mzian team is on it."
     cancelled: "This project was cancelled."
     waiting_admin_approval: "The Mzian team needs to approve the next step."
+  changes:
+    title: "The Mzian team needs more information"
+    answer: "Your answer"
+    submit: "Send my answer"
+    sent: "Thank you! Your answer has been sent to the Mzian team."
+    error: "Your answer could not be sent."
+  cancelled_reason: "Project cancelled: %reason%"
 pipeline:
   step:
     hosting: "Hosting"

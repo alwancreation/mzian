@@ -18,6 +18,7 @@ use App\Notification\Enum\NotificationType;
 use App\Notification\NotificationService;
 use App\Notification\Repository\NotificationRepository;
 use App\Order\Repository\OrderRepository;
+use App\Project\Approval\ApprovalService;
 use App\Project\Entity\Project;
 use App\Project\Entity\ProjectCredential;
 use App\Project\Enum\ProjectStatus;
@@ -83,6 +84,25 @@ final class AccountController extends AbstractController
         $this->denyAccessUnlessGranted(ProjectVoter::VIEW, $project);
 
         return $this->render('account/project.html.twig', ['project' => $project]);
+    }
+
+    /**
+     * The customer answers the administrator's questions (CHANGES_REQUESTED → PENDING_ADMIN_APPROVAL).
+     */
+    #[Route(['fr' => '/fr/compte/projets/{reference}/reponse', 'en' => '/en/account/projects/{reference}/answer', 'ar' => '/ar/account/projects/{reference}/answer'], name: 'account_project_answer', methods: ['POST'])]
+    public function answer(Request $request, #[MapEntity(mapping: ['reference' => 'reference'])] Project $project, ApprovalService $approvals): Response
+    {
+        $this->denyAccessUnlessGranted(ProjectVoter::VIEW, $project);
+        $this->denyUnlessCsrfValid('answer-'.$project->getReference(), $request);
+        $reply = trim($request->getPayload()->getString('message'));
+        if (ProjectStatus::ChangesRequested !== $project->getStatus() || '' === $reply) {
+            $this->addFlash('error', $this->translator->trans('project.changes.error'));
+        } else {
+            $approvals->resubmit($project, $reply);
+            $this->addFlash('success', $this->translator->trans('project.changes.sent'));
+        }
+
+        return $this->redirectToRoute('account_project', ['reference' => $project->getReference()]);
     }
 
     /**

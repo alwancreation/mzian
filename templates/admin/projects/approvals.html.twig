@@ -1,0 +1,56 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Approvals{% endblock %}
+{% block page_title %}Approvals <span class="text-sm font-normal text-slate-500">({{ pending|length + blocked|length + transfers|length }})</span>{% endblock %}
+
+{% block admin_content %}
+<p class="mb-6 max-w-3xl text-sm text-slate-600">No project is built without a human decision. Paid projects wait here; agents stop and come back here whenever a rule (budget, retries) requires an administrator.</p>
+
+{% set head %}<thead><tr><th>Project</th><th>Customer</th><th>Solution</th><th>Price</th><th>Risk</th><th>Status</th><th>Updated</th><th></th></tr></thead>{% endset %}
+
+<section class="mb-8">
+    <h2 class="mb-3 font-semibold">✅ New projects to approve</h2>
+    <div class="card table-wrap">
+        <table class="table" data-testid="pending-approvals">
+            {{ head }}
+            <tbody>
+            {% for project in pending %}{% include 'admin/projects/_row.html.twig' %}{% else %}<tr><td colspan="8" class="py-6 text-center text-slate-500">Nothing to approve.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="mb-8">
+    <h2 class="mb-3 font-semibold">⏸️ Automation waiting for a decision</h2>
+    <div class="card table-wrap">
+        <table class="table" data-testid="blocked-projects">
+            {{ head }}
+            <tbody>
+            {% for project in blocked %}{% include 'admin/projects/_row.html.twig' %}{% else %}<tr><td colspan="8" class="py-6 text-center text-slate-500">No blocked project.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2 class="mb-3 font-semibold">🏦 Bank transfers to confirm</h2>
+    <div class="card table-wrap">
+        <table class="table">
+            <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Since</th><th></th></tr></thead>
+            <tbody>
+            {% for payment in transfers %}
+                <tr>
+                    <td class="font-mono text-xs">{{ payment.order.number }}</td>
+                    <td>{{ payment.order.customer.displayName }}</td>
+                    <td>{{ payment.amount|money(payment.currency) }}</td>
+                    <td class="text-xs text-slate-500">{{ payment.createdAt|format_datetime('short', 'short', locale: 'en') }}</td>
+                    <td class="text-end"><a class="btn-secondary btn-sm" href="{{ path('admin_project', {id: payment.order.project.id}) }}#payments">Review</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="py-6 text-center text-slate-500">No pending transfer.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

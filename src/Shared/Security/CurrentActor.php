@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Security;
 
 use App\Security\Entity\User;
+use App\Security\UserRole;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
@@ -28,9 +29,12 @@ final class CurrentActor
 
         $user = $this->security->getUser();
         if ($user instanceof User) {
-            return $user->isAdmin()
-                ? Actor::admin((int) $user->getId(), $user->getFullName())
-                : Actor::customer((int) $user->getId(), $user->getFullName());
+            return match (true) {
+                // Agent accounts (API tokens) are never treated as humans.
+                $user->hasRole(UserRole::AGENT) => Actor::agent('user'.(int) $user->getId()),
+                $user->isAdmin() => Actor::admin((int) $user->getId(), $user->getFullName()),
+                default => Actor::customer((int) $user->getId(), $user->getFullName()),
+            };
         }
 
         return \PHP_SAPI === 'cli' ? Actor::system() : Actor::visitor();

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Project;
 
-use App\Billing\Payment\Dto\CheckoutUrls;
-use App\Billing\Payment\Dto\PaymentEvent;
-use App\Billing\Service\PaymentService;
 use App\Project\Entity\Project;
 use App\Project\Entity\ProjectEvent;
 use App\Project\Enum\ProjectStatus;
@@ -41,13 +38,7 @@ final class ProjectStateMachineTest extends KernelTestCase
 
     private function paidProject(): Project
     {
-        $customer = $this->factory->customer();
-        $order = $this->placeOrder($customer);
-        $payments = static::getContainer()->get(PaymentService::class);
-        $payment = $payments->start($order, 'mock_payment', new CheckoutUrls('https://example.test/ok', 'https://example.test/ko'));
-        $this->as(Actor::webhook('mock_payment'), fn () => $payments->handle($payments->provider('mock_payment'), new PaymentEvent('evt_1', PaymentEvent::SUCCEEDED, 'payment.succeeded', $payment->getIdempotencyKey(), null, $payment->getAmount(), $payment->getCurrency())));
-
-        return $order->getProject();
+        return $this->payOrder($this->placeOrder($this->factory->customer()))->getProject();
     }
 
     public function testDefinitionCoversEveryStatusAndOnlyHumansDecide(): void

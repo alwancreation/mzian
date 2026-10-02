@@ -280,6 +280,13 @@ project:
     failed: "Un contrôle a échoué : l'équipe Mzian intervient."
     cancelled: "Ce projet a été annulé."
     waiting_admin_approval: "Une validation de l'équipe Mzian est nécessaire pour continuer."
+  changes:
+    title: "L'équipe Mzian a besoin de précisions"
+    answer: "Votre réponse"
+    submit: "Envoyer ma réponse"
+    sent: "Merci ! Votre réponse a été transmise à l'équipe Mzian."
+    error: "Votre réponse n'a pas pu être envoyée."
+  cancelled_reason: "Projet annulé : %reason%"
 pipeline:
   step:
     hosting: "Hébergement"

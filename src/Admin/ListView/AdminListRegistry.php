@@ -78,7 +78,7 @@ final class AdminListRegistry
                 new Column('Margin', 'margin', 'money', 'currency'),
                 new Column('Status', 'status', 'badge'),
                 new Column('Created', 'createdAt', 'datetime'),
-            ], ['e.number'], array_map(static fn (OrderStatus $s) => $s->value, OrderStatus::cases())),
+            ], ['e.number'], array_map(static fn (OrderStatus $s) => $s->value, OrderStatus::cases()), rowRoute: 'admin_project', rowRouteProperty: 'project.id'),
             'payments' => new ListDefinition('Payments', Payment::class, [
                 new Column('#', 'id'),
                 new Column('Order', 'order.number', 'code'),
@@ -87,7 +87,7 @@ final class AdminListRegistry
                 new Column('Amount', 'amount', 'money', 'currency'),
                 new Column('Status', 'status', 'badge'),
                 new Column('Paid at', 'paidAt', 'datetime'),
-            ], ['e.providerReference'], array_map(static fn (PaymentStatus $s) => $s->value, PaymentStatus::cases())),
+            ], ['e.providerReference'], array_map(static fn (PaymentStatus $s) => $s->value, PaymentStatus::cases()), rowRoute: 'admin_project', rowRouteProperty: 'order.project.id'),
             'invoices' => new ListDefinition('Invoices', Invoice::class, [
                 new Column('Number', 'number', 'code'),
                 new Column('Customer', 'customer.displayName'),
