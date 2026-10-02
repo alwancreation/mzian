@@ -1,0 +1,41 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        default_bus: messenger.bus.default
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - doctrine_ping_connection
+                    - doctrine_close_connection
+                    - doctrine_transaction
+
+        transports:
+            # Agent pipeline jobs (hosting, domain, development, tests, deployment, QA, delivery).
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    delay: 2000
+                    multiplier: 3
+                    max_delay: 60000
+            # E-mails and in-app notifications.
+            notifications:
+                dsn: '%env(MESSENGER_NOTIFICATIONS_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 5
+                    delay: 5000
+                    multiplier: 2
+            failed: 'doctrine://default?queue_name=failed&auto_setup=0'
+            sync: 'sync://'
+
+        routing:
+            'Symfony\Component\Mailer\Messenger\SendEmailMessage': notifications
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'
+                notifications: 'in-memory://'
+                failed: 'in-memory://'

@@ -1,0 +1,35 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+    default_locale: fr
+    enabled_locales: ['fr', 'en', 'ar']
+    http_method_override: false
+    handle_all_throwables: true
+    trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
+
+    # The session is started only when it is read or written (login, forms, flashes).
+    session:
+        cookie_secure: auto
+        cookie_samesite: lax
+        cookie_httponly: true
+        name: MZIANSESSID
+
+    assets:
+        version_strategy: App\Shared\Asset\BuildManifestVersionStrategy
+
+    http_client:
+        default_options:
+            timeout: 20
+            max_redirects: 3
+            headers:
+                'User-Agent': 'Mzian/1.0 (+https://mzian.net)'
+
+    php_errors:
+        log: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

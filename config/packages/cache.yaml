@@ -1,0 +1,13 @@
+framework:
+    cache:
+        prefix_seed: mzian/platform
+        pools:
+            # Catalog (solutions, sectors, questions) — invalidated on admin changes.
+            cache.catalog:
+                adapter: cache.app
+                tags: true
+                default_lifetime: 3600
+            # De-duplication of daily visitor tracking.
+            cache.analytics:
+                adapter: cache.app
+                default_lifetime: 86400

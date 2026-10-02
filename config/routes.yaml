@@ -1,0 +1,4 @@
+# Routes are declared with #[Route] attributes on controllers (src/**/Controller).
+# Public pages use localized paths and the /{_locale} prefix (fr, en, ar).
+controllers:
+    resource: routing.controllers

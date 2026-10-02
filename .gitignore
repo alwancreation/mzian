@@ -1,0 +1,39 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+# Frontend build output & dependencies
+/node_modules/
+/public/build/
+
+# Local tooling
+/.phpstan.cache/
+/docker/data/
+/.idea/
+/.vscode/
+.DS_Store
+
+# Never commit secrets, keys or credentials
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+/.secrets/
+/config/jwt/

@@ -1,0 +1,7 @@
+# Classic (session-based) CSRF tokens for every form and state-changing action.
+framework:
+    form:
+        csrf_protection:
+            enabled: true
+    csrf_protection:
+        enabled: true
