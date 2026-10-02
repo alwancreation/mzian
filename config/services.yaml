@@ -1,23 +1,24 @@
 # yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
-
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-# See also https://symfony.com/doc/current/service_container/import.html
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    mzian.public_base_url: '%env(MZIAN_PUBLIC_BASE_URL)%'
+    mzian.internal_base_url: '%env(MZIAN_INTERNAL_BASE_URL)%'
+    mzian.mail_from: '%env(MZIAN_MAIL_FROM)%'
+    mzian.admin_email: '%env(MZIAN_ADMIN_EMAIL)%'
+    mzian.workspaces_dir: '%kernel.project_dir%/var/workspaces'
+    mzian.repositories_dir: '%kernel.project_dir%/var/repositories'
+    mzian.previews_dir: '%kernel.project_dir%/var/previews'
+    mzian.application_templates_dir: '%kernel.project_dir%/resources/application-templates'
+    mzian.catalog_file: '%kernel.project_dir%/config/mzian/catalog.yaml'
 
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+        exclude:
+            - '../src/Kernel.php'
+            - '../src/**/Entity/'
+            - '../src/**/Enum/'
+            - '../src/**/Dto/'
