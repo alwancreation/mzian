@@ -64,6 +64,10 @@ final class ApprovalCenterTest extends WebTestCase
         self::assertSelectorTextContains('[data-testid="project-status"]', 'APPROVED');
         self::assertSelectorTextContains('[data-testid="timeline"]', 'PENDING_ADMIN_APPROVAL → APPROVED');
         self::assertSelectorTextContains('[data-testid="timeline"]', 'admin: Ada Admin');
+
+        $this->client->request('GET', '/admin/pipeline');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('[data-testid="pipeline"]', $project->getReference());
     }
 
     public function testRequestChangesRoundTripWithTheCustomer(): void

@@ -54,6 +54,21 @@ final class ProjectAdminController extends AbstractController
         ]);
     }
 
+    /**
+     * Board of the projects handled by the agents (auto-refreshed).
+     */
+    #[Route('/pipeline', name: 'admin_pipeline', methods: ['GET'])]
+    public function pipeline(): Response
+    {
+        $columns = [ProjectStatus::Approved, ...array_slice(ProjectStatus::automationStates(), 1), ProjectStatus::WaitingAdminApproval, ProjectStatus::Failed];
+        $board = array_fill_keys(array_map(static fn (ProjectStatus $s) => $s->value, $columns), []);
+        foreach ($this->projects->findByStatuses($columns, 300) as $project) {
+            $board[$project->getStatus()->value][] = $project;
+        }
+
+        return $this->render('admin/projects/pipeline.html.twig', ['board' => $board]);
+    }
+
     #[Route('/projects', name: 'admin_projects', methods: ['GET'])]
     public function index(Request $request): Response
     {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Project;
 
+use App\Notification\Entity\Notification;
+use App\Notification\Enum\NotificationType;
 use App\Project\Entity\Project;
 use App\Project\Entity\ProjectEvent;
 use App\Project\Enum\ProjectStatus;
@@ -134,5 +136,12 @@ final class ProjectStateMachineTest extends KernelTestCase
         }
         self::assertSame(ProjectStatus::Completed, $project->getStatus());
         self::assertSame(100, $project->getStatus()->progress());
+
+        // Milestones notify the customer exactly once; holds and failures alert the administrators.
+        $notifications = static::getContainer()->get(EntityManagerInterface::class)->getRepository(Notification::class);
+        foreach ([NotificationType::DevelopmentCompleted, NotificationType::TestingCompleted, NotificationType::ProjectDeployed, NotificationType::ProjectDelivered] as $type) {
+            self::assertSame(1, $notifications->count(['project' => $project, 'type' => $type]), $type->value);
+        }
+        self::assertGreaterThanOrEqual(2, $notifications->count(['project' => $project, 'type' => NotificationType::AdminAttentionRequired]));
     }
 }

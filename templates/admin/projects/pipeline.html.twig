@@ -1,0 +1,29 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Pipeline{% endblock %}
+{% block head %}<meta http-equiv="refresh" content="20">{% endblock %}
+{% block page_title %}Pipeline <span class="text-sm font-normal text-slate-500">auto-refresh 20 s</span>{% endblock %}
+
+{% block admin_content %}
+<div class="flex gap-4 overflow-x-auto pb-4" data-testid="pipeline">
+    {% for status, projects in board %}
+        <section class="w-64 shrink-0 rounded-2xl bg-slate-100 p-3">
+            <h2 class="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide {{ status in ['FAILED', 'WAITING_ADMIN_APPROVAL'] ? 'text-rose-700' : 'text-slate-600' }}">{{ status|replace({'_': ' '}) }} <span class="rounded-full bg-white px-2 py-0.5">{{ projects|length }}</span></h2>
+            <ul class="space-y-2">
+                {% for project in projects %}
+                    <li>
+                        <a href="{{ path('admin_project', {id: project.id}) }}" class="block rounded-xl bg-white p-3 text-sm shadow-sm hover:ring-2 hover:ring-brand-300">
+                            <span class="font-medium">{{ project.name }}</span>
+                            <span class="block font-mono text-xs text-slate-500">{{ project.reference }}</span>
+                            <span class="progress mt-2 block h-1.5"><span class="progress-bar block h-full" style="width: {{ project.progress }}%"></span></span>
+                            {% if project.holdReason %}<span class="mt-2 block text-xs text-rose-700">{{ project.holdReason|slice(0, 90) }}</span>{% endif %}
+                            {% if project.automationPaused %}<span class="badge-gray mt-2">paused</span>{% endif %}
+                            {% if project.simulated %}<span class="badge-amber mt-2">simulated</span>{% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endfor %}
+</div>
+{% endblock %}

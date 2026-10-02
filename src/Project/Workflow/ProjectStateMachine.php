@@ -7,9 +7,11 @@ namespace App\Project\Workflow;
 use App\Project\Entity\Project;
 use App\Project\Entity\ProjectEvent;
 use App\Project\Enum\ProjectStatus;
+use App\Project\Event\ProjectTransitionedEvent;
 use App\Shared\Audit\AuditLogger;
 use App\Shared\Security\CurrentActor;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\Transition;
@@ -29,6 +31,7 @@ final readonly class ProjectStateMachine
         private AuditLogger $audit,
         private CurrentActor $actor,
         private LoggerInterface $logger,
+        private EventDispatcherInterface $dispatcher,
     ) {
     }
 
@@ -74,6 +77,7 @@ final readonly class ProjectStateMachine
         if ($flush) {
             $this->em->flush();
         }
+        $this->dispatcher->dispatch(new ProjectTransitionedEvent($project, $transition, $from, $to, $actor, $message ?? $label, $metadata));
     }
 
     /**
