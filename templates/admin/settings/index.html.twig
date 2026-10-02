@@ -1,0 +1,56 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block admin_content %}
+<p class="mb-6 max-w-3xl text-sm text-slate-600">
+    Defaults come from <code>config/packages/mzian.yaml</code>; values saved here override them and are audited.
+    Margins and prices: <a href="{{ path('admin_pricing') }}" class="text-brand-700 hover:underline">Pricing</a>.
+    Agents permissions and retries: <a href="{{ path('admin_agents') }}" class="text-brand-700 hover:underline">Agents</a>.
+    External services: <a href="{{ path('admin_providers') }}" class="text-brand-700 hover:underline">Providers</a>.
+</p>
+
+<div class="grid gap-6 xl:grid-cols-2">
+    <section class="card card-body" aria-labelledby="policy-title" data-testid="automation-policy">
+        <div class="flex items-center justify-between gap-3">
+            <h2 id="policy-title" class="font-semibold">Automation policy</h2>
+            <span class="{{ overridden.automation_policy ? 'badge-blue' : 'badge-gray' }}">{{ overridden.automation_policy ? 'customized' : 'defaults' }}</span>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">
+            Agents never perform an irreversible financial operation above these limits, nor beyond the project budget:
+            they stop, the project goes to <code>WAITING_ADMIN_APPROVAL</code> and an administrator approves the spending explicitly.
+        </p>
+        <dl class="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-slate-50 p-3 text-sm">
+            <div><dt class="text-slate-500">Hosting</dt><dd>≤ {{ policy.maxHostingCost|money(currency) }}</dd></div>
+            <div><dt class="text-slate-500">Domain / year</dt><dd>≤ {{ policy.maxDomainCost|money(currency) }}</dd></div>
+            <div><dt class="text-slate-500">Recurring / month</dt><dd>≤ {{ policy.maxMonthlyCost|money(currency) }}</dd></div>
+            <div><dt class="text-slate-500">Any spending</dt><dd>≤ {{ policy.requireAdminApprovalAbove|money(currency) }}</dd></div>
+        </dl>
+        <div class="mt-4">
+            {{ form_start(policy_form) }}
+                {{ form_errors(policy_form) }}
+                <div class="grid gap-x-4 sm:grid-cols-2">
+                    {% for child in policy_form %}{{ form_row(child) }}{% endfor %}
+                </div>
+                {% if can_edit %}<button class="btn-primary">Save automation policy</button>{% else %}<span class="badge-gray">read only — super admin</span>{% endif %}
+            {{ form_end(policy_form) }}
+        </div>
+    </section>
+
+    <section class="card card-body" aria-labelledby="generation-title" data-testid="generation-settings">
+        <div class="flex items-center justify-between gap-3">
+            <h2 id="generation-title" class="font-semibold">Generated applications</h2>
+            <span class="{{ overridden.generation ? 'badge-blue' : 'badge-gray' }}">{{ overridden.generation ? 'customized' : 'defaults' }}</span>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">Defaults of the websites and applications built by the development agent (the customer's own prices, opening hours, bookings).</p>
+        <div class="mt-4">
+            {{ form_start(generation_form) }}
+                {{ form_errors(generation_form) }}
+                {% for child in generation_form %}{{ form_row(child) }}{% endfor %}
+                {% if can_edit %}<button class="btn-primary">Save generation defaults</button>{% endif %}
+            {{ form_end(generation_form) }}
+        </div>
+    </section>
+</div>
+{% endblock %}

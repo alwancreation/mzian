@@ -6,6 +6,7 @@ namespace App\Tests\Support;
 
 use App\Admin\Entity\Admin;
 use App\Customer\Entity\Customer;
+use App\Lead\Entity\Lead;
 use App\Project\Entity\Project;
 use App\Requirement\Entity\Requirement;
 use App\Security\Entity\User;
@@ -50,6 +51,15 @@ final class Factory
         $this->em->flush();
 
         return $user;
+    }
+
+    public function lead(string $email = 'lead@example.com', string $fullName = 'Nadia Lead'): Lead
+    {
+        $lead = new Lead($email, $fullName);
+        $this->em->persist($lead);
+        $this->em->flush();
+
+        return $lead;
     }
 
     public function project(?Customer $customer = null, string $reference = 'PRJ-T-0001'): Project

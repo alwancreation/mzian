@@ -1,0 +1,64 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}AI recommendations{% endblock %}
+{% block page_title %}AI recommendations{% endblock %}
+
+{% block admin_content %}
+<p class="mb-6 max-w-3xl text-sm text-slate-600">What the requirement analyzer recommended (last 200 analyses). The AI only recommends: prices come from the pricing engine and every project is approved by a human.</p>
+
+<dl class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5" data-testid="ai-stats">
+    <div class="kpi"><dt class="kpi-label">Analyses</dt><dd class="kpi-value">{{ stats.analyzed }}</dd></div>
+    <div class="kpi"><dt class="kpi-label">Average confidence</dt><dd class="kpi-value">{{ (stats.confidence * 100)|round }} %</dd></div>
+    <div class="kpi"><dt class="kpi-label">Rule fallback</dt><dd class="kpi-value">{{ stats.fallback }}</dd></div>
+    <div class="kpi"><dt class="kpi-label">Quoted</dt><dd class="kpi-value">{{ stats.quoted }}</dd></div>
+    <div class="kpi"><dt class="kpi-label">Ordered</dt><dd class="kpi-value">{{ stats.sold }}{% if stats.analyzed %} <span class="text-sm font-normal text-slate-500">({{ (stats.sold / stats.analyzed * 100)|round }} %)</span>{% endif %}</dd></div>
+</dl>
+
+<div class="mb-6 grid gap-6 xl:grid-cols-2">
+    <section class="card card-body text-sm">
+        <h2 class="font-semibold">By recommended solution</h2>
+        <ul class="mt-3 space-y-1">
+            {% for code, row in stats.by_solution %}
+                <li class="flex justify-between gap-2"><a href="{{ path('admin_ai_recommendations', {solution: code}) }}" class="font-mono text-brand-700 hover:underline">{{ code }}</a><span>{{ row.count }} recommended · {{ row.sold }} ordered</span></li>
+            {% else %}
+                <li class="text-slate-500">No analysis yet.</li>
+            {% endfor %}
+        </ul>
+        {% if solution %}<a href="{{ path('admin_ai_recommendations') }}" class="btn-ghost btn-sm mt-3">Show all</a>{% endif %}
+    </section>
+    <section class="card card-body text-sm">
+        <h2 class="font-semibold">Most requested features without a template</h2>
+        <p class="mt-1 text-xs text-slate-500">Candidates for a new template module (see PROVIDERS.md, “Add a template”).</p>
+        <ul class="mt-3 space-y-1">
+            {% for feature, count in stats.unsupported %}
+                <li class="flex justify-between gap-2"><span>{{ feature }}</span><span class="badge-amber">{{ count }}</span></li>
+            {% else %}
+                <li class="text-slate-500">None.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+
+<div class="card table-wrap">
+    <table class="table" data-testid="ai-recommendations">
+        <thead><tr><th>Analyzed</th><th>Business</th><th>Recommended</th><th>Engine</th><th>Confidence</th><th>Custom features</th><th>Project</th></tr></thead>
+        <tbody>
+            {% for requirement in requirements %}
+                {% set analysis = requirement.analysis %}
+                {% set project = projects[requirement.id] ?? null %}
+                <tr>
+                    <td class="whitespace-nowrap text-xs">{{ requirement.analyzedAt ? requirement.analyzedAt|format_datetime('short', 'short', locale: 'en') : '' }}</td>
+                    <td>{{ requirement.businessName|default('—') }} <span class="text-xs text-slate-500">{{ requirement.sector }}</span>{% if requirement.lead %}<br><a href="{{ path('admin_lead', {id: requirement.lead.id}) }}" class="text-xs text-brand-700 hover:underline">{{ requirement.lead.email }}</a>{% endif %}</td>
+                    <td>{{ requirement.recommendedSolution ? requirement.recommendedSolution.name('en') : '—' }}</td>
+                    <td><span class="badge-gray">{{ analysis.engine|default('?') }}</span>{% if analysis.fallback_used|default(false) %} <span class="badge-amber" title="{{ analysis.fallback_reason|default('') }}">fallback</span>{% endif %}</td>
+                    <td>{{ ((analysis.confidence|default(0)) * 100)|round }} %</td>
+                    <td class="text-xs">{{ analysis.unsupported_features|default([])|join(', ')|default('—') }}</td>
+                    <td>{% if project %}<a href="{{ path('admin_project', {id: project.id}) }}" class="font-mono text-xs text-brand-700 hover:underline">{{ project.reference }}</a> <span class="{{ project.status.badge }}">{{ project.status.value }}</span>{% else %}<span class="text-slate-400">—</span>{% endif %}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7" class="text-center text-slate-500">No analysis yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

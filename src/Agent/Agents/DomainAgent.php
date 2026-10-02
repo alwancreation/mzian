@@ -62,6 +62,9 @@ final readonly class DomainAgent implements AgentInterface
 
             return new AgentResult('No custom domain: the application uses its Mzian address.', ['domain' => null, 'mode' => Proposal::DOMAIN_NONE]);
         }
+        if ('' === $ip) {
+            throw new NeedsAdminException('The hosting address is unknown (the hosting step was skipped): configure the domain manually, then skip this step.');
+        }
 
         $provider = $this->domains->provider($project);
         $existing = $this->em->getRepository(Domain::class)->findOneBy(['name' => $name]);

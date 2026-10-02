@@ -220,4 +220,89 @@ final class PipelineTest extends KernelTestCase
         self::assertSame(1, $this->em->getRepository(HostingAccount::class)->count([]));
         self::assertSame(1, $this->em->getRepository(AgentRun::class)->count(['project' => $project, 'agentCode' => 'hosting']), 'Duplicates are ignored, not re-run.');
     }
+
+    public function testAdministratorSkipsANonCriticalStepButNeverAQualityGate(): void
+    {
+        $provider = static::getContainer()->get(\App\Provider\ProviderRegistry::class)->findByCode('mock_domain');
+        $provider?->setSettings(['simulate_failures' => ['register' => 'permanent']] + $provider->getSettings());
+        $this->em->flush();
+        $project = $this->approvedProject();
+        $this->runPipeline();
+        self::assertSame(ProjectStatus::Failed, $project->getStatus());
+
+        $approvals = static::getContainer()->get(ApprovalService::class);
+        self::assertSame(PipelineStep::Domain, $approvals->blockedStep($project));
+        try {
+            $this->as(\App\Shared\Security\Actor::agent('domain'), fn () => $approvals->skipStep($project, 'I skip myself'));
+            self::fail('Agents cannot skip steps.');
+        } catch (\Symfony\Component\Security\Core\Exception\AccessDeniedException) {
+        }
+
+        $admin = self::adminActor($this->factory->admin('ops@example.com'));
+        $this->as($admin, fn () => $approvals->skipStep($project, 'The customer configures the domain with their registrar.'));
+        self::assertSame(ProjectTaskStatus::Skipped, $project->getTask(PipelineStep::Domain)?->getStatus());
+        $this->runPipeline();
+
+        self::assertSame(ProjectStatus::Completed, $project->getStatus(), (string) $project->getHoldReason());
+        self::assertSame(0, $this->em->getRepository(Domain::class)->count([]), 'No domain bought.');
+        self::assertSame(0, $project->getSpent(CostCategory::Domain));
+
+        // Development, tests, deployment and QA can never be skipped.
+        $provider?->setSettings(array_diff_key($provider->getSettings(), ['simulate_failures' => true]));
+        $development = $this->em->getRepository(\App\Agent\Entity\Agent::class)->findOneBy(['code' => 'development']);
+        $development?->setEnabled(false);
+        $this->em->flush();
+        $nadia = $this->factory->customer('nadia@riad.ma');
+        $second = $this->payOrder($this->placeOrder($nadia, 'business', $this->issueQuote($nadia, 'Riad Nadia')))->getProject();
+        $this->as($admin, fn () => $approvals->approve($second));
+        $this->runPipeline();
+        self::assertSame(ProjectStatus::WaitingAdminApproval, $second->getStatus());
+        self::assertSame(PipelineStep::Development, $approvals->blockedStep($second));
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('quality gate');
+        $this->as($admin, fn () => $approvals->skipStep($second, 'Ship it without code'));
+    }
+
+    public function testProviderOverrideAndBudgetChangesAreGuarded(): void
+    {
+        $customer = $this->factory->customer('karim@atlas.ma');
+        $project = $this->payOrder($this->placeOrder($customer, 'business'))->getProject();
+        $approvals = static::getContainer()->get(ApprovalService::class);
+        $admin = self::adminActor($this->factory->admin('ops@example.com'));
+        $super = self::adminActor($this->factory->admin('root@example.com', true));
+
+        // Before approval, the hosting provider can be changed (only to an enabled hosting provider).
+        $this->as($admin, fn () => $approvals->overrideProvider($project, \App\Provider\Enum\ProviderType::Hosting, 'mock_hosting'));
+        self::assertSame('mock_hosting', $project->getProviderOverride('hosting'));
+        foreach (['mock_domain', 'does_not_exist'] as $wrong) {
+            try {
+                $this->as($admin, fn () => $approvals->overrideProvider($project, \App\Provider\Enum\ProviderType::Hosting, $wrong));
+                self::fail('Only an enabled hosting provider can be chosen.');
+            } catch (\InvalidArgumentException) {
+            }
+        }
+        try {
+            $this->as($admin, fn () => $approvals->overrideProvider($project, \App\Provider\Enum\ProviderType::Payment, 'mock_payment'));
+            self::fail('The payment provider is not a per-project choice.');
+        } catch (\InvalidArgumentException) {
+        }
+
+        // Budget: super administrators only, never below what was spent.
+        try {
+            $this->as($admin, fn () => $approvals->changeBudget($project, 999999, 'More room'));
+            self::fail('Only super administrators change budgets.');
+        } catch (\Symfony\Component\Security\Core\Exception\AccessDeniedException) {
+        }
+        $this->as($super, fn () => $approvals->changeBudget($project, 123400, 'Premium hosting agreed with the customer'));
+        self::assertSame(123400, $project->getBudget());
+
+        $this->as($admin, fn () => $approvals->approve($project));
+        $this->runPipeline();
+        self::assertSame(ProjectStatus::Completed, $project->getStatus(), (string) $project->getHoldReason());
+
+        // Once the hosting exists, its provider can no longer be changed (never two hostings).
+        $this->as($admin, fn () => $approvals->pause($project));
+        $this->expectException(\InvalidArgumentException::class);
+        $this->as($admin, fn () => $approvals->overrideProvider($project, \App\Provider\Enum\ProviderType::Hosting, null));
+    }
 }

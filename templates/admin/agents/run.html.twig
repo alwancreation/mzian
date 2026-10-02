@@ -1,0 +1,38 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Agent run #{{ run.id }}{% endblock %}
+{% block page_title %}{{ run.agentCode|capitalize }} agent — run #{{ run.id }}{% endblock %}
+{% block page_actions %}{% if run.project %}<a href="{{ path('admin_project', {id: run.project.id}) }}" class="btn-ghost btn-sm">← {{ run.project.reference }}</a>{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="grid gap-6 xl:grid-cols-3">
+    <section class="card card-body text-sm xl:col-span-1">
+        <dl class="space-y-2">
+            <div class="flex justify-between"><dt class="text-slate-500">Status</dt><dd><span class="{{ run.status.badge }}">{{ run.status.value }}</span></dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Attempt</dt><dd>{{ run.attempt }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Started</dt><dd>{{ run.startedAt|format_datetime('medium', 'medium', locale: 'en') }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Duration</dt><dd>{{ run.durationMs is not null ? run.durationMs ~ ' ms' : 'running' }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Cost</dt><dd>{{ run.cost|money }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Tokens</dt><dd>{{ run.tokensInput }} / {{ run.tokensOutput }}</dd></div>
+        </dl>
+        {% if run.error %}<p class="alert-error mt-4"><span>{{ run.error }}</span></p>{% endif %}
+        {% for task in tasks %}
+            <div class="mt-4 rounded-xl bg-slate-50 p-3">
+                <p class="font-semibold"><code>{{ task.operation }}</code> <span class="badge-gray">{{ task.status.value }}</span></p>
+                <p class="text-xs text-slate-500">key {{ task.idempotencyKey }} · attempts {{ task.attempts }}</p>
+                {% if task.output is not empty %}<pre class="mt-2 max-h-64 overflow-auto whitespace-pre-wrap text-xs">{{ task.output|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE')) }}</pre>{% endif %}
+            </div>
+        {% endfor %}
+    </section>
+    <section class="card xl:col-span-2">
+        <div class="card-header"><h2 class="card-title">Logs</h2><span class="text-xs text-slate-500">secrets are masked</span></div>
+        <ol class="divide-y divide-slate-100 font-mono text-xs" data-testid="run-logs">
+            {% for entry in run.logs %}
+                <li class="px-5 py-2"><span class="text-slate-400">{{ entry.at|slice(11, 12) }}</span> <span class="{{ entry.level == 'error' ? 'text-rose-600' : (entry.level == 'warning' ? 'text-amber-600' : 'text-slate-500') }}">{{ entry.level|upper }}</span> {{ entry.message }}{% if entry.context is defined and entry.context is not empty %}<span class="block text-slate-500">{{ entry.context|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE')) }}</span>{% endif %}</li>
+            {% else %}
+                <li class="px-5 py-4 text-slate-500">No log.</li>
+            {% endfor %}
+        </ol>
+    </section>
+</div>
+{% endblock %}

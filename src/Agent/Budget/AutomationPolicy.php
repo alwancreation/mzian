@@ -15,7 +15,6 @@ final readonly class AutomationPolicy
         public int $maxDomainCost = 3000,
         public int $maxMonthlyCost = 3000,
         public int $requireAdminApprovalAbove = 10000,
-        public int $maxAttempts = 3,
         public int $qaMinScore = 70,
     ) {
     }
@@ -32,7 +31,6 @@ final readonly class AutomationPolicy
             $cents($settings['max_domain_cost'] ?? null, 30),
             $cents($settings['max_monthly_cost'] ?? null, 30),
             $cents($settings['require_admin_approval_above'] ?? null, 100),
-            max(1, (int) ($settings['max_attempts'] ?? 3)),
             min(100, max(0, (int) ($settings['qa_min_score'] ?? 70))),
         );
     }

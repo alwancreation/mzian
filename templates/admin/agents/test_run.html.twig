@@ -1,0 +1,31 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Test run #{{ test_run.id }}{% endblock %}
+{% block page_title %}{{ test_run.type.value == 'qa' ? 'QA report' : 'Automated tests' }} #{{ test_run.id }}{% endblock %}
+{% block page_actions %}<a href="{{ path('admin_project', {id: test_run.project.id}) }}" class="btn-ghost btn-sm">← {{ test_run.project.reference }}</a>{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 grid gap-4 sm:grid-cols-4">
+    <div class="kpi"><p class="kpi-label">Status</p><p class="kpi-value {{ report.status == 'passed' ? 'text-emerald-600' : 'text-rose-600' }}" data-testid="test-status">{{ report.status }}</p></div>
+    <div class="kpi"><p class="kpi-label">Score</p><p class="kpi-value">{{ report.score }}/100</p></div>
+    <div class="kpi"><p class="kpi-label">Checks</p><p class="kpi-value">{{ report.checks }}</p><p class="text-xs text-slate-500">{{ report.skipped }} skipped</p></div>
+    <div class="kpi"><p class="kpi-label">Target</p><p class="mt-2 break-all text-sm">{{ test_run.target }}</p></div>
+</div>
+<div class="card table-wrap">
+    <table class="table">
+        <thead><tr><th>Check</th><th>Category</th><th>Severity</th><th>Status</th><th>Result</th></tr></thead>
+        <tbody>
+        {% for result in test_run.results %}
+            <tr>
+                <td class="font-medium">{{ result.name }}<code class="block text-xs text-slate-400">{{ result.code }}</code></td>
+                <td>{{ result.category }}</td>
+                <td><span class="{{ result.severity.value == 'critical' ? 'badge-red' : (result.severity.value == 'major' ? 'badge-amber' : 'badge-gray') }}">{{ result.severity.value }}</span></td>
+                <td><span class="{{ {passed: 'badge-green', failed: 'badge-red', warning: 'badge-amber', skipped: 'badge-gray'}[result.status.value] }}">{{ result.status.value }}</span></td>
+                <td class="text-sm">{{ result.message }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<details class="card card-body mt-6"><summary class="cursor-pointer text-sm font-semibold">JSON report</summary><pre class="mt-3 text-xs">{{ report|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE')) }}</pre></details>
+{% endblock %}

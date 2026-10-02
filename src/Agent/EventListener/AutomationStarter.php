@@ -10,7 +10,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 /**
  * Starts (or restarts) the agents once an administrator approved, resumed,
- * retried or unpaused a project.
+ * retried, unpaused a project or skipped a step.
  */
 #[AsEventListener]
 final readonly class AutomationStarter
@@ -21,7 +21,7 @@ final readonly class AutomationStarter
 
     public function __invoke(ProjectAutomationEvent $event): void
     {
-        if (\in_array($event->reason, [ProjectAutomationEvent::RESUMED, ProjectAutomationEvent::RETRIED], true)) {
+        if (\in_array($event->reason, [ProjectAutomationEvent::RESUMED, ProjectAutomationEvent::RETRIED, ProjectAutomationEvent::SKIPPED], true)) {
             $this->orchestrator->prepareRestart($event->project);
         }
         $this->orchestrator->kick($event->project);

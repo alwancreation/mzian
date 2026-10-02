@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Admin\Controller;
 
+use App\Agent\Repository\AgentRunRepository;
 use App\Billing\Entity\Payment;
 use App\Billing\Enum\PaymentStatus;
 use App\Billing\Repository\PaymentRepository;
@@ -11,10 +12,15 @@ use App\Billing\Service\PaymentService;
 use App\Catalog\Service\CatalogProvider;
 use App\Project\Approval\ApprovalService;
 use App\Project\Entity\Project;
+use App\Project\Enum\PipelineStep;
 use App\Project\Enum\ProjectStatus;
 use App\Project\Repository\ProjectRepository;
 use App\Project\Workflow\IllegalTransitionException;
+use App\Provider\Enum\ProviderType;
+use App\Provider\Exception\ProviderException;
+use App\Provider\ProviderRegistry;
 use App\Shared\Controller\CsrfGuardTrait;
+use App\Testing\Repository\TestRunRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +37,9 @@ final class ProjectAdminController extends AbstractController
 {
     use CsrfGuardTrait;
 
-    private const ACTIONS = ['approve', 'request_changes', 'reject', 'cancel', 'resume', 'retry', 'pause', 'unpause'];
+    private const ACTIONS = ['approve', 'request_changes', 'reject', 'cancel', 'resume', 'retry', 'pause', 'unpause', 'skip', 'approve_spending', 'provider', 'budget'];
+
+    private const OVERRIDABLE_PROVIDERS = [ProviderType::Hosting, ProviderType::Domain, ProviderType::Repository, ProviderType::Deployment, ProviderType::Ai];
 
     public function __construct(
         private readonly ProjectRepository $projects,
@@ -96,8 +104,17 @@ final class ProjectAdminController extends AbstractController
     }
 
     #[Route('/projects/{id}', name: 'admin_project', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function show(Project $project, PaymentRepository $payments, CatalogProvider $catalog): Response
+    public function show(Project $project, PaymentRepository $payments, CatalogProvider $catalog, AgentRunRepository $runs, TestRunRepository $testRuns, ProviderRegistry $registry): Response
     {
+        $providers = [];
+        foreach (self::OVERRIDABLE_PROVIDERS as $type) {
+            try {
+                $current = $registry->resolve($type, $project)->getCode();
+            } catch (ProviderException) {
+                $current = null;
+            }
+            $providers[$type->value] = ['current' => $current, 'override' => $project->getProviderOverride($type->value), 'choices' => $registry->enabled($type)];
+        }
         $order = $project->getOrder();
         $quote = $order?->getQuote() ?? $project->getCurrentQuote();
         $requirement = $project->getRequirement();
@@ -113,6 +130,12 @@ final class ProjectAdminController extends AbstractController
             'payments' => null !== $order ? $payments->findBy(['order' => $order], ['id' => 'DESC']) : [],
             'transcript' => $requirement->getConversation()?->transcript(100) ?? [],
             'automation_states' => ProjectStatus::automationStates(),
+            'steps' => PipelineStep::ordered(),
+            'runs' => $runs->findBy(['project' => $project], ['id' => 'DESC'], 30),
+            'test_runs' => $testRuns->findBy(['project' => $project], ['id' => 'DESC'], 10),
+            'blocked_step' => $this->approvals->blockedStep($project),
+            'pending_spending' => $this->approvals->pendingSpending($project),
+            'providers' => $providers,
         ]);
     }
 
@@ -137,11 +160,15 @@ final class ProjectAdminController extends AbstractController
                 'retry' => $this->call(fn () => $this->approvals->retry($project, $at), 'Retry scheduled.'),
                 'pause' => $this->call(fn () => $this->approvals->pause($project), 'Automation paused: agents will stop after their current task.'),
                 'unpause' => $this->call(fn () => $this->approvals->unpause($project), 'Automation unpaused.'),
+                'skip' => \sprintf('Step "%s" skipped: the automation goes on with the next step.', $this->approvals->skipStep($project, $message)->value),
+                'approve_spending' => $this->call(fn () => $this->approvals->approveSpending($project), 'Spending approved: the agent resumes.'),
+                'provider' => $this->changeProvider($project, $payload->getString('type'), $payload->getString('provider')),
+                'budget' => $this->changeBudget($project, $payload->getString('budget'), $message),
             };
             $this->addFlash('success', $flash);
         } catch (IllegalTransitionException $e) {
             $this->addFlash('error', 'Not allowed now: '.implode(' ', $e->reasons ?: [$e->getMessage()]));
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException|\ValueError $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
@@ -167,6 +194,24 @@ final class ProjectAdminController extends AbstractController
         $this->approvals->approve($project, '' !== trim($note) ? $note : null);
 
         return 'Project approved: the agents start working.';
+    }
+
+    private function changeProvider(Project $project, string $type, string $code): string
+    {
+        $this->approvals->overrideProvider($project, ProviderType::from($type), '' !== $code ? $code : null);
+
+        return '' !== $code ? \sprintf('This project now uses %s for %s.', $code, $type) : \sprintf('This project uses the default %s provider again.', $type);
+    }
+
+    private function changeBudget(Project $project, string $amount, string $reason): string
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        if (!is_numeric($amount) || (float) $amount < 0) {
+            throw new \InvalidArgumentException('Enter a positive amount.');
+        }
+        $this->approvals->changeBudget($project, (int) round((float) $amount * 100), $reason);
+
+        return 'Budget updated.';
     }
 
     private function call(callable $callback, string $message): string

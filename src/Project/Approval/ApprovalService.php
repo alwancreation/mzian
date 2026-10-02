@@ -10,8 +10,11 @@ use App\Notification\Enum\NotificationType;
 use App\Notification\NotificationService;
 use App\Project\Entity\Project;
 use App\Project\Entity\ProjectEvent;
+use App\Project\Entity\ProjectTask;
 use App\Project\Enum\CostCategory;
+use App\Project\Enum\PipelineStep;
 use App\Project\Enum\ProjectStatus;
+use App\Project\Enum\ProjectTaskStatus;
 use App\Project\Event\ProjectAutomationEvent;
 use App\Project\Workflow\ProjectStateMachine;
 use App\Provider\Enum\ProviderType;
@@ -19,6 +22,7 @@ use App\Provider\Enum\ProvisioningMethod;
 use App\Provider\Exception\ProviderException;
 use App\Provider\ProviderRegistry;
 use App\Security\Entity\User;
+use App\Security\UserRole;
 use App\Shared\Audit\AuditLogger;
 use App\Shared\I18n\MoneyFormatter;
 use App\Shared\Security\CurrentActor;
@@ -193,6 +197,124 @@ final readonly class ApprovalService
         if ($project->getStatus()->isAutomation()) {
             $this->dispatcher->dispatch(new ProjectAutomationEvent($project, ProjectAutomationEvent::RESUMED));
         }
+    }
+
+    /**
+     * The pipeline step a held or failed project is blocked at (where it would resume).
+     */
+    public function blockedStep(Project $project): ?PipelineStep
+    {
+        $at = $project->getResumeStatus();
+        if (null === $at || !\in_array($project->getStatus(), [ProjectStatus::WaitingAdminApproval, ProjectStatus::Failed], true)) {
+            return null;
+        }
+        foreach (PipelineStep::ordered() as $step) {
+            $done = \in_array($project->getTask($step)?->getStatus(), [ProjectTaskStatus::Succeeded, ProjectTaskStatus::Skipped], true);
+            if (!$done && ($at === $step->requiredStatus() || $at === $step->runningStatus())) {
+                return $step;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * An administrator handles the blocked step outside the platform (e.g. the
+     * customer keeps their hosting, the domain is configured later, the delivery
+     * is done in person) and lets the automation continue with the next step.
+     * Critical quality gates (development, tests, deployment, QA) can never be skipped.
+     */
+    public function skipStep(Project $project, string $reason): PipelineStep
+    {
+        $admin = $this->admin();
+        $reason = self::clean($reason);
+        $step = $this->blockedStep($project) ?? throw new \InvalidArgumentException('Only the step a held or failed project is blocked at can be skipped.');
+        if (!$step->isSkippable()) {
+            throw new \InvalidArgumentException(\sprintf('The %s step is a quality gate and cannot be skipped.', $step->value));
+        }
+
+        $message = \sprintf('Step "%s" skipped by an administrator: %s', $step->value, $reason);
+        if (ProjectStatus::Failed === $project->getStatus()) {
+            $this->stateMachine->retry($project, null, $message);
+        } else {
+            $this->stateMachine->resume($project, null, $message);
+        }
+        if ($project->getStatus() === $step->requiredStatus() && null !== $step->startTransition()) {
+            $this->stateMachine->apply($project, (string) $step->startTransition(), $message, ['skipped' => true], false);
+        }
+        $task = $project->getTask($step);
+        if (null === $task) {
+            $task = new ProjectTask($project, $step);
+            $this->em->persist($task);
+        }
+        $task->skip($reason);
+        if (PipelineStep::Delivery === $step) {
+            $project->markDelivered();
+            $project->markCompleted();
+        }
+        if (null !== $step->completeTransition()) {
+            $this->stateMachine->apply($project, (string) $step->completeTransition(), $message, ['skipped' => true], false);
+        }
+        $this->audit->log('project.step_skipped', $project, null, ['step' => $step->value], ['reference' => $project->getReference(), 'reason' => $reason, 'admin' => $admin->getUserIdentifier()]);
+        $this->em->flush();
+        $this->dispatcher->dispatch(new ProjectAutomationEvent($project, ProjectAutomationEvent::SKIPPED));
+
+        return $step;
+    }
+
+    /**
+     * Uses another configured provider for this project. Only for a step that has
+     * not produced anything yet (never two hostings or two domains for one project)
+     * and only while no agent is working on the project.
+     */
+    public function overrideProvider(Project $project, ProviderType $type, ?string $code): void
+    {
+        $this->admin();
+        $step = match ($type) {
+            ProviderType::Hosting => PipelineStep::Hosting,
+            ProviderType::Domain => PipelineStep::Domain,
+            ProviderType::Repository => PipelineStep::Development,
+            ProviderType::Deployment => PipelineStep::Deployment,
+            ProviderType::Ai => null,
+            default => throw new \InvalidArgumentException(\sprintf('The %s provider cannot be changed per project.', $type->value)),
+        };
+        $idle = $project->isAutomationPaused() || \in_array($project->getStatus(), [ProjectStatus::Paid, ProjectStatus::PendingAdminApproval, ProjectStatus::ChangesRequested, ProjectStatus::WaitingAdminApproval, ProjectStatus::Failed], true);
+        if (!$idle) {
+            throw new \InvalidArgumentException('Pause the automation (or wait for a hold) before changing a provider.');
+        }
+        $task = null !== $step ? $project->getTask($step) : null;
+        if (null !== $task && ProjectTaskStatus::Pending !== $task->getStatus() && ProjectTaskStatus::WaitingAdmin !== $task->getStatus()) {
+            throw new \InvalidArgumentException(\sprintf('The %s step already ran with the current provider: its resources are kept.', $step?->value));
+        }
+        if (null !== $code) {
+            $provider = $this->providers->findByCode($code);
+            if (null === $provider || $provider->getType() !== $type || !$provider->isEnabled()) {
+                throw new \InvalidArgumentException(\sprintf('"%s" is not an enabled %s provider.', $code, $type->value));
+            }
+        }
+        $old = $project->getProviderOverride($type->value);
+        $project->setProviderOverride($type->value, $code);
+        $this->audit->log('project.provider_changed', $project, ['type' => $type->value, 'provider' => $old], ['type' => $type->value, 'provider' => $code], ['reference' => $project->getReference()]);
+        $this->em->flush();
+    }
+
+    /**
+     * Changes the automation budget of a project (super administrators only).
+     */
+    public function changeBudget(Project $project, int $budget, string $reason): void
+    {
+        $admin = $this->admin();
+        if (!$admin->hasRole(UserRole::SUPER_ADMIN)) {
+            throw new AccessDeniedException('Only a super administrator can change a project budget.');
+        }
+        $reason = self::clean($reason);
+        if ($budget < $project->getSpent()) {
+            throw new \InvalidArgumentException('The budget cannot be lower than what has already been spent.');
+        }
+        $old = $project->getBudget();
+        $project->setBudget($budget);
+        $this->audit->log('budget.changed', $project, ['budget' => $old], ['budget' => $budget], ['reference' => $project->getReference(), 'reason' => $reason]);
+        $this->em->flush();
     }
 
     /**

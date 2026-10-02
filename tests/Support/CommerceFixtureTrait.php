@@ -48,6 +48,10 @@ trait CommerceFixtureTrait
             0.9,
         );
 
+        // As in the real flow (RequirementAnalysisService), the analysis is recorded before quoting.
+        $requirement->recordAnalysis($analysis->toArray(), static::getContainer()->get(\App\Catalog\Service\CatalogProvider::class)->solution('car_rental_management'));
+        $em->flush();
+
         return static::getContainer()->get(QuoteService::class)->issue($requirement, $analysis);
     }
 

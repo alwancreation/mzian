@@ -40,9 +40,8 @@ parameters:
             max_domain_cost: 30
             max_monthly_cost: 30
             require_admin_approval_above: 100
-            # Automatic retries of a failed step before asking an administrator.
-            max_attempts: 3
-            # QA: in simulated (mock) deployments HTTPS/DNS checks cannot be verified.
+            # Minimum QA score (0-100) of the deployed application before delivery.
+            # Critical checks must pass whatever the score. Retries: Admin > Agents.
             qa_min_score: 70
         generation:
             # Currency shown in the generated applications (prices of the customer's business).

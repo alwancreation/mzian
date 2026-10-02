@@ -1,0 +1,108 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Providers{% endblock %}
+{% block page_title %}Providers{% endblock %}
+
+{% block admin_content %}
+{% set can_edit = is_granted('ROLE_SUPER_ADMIN') %}
+<p class="mb-6 max-w-3xl text-sm text-slate-600">
+    Each operation uses the project's provider override, else the <strong>default</strong> enabled provider of its type, else the enabled one with the highest priority.
+    <span class="badge-violet">mock</span> providers never spend money nor call external services.
+    Secrets are <strong>write-only</strong>: encrypted on submission, never displayed again. Settings are stored in clear and must never contain a secret.
+    {% if not can_edit %}Only super administrators can change providers.{% endif %}
+</p>
+
+{% for type, items in groups %}
+    <section class="mb-8" aria-labelledby="type-{{ type }}">
+        <h2 id="type-{{ type }}" class="mb-3 font-semibold capitalize">{{ type }}</h2>
+        {% if items is empty %}
+            <p class="text-sm text-slate-500">No {{ type }} provider configured (see config/mzian/providers.yaml and PROVIDERS.md).</p>
+        {% endif %}
+        <div class="grid gap-4 xl:grid-cols-2">
+            {% for item in items %}
+                {% set provider = item.provider %}
+                {% set token = csrf_token('provider-' ~ provider.id) %}
+                <article id="provider-{{ provider.id }}" class="card card-body text-sm" data-testid="provider-{{ provider.code }}">
+                    <div class="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                            <h3 class="font-semibold">{{ provider.name }}</h3>
+                            <p class="text-xs text-slate-500"><code>{{ provider.code }}</code> · driver <code>{{ provider.driver }}</code> · {{ provider.provisioningMethod.value }}</p>
+                        </div>
+                        <div class="flex flex-wrap gap-1">
+                            {% if provider.mock %}<span class="badge-violet">mock</span>{% endif %}
+                            {% if provider.default %}<span class="badge-blue">default</span>{% endif %}
+                            <span class="{{ provider.enabled ? 'badge-green' : 'badge-gray' }}">{{ provider.enabled ? 'enabled' : 'disabled' }}</span>
+                        </div>
+                    </div>
+                    {% if provider.capabilities is not empty %}
+                        <p class="mt-2 flex flex-wrap gap-1">{% for capability in provider.capabilities %}<span class="badge-gray">{{ capability }}</span>{% endfor %}</p>
+                    {% endif %}
+
+                    <form method="post" action="{{ path('admin_provider_update', {id: provider.id}) }}" class="mt-3 flex flex-wrap items-end gap-4">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <fieldset class="contents" {{ can_edit ? '' : 'disabled' }}>
+                            <label class="form-check"><input type="checkbox" name="enabled" value="1" {{ provider.enabled ? 'checked' }}> Enabled</label>
+                            <label class="form-check"><input type="checkbox" name="default" value="1" {{ provider.default ? 'checked' }}> Default</label>
+                            <label>Priority <input type="number" name="priority" min="-100" max="100" value="{{ provider.priority }}" class="form-input w-20"></label>
+                            {% if can_edit %}<button class="btn-secondary btn-sm">Save</button>{% endif %}
+                        </fieldset>
+                    </form>
+
+                    <div class="mt-4">
+                        <p class="font-semibold">Credentials</p>
+                        <ul class="mt-2 space-y-1" data-testid="credentials-{{ provider.code }}">
+                            {% for credential in item.credentials %}
+                                <li class="flex flex-wrap items-center gap-2">
+                                    <code>{{ credential.name }}</code>
+                                    {% if credential.source == 'encrypted' %}
+                                        <span class="badge-green">stored encrypted</span>
+                                        <span class="text-xs text-slate-500">rotated {{ credential.rotated_at|format_datetime('short', 'short', locale: 'en') }}{{ credential.last_used_at ? ', used ' ~ credential.last_used_at|format_datetime('short', 'short', locale: 'en') }}</span>
+                                        {% if can_edit %}
+                                            <form method="post" action="{{ path('admin_provider_credential', {id: provider.id}) }}" data-confirm="Remove the {{ credential.name }} credential?">
+                                                <input type="hidden" name="_token" value="{{ token }}">
+                                                <input type="hidden" name="name" value="{{ credential.name }}">
+                                                <input type="hidden" name="remove" value="1">
+                                                <button class="btn-ghost btn-sm text-red-700">Remove</button>
+                                            </form>
+                                        {% endif %}
+                                    {% elseif credential.source == 'environment' %}
+                                        <span class="badge-blue">from {{ credential.env }}</span>
+                                    {% else %}
+                                        <span class="{{ provider.mock ? 'badge-gray' : 'badge-amber' }}">missing</span>{% if credential.env %} <span class="text-xs text-slate-500">(or set {{ credential.env }})</span>{% endif %}
+                                    {% endif %}
+                                </li>
+                            {% else %}
+                                <li class="text-slate-500">No credential needed.</li>
+                            {% endfor %}
+                        </ul>
+                        {% if can_edit %}
+                            <form method="post" action="{{ path('admin_provider_credential', {id: provider.id}) }}" class="mt-3 flex flex-wrap items-end gap-2" autocomplete="off">
+                                <input type="hidden" name="_token" value="{{ token }}">
+                                <div>
+                                    <label class="form-label" for="cred-name-{{ provider.id }}">Name</label>
+                                    <input id="cred-name-{{ provider.id }}" name="name" list="cred-names-{{ provider.id }}" class="form-input w-40" required pattern="[a-z][a-z0-9_]{1,39}">
+                                    <datalist id="cred-names-{{ provider.id }}">{% for credential in item.credentials %}<option value="{{ credential.name }}">{% endfor %}</datalist>
+                                </div>
+                                <div class="min-w-48 flex-1">
+                                    <label class="form-label" for="cred-value-{{ provider.id }}">Secret value</label>
+                                    <input id="cred-value-{{ provider.id }}" type="password" name="value" class="form-input" required autocomplete="new-password">
+                                </div>
+                                <button class="btn-secondary btn-sm">🔒 Encrypt & store</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <details class="mt-4">
+                        <summary class="cursor-pointer font-semibold">Settings (non-secret)</summary>
+                        <form method="post" action="{{ path('admin_provider_settings', {id: provider.id}) }}" class="mt-2 space-y-2">
+                            <input type="hidden" name="_token" value="{{ token }}">
+                            <textarea name="settings" rows="8" class="form-textarea font-mono text-xs" {{ can_edit ? '' : 'readonly' }} spellcheck="false">{{ item.settings }}</textarea>
+                            {% if can_edit %}<button class="btn-secondary btn-sm">Save settings</button>{% endif %}
+                        </form>
+                    </details>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endfor %}
+{% endblock %}
