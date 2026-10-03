@@ -135,6 +135,18 @@ jobs:
           random_hex() { od -An -tx1 -N"$1" /dev/urandom | tr -d ' \n'; }
           random_base64() { head -c "$1" /dev/urandom | base64 | tr -d '\n'; }
 
+          # The deploy user must be able to use Docker (and Compose >= 2.24) on the server;
+          # checked first, otherwise nothing below can be trusted (e.g. existing volumes).
+          if ! docker_error="$(docker info 2>&1 >/dev/null)"; then
+            echo "$docker_error"
+            echo "::error::The deploy user ($(id -un)) cannot use Docker on the server. Add it to the docker group: 'sudo usermod -aG docker $(id -un)' (takes effect on the next SSH connection), or deploy with a user that already belongs to it."
+            exit 1
+          fi
+          if ! docker compose version >/dev/null 2>&1; then
+            echo "::error::Docker Compose (plugin 'docker compose', version 2.24 or later) is not installed on the server."
+            exit 1
+          fi
+
           # First deployment: the application secrets are generated HERE, on the server.
           # They never transit through GitHub and are never printed.
           if [ ! -f .env ]; then
@@ -161,7 +173,7 @@ jobs:
           previous="$(cat .deployed-tag 2>/dev/null || true)"
           for image in "$MZIAN_IMAGE:$TAG" "$MZIAN_NGINX_IMAGE:$TAG"; do
             if ! DOCKER_CONFIG="$REGISTRY_CONFIG" docker pull -q "$image"; then
-              echo "::error::Cannot pull $image: is the tag published? The Build workflow publishes 'main', 'develop', 'sha-<commit>' (for those branches) and the versions of v* tags."
+              echo "::error::Cannot pull $image (Docker's error is just above). If the tag does not exist: the Build workflow publishes 'main', 'develop', 'sha-<commit>' (for those branches) and the versions of v* tags."
               exit 1
             fi
           done

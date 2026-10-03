@@ -122,8 +122,9 @@ disable the mocks, review Pricing and Settings, create the other administrators.
    (a dedicated key pair; the user only needs Docker access), `DEPLOY_KNOWN_HOSTS`
    (`ssh-keyscan -t ed25519 <host>`), `DEPLOY_PATH` (e.g. `/srv/mzian`) and the variable
    `DEPLOY_URL` (e.g. `https://mzian.net`).
-3. Prepare the server: Docker + Compose, the `DEPLOY_PATH` directory writable by
-   `DEPLOY_USER`, a TLS proxy, optionally `app.env`. If `DEPLOY_PATH/.env` does not exist,
+3. Prepare the server: Docker + Compose, `DEPLOY_USER` in the `docker` group
+   (`sudo usermod -aG docker <user>`, effective on the next SSH connection), the
+   `DEPLOY_PATH` directory writable by `DEPLOY_USER`, a TLS proxy, optionally `app.env`. If `DEPLOY_PATH/.env` does not exist,
    the **first deployment generates it on the server** with random secrets (never sent to
    GitHub, never printed; `MZIAN_PUBLIC_BASE_URL` = `DEPLOY_URL`, `MAILER_DSN=null://null`):
    back it up and set `MAILER_DSN` afterwards. A missing `.env` next to an existing
