@@ -29,7 +29,7 @@ missing, waits for MySQL, runs the migrations and `mzian:setup --demo` on every 
 
 ### Server
 
-- Linux with Docker Engine and Compose v2, 2 vCPU / 4 GB RAM to start;
+- Linux with Docker Engine and Docker Compose 2.24 or later (v2 or v5), 2 vCPU / 4 GB RAM to start;
 - a DNS name for the platform and TLS termination in front of the `nginx` container
   (Caddy, Traefik, a cloud load balancer…) that sets `X-Forwarded-Proto/For/Host`;
 - outbound HTTPS to your providers (AI, payments, GitHub, hosting/registrar APIs), SMTP.

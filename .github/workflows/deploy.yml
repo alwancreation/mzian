@@ -159,8 +159,12 @@ jobs:
           fi
 
           previous="$(cat .deployed-tag 2>/dev/null || true)"
-          DOCKER_CONFIG="$REGISTRY_CONFIG" docker pull -q "$MZIAN_IMAGE:$TAG"
-          DOCKER_CONFIG="$REGISTRY_CONFIG" docker pull -q "$MZIAN_NGINX_IMAGE:$TAG"
+          for image in "$MZIAN_IMAGE:$TAG" "$MZIAN_NGINX_IMAGE:$TAG"; do
+            if ! DOCKER_CONFIG="$REGISTRY_CONFIG" docker pull -q "$image"; then
+              echo "::error::Cannot pull $image: is the tag published? The Build workflow publishes 'main', 'develop', 'sha-<commit>' (for those branches) and the versions of v* tags."
+              exit 1
+            fi
+          done
           # Refuses missing or development secrets before anything changes.
           MZIAN_IMAGE_TAG="$TAG" compose run --rm --no-deps --entrypoint php php bin/console mzian:security:check
 
