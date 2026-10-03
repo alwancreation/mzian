@@ -145,6 +145,12 @@ The containers only listen on the server (`HTTP_PORT`, 80 by default). Making
          ProxyTimeout 120
      </VirtualHost>
      ```
+     Use the same address form as the other sites: if `sudo apachectl -S` lists them under
+     the server's IP (`203.0.113.10:80`) rather than `*:80`, Apache matches requests arriving
+     on that IP against those virtual hosts only, so `*:80` works for `curl -H 'Host: mzian.net'
+     http://127.0.0.1/` but a browser gets the first other site; declare
+     `<VirtualHost 203.0.113.10:80>` (your IP) instead. A browser that opens
+     `https://mzian.net` before certbot has run gets Apache's default port-443 site.
      In a Plesk/cPanel panel, put the same proxy directives in the domain's
      "additional Apache directives".
 
@@ -218,4 +224,4 @@ Docker configuration that is deleted at the end of the job (nothing is written t
 | Payment stays pending | webhook URL reachable from the provider, webhook secret matches, `webhook_event` table, logs `invalid_signature` |
 | E-mails not sent | `MAILER_DSN`, `messenger:failed:show` (notifications transport) |
 | Wrong scheme/host in links | `MZIAN_PUBLIC_BASE_URL`, `TRUSTED_PROXIES`, proxy headers |
-| Deployment OK but the domain shows another site / nothing | [Domain and HTTPS](#domain-and-https): DNS records, reverse proxy to `HTTP_PORT` |
+| Deployment OK but the domain shows another site / nothing | [Domain and HTTPS](#domain-and-https): DNS records, reverse proxy to `HTTP_PORT`; with Apache, `sudo apachectl -S` (virtual host address form, port 443) |
