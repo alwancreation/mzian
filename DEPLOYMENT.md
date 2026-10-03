@@ -205,9 +205,13 @@ success or rollback), then on `DEPLOY_URL`: if the public address does not reach
    back it up and set `MAILER_DSN` afterwards. A missing `.env` next to an existing
    database volume is refused (its passwords cannot be regenerated).
 4. Images must exist: the `Build` workflow publishes them for `main` (`main`,
-   `sha-<commit>`), `develop` and `v*` tags. Deploy manually with one of these tags, or
-   release: merge `develop` into `main`, tag `vX.Y.Z`, push the tag → Build → Deploy (waits
-   for approval) → health check.
+   `sha-<commit>`), `develop` and `v*` tags. Deploy manually (Actions > Deploy > Run
+   workflow, branch `main`): with an empty image tag (or `main`) it deploys the images of
+   the branch's current commit (`sha-<commit>`) and waits up to 15 minutes for the Build of
+   that commit to publish them, so it can be started right after a merge; or give a version
+   (`1.4.0`) or `sha-<commit>` to deploy (or go back to) a specific build. Or release:
+   merge `develop` into `main`, tag `vX.Y.Z`, push the tag → Build → Deploy (waits for
+   approval) → health check.
 
 Application secrets never transit through GitHub; the workflows only hold deployment
 access. The server logs in to GHCR with the job's short-lived token in a temporary, private
@@ -224,4 +228,5 @@ Docker configuration that is deleted at the end of the job (nothing is written t
 | Payment stays pending | webhook URL reachable from the provider, webhook secret matches, `webhook_event` table, logs `invalid_signature` |
 | E-mails not sent | `MAILER_DSN`, `messenger:failed:show` (notifications transport) |
 | Wrong scheme/host in links | `MZIAN_PUBLIC_BASE_URL`, `TRUSTED_PROXIES`, proxy headers |
+| Deployment OK but a change is not visible | the deployed tag ("Deployed …" in the job log, `DEPLOY_PATH/.deployed-tag`) must be the `sha-<commit>` containing the change; a forced refresh of the browser (Ctrl+F5) bypasses its cache |
 | Deployment OK but the domain shows another site / nothing | [Domain and HTTPS](#domain-and-https): DNS records, reverse proxy to `HTTP_PORT`; with Apache, `sudo apachectl -S` (virtual host address form, port 443) |
