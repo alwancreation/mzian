@@ -2,12 +2,13 @@
 # (MySQL, Redis, worker, demo apps server) before being published to GHCR.
 #
 # Pushed tags: branch name (main, develop), sha-<short sha>, and the version for
-# v* tags. Pull requests and manual runs on other branches only build and test.
+# v* tags. Work branches, pull requests and manual runs elsewhere only build and
+# test the images (nothing is published).
 name: Build
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'feature/**', 'fix/**', 'hotfix/**', 'claude/**']
     tags: ['v*']
   pull_request:
     branches: [main, develop]
