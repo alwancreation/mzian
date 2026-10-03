@@ -35,13 +35,6 @@ final class SecurityHeadersSubscriber
         $headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
         $headers->set('Cross-Origin-Opener-Policy', 'same-origin');
 
-        // Generated customer previews are served by Mzian and may be framed by the dashboard.
-        if (str_starts_with($request->getPathInfo(), '/preview/')) {
-            $headers->set('X-Frame-Options', 'SAMEORIGIN');
-
-            return;
-        }
-
         $headers->set('X-Frame-Options', 'DENY');
         if (!$this->debug && !$headers->has('Content-Security-Policy')) {
             $headers->set('Content-Security-Policy', implode('; ', [

@@ -5,7 +5,7 @@ name: Tests
 
 on:
   push:
-    branches: [main, develop, 'feature/**', 'fix/**', 'claude/**']
+    branches: [main, develop, 'feature/**', 'fix/**', 'hotfix/**', 'claude/**']
   pull_request:
   workflow_dispatch:
 
