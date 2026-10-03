@@ -125,11 +125,28 @@ The containers only listen on the server (`HTTP_PORT`, 80 by default). Making
          }
      }
      ```
-   - **An existing Apache** (or a Plesk/cPanel panel): a virtual host for the domain with
-     `ProxyPreserveHost On`, `ProxyPass / http://127.0.0.1:8080/`,
-     `ProxyPassReverse / http://127.0.0.1:8080/` and
-     `RequestHeader set X-Forwarded-Proto "https"` on the HTTPS host (in a panel: the
-     domain's proxy / "additional directives" settings).
+   - **An existing Apache**: same `.env`; enable the modules
+     (`sudo a2enmod proxy proxy_http headers`), create
+     `/etc/apache2/sites-available/mzian.conf` (Debian/Ubuntu; `/etc/httpd/conf.d/mzian.conf`
+     on RHEL), then `sudo a2ensite mzian && sudo apachectl configtest && sudo systemctl reload
+     apache2`, and `sudo certbot --apache -d mzian.net -d www.mzian.net` for HTTPS (certbot
+     copies the virtual host to port 443; the headers below follow the scheme):
+     ```apache
+     <VirtualHost *:80>
+         ServerName mzian.net
+         ServerAlias www.mzian.net
+
+         ProxyPreserveHost On
+         ProxyRequests Off
+         RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}
+         RequestHeader set X-Forwarded-Port expr=%{SERVER_PORT}
+         ProxyPass        / http://127.0.0.1:8080/
+         ProxyPassReverse / http://127.0.0.1:8080/
+         ProxyTimeout 120
+     </VirtualHost>
+     ```
+     In a Plesk/cPanel panel, put the same proxy directives in the domain's
+     "additional Apache directives".
 
    `HTTP_BIND=127.0.0.1` keeps the container unreachable from outside except through the
    proxy. With a proxy, also set `TRUSTED_PROXIES=private_ranges` in `app.env`, and use the
