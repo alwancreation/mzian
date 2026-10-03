@@ -14,7 +14,8 @@
             </div>
 
             {% if order.paid %}
-                <div class="alert-success mt-5" data-testid="order-paid"><span>{{ 'order.paid_notice'|trans({'%date%': order.paidAt|format_datetime('medium', 'short', locale: locale)}) }}</span></div>
+                {% set stage = project.status.value == 'COMPLETED' ? 'delivered' : (project.status.value == 'CANCELLED' ? 'cancelled' : (project.status.value in ['PAID', 'PENDING_ADMIN_APPROVAL', 'CHANGES_REQUESTED'] ? 'review' : 'in_progress')) %}
+                <div class="alert-success mt-5" data-testid="order-paid"><span>{{ ('order.paid_notice_' ~ stage)|trans({'%date%': order.paidAt|format_datetime('medium', 'short', locale: locale)}) }}</span></div>
             {% elseif offline %}
                 {% set settings = offline.provider.settings %}
                 <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm" data-testid="bank-instructions">

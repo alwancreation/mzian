@@ -139,7 +139,7 @@ final class CheckoutFlowTest extends WebTestCase
         $this->client->submit($crawler->selectButton('Simuler un paiement réussi')->form());
         self::assertResponseRedirects('/fr/compte/commandes/'.$order->getNumber());
         $this->client->followRedirect();
-        self::assertSelectorExists('[data-testid="order-paid"]');
+        self::assertSelectorTextContains('[data-testid="order-paid"]', 'en cours de validation');
 
         $order = static::getContainer()->get(OrderRepository::class)->findOneBy(['number' => $order->getNumber()]);
         self::assertSame(OrderStatus::Paid, $order->getStatus());

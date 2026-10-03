@@ -126,6 +126,10 @@ docker compose logs -f worker                              # the agents at work
 docker compose run --rm assets                             # rebuild CSS/JS
 ```
 
+The `Makefile` wraps them: `make help`, `make qa` (lints, PHPStan, code style, tests — what
+CI runs), `make up-dev` (assets watch mode, Adminer on http://localhost:8080, MySQL and Redis
+ports exposed through `docker-compose.dev.yml`).
+
 ## Branch strategy
 
 `main` (production, tagged `vX.Y.Z`) ← `develop` (integration) ← `feature/*` and `fix/*`.

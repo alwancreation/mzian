@@ -16,6 +16,7 @@ docker compose logs -f php worker
 docker compose run --rm assets  # rebuild CSS/JS after changing templates/assets
 docker compose exec php php bin/phpunit
 docker compose down -v          # stop and DELETE the data (fresh start)
+make up-dev                     # + assets watch, Adminer (:8080), MySQL/Redis ports (docker-compose.dev.yml)
 ```
 
 Local overrides go in `.env.local` (git-ignored), e.g. `HTTP_PORT=8080`,
