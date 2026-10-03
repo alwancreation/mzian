@@ -27,7 +27,7 @@ footer:
   terms: "Terms"
   privacy: "Privacy"
   rights: "All rights reserved."
-  made_with_ai: "Built with AI, validated by humans."
+  slogan: "Connect & grow your business."
 form:
   first_name: "First name"
   last_name: "Last name"
@@ -465,7 +465,7 @@ home:
     title_1: "Describe your needs."
     title_2: "Mzian builds your web solution."
     lead: "Website, booking, e-commerce, CRM or business app: AI analyses your business, proposes the right solution with its price, then our agents build it and put it online."
-    badge: "Powered by AI, validated by humans"
+    badge: "Connect & grow your business"
     chat: "Describe my project to the AI"
     reassurance: "Free, no commitment · Proposal in minutes"
   examples:

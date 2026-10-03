@@ -27,7 +27,7 @@ footer:
   terms: "Conditions générales"
   privacy: "Confidentialité"
   rights: "Tous droits réservés."
-  made_with_ai: "Conçu avec l'IA, validé par des humains."
+  slogan: "Connectez et développez votre activité."
 form:
   first_name: "Prénom"
   last_name: "Nom"
@@ -465,7 +465,7 @@ home:
     title_1: "Décrivez votre besoin."
     title_2: "Mzian crée votre solution web."
     lead: "Site vitrine, réservation, e-commerce, CRM ou application métier : l'IA analyse votre activité, vous propose la bonne solution avec son prix, puis nos agents la réalisent et la mettent en ligne."
-    badge: "Propulsé par l'IA, validé par des humains"
+    badge: "Connectez et développez votre activité"
     chat: "Décrire mon projet à l'IA"
     reassurance: "Gratuit et sans engagement · Proposition en quelques minutes"
   examples:
