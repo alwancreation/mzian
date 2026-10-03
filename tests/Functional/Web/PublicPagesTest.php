@@ -87,6 +87,27 @@ final class PublicPagesTest extends WebTestCase
         self::assertSame('hassan@example.com', $leads[0]->getEmail());
     }
 
+    public function testLogoIconsAndSharingImageExist(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/fr/');
+
+        $urls = [
+            $crawler->filter('header img[alt="Mzian.net"]')->attr('src'),
+            $crawler->filter('footer img[alt="Mzian.net"]')->attr('src'),
+            $crawler->filter('meta[property="og:image"]')->attr('content'),
+            ...$crawler->filter('link[rel="icon"], link[rel="apple-touch-icon"]')->each(static fn ($link) => $link->attr('href')),
+        ];
+        $json = json_decode($crawler->filter('script[type="application/ld+json"]')->text(), true, flags: \JSON_THROW_ON_ERROR);
+        $urls[] = $json[0]['logo'];
+
+        self::assertCount(7, $urls);
+        $public = static::getContainer()->getParameter('kernel.project_dir').'/public';
+        foreach ($urls as $url) {
+            self::assertFileExists($public.parse_url((string) $url, \PHP_URL_PATH), (string) $url);
+        }
+    }
+
     public function testUserInputIsEscapedInPages(): void
     {
         $client = static::createClient();

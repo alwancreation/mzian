@@ -5,7 +5,7 @@
 {% block structured_data %}
 <script type="application/ld+json">
 {{ [
-    {'@context': 'https://schema.org', '@type': 'Organization', 'name': 'Mzian.net', 'url': url('home'), 'logo': absolute_url(asset('favicon.svg'))},
+    {'@context': 'https://schema.org', '@type': 'Organization', 'name': 'Mzian.net', 'url': url('home'), 'logo': absolute_url(asset('images/brand/logo.png'))},
     {'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Mzian.net', 'url': url('home'), 'inLanguage': locale}
 ]|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}
 </script>

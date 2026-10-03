@@ -10,7 +10,7 @@
 <div class="min-h-screen lg:flex">
     <aside id="admin-sidebar" class="hidden w-full shrink-0 bg-slate-950 text-slate-200 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:overflow-y-auto">
         <div class="flex h-16 items-center px-5">
-            <a href="{{ path('admin_dashboard') }}">{% include 'components/_logo.html.twig' with {class: 'text-white', variant: 'admin'} %}</a>
+            <a href="{{ path('admin_dashboard') }}">{% include 'components/_logo.html.twig' with {on_dark: true, class: 'h-8'} %}</a>
         </div>
         <nav class="space-y-6 px-3 pb-8" aria-label="Admin">
             {% for group in admin_menu() %}
