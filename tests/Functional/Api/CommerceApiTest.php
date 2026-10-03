@@ -97,10 +97,18 @@ final class CommerceApiTest extends WebTestCase
     public function testCommerceEndpointsRequireAToken(): void
     {
         foreach (['/api/v1/orders', '/api/v1/projects'] as $uri) {
-            $this->api('GET', $uri, null);
+            $body = $this->api('GET', $uri, null);
             self::assertResponseStatusCodeSame(401);
+            self::assertSame(401, $body['error']['code'] ?? null, 'JSON error, not an HTML page.');
+            self::assertResponseHeaderSame('WWW-Authenticate', 'Bearer realm="mzian-api"');
         }
-        $this->api('POST', '/api/v1/quotes', 'mzn_invalid', ['conversation' => str_repeat('a', 32)]);
+        $body = $this->api('POST', '/api/v1/quotes', 'mzn_invalid', ['conversation' => str_repeat('a', 32)]);
         self::assertResponseStatusCodeSame(401);
+        self::assertSame('Invalid or expired API token.', $body['error']['message'] ?? null);
+
+        // A customer token cannot reach the administration API.
+        $body = $this->api('GET', '/api/v1/admin/approvals', $this->token($this->factory()->customer('karim@atlas.ma')));
+        self::assertResponseStatusCodeSame(403);
+        self::assertSame(['code' => 403, 'message' => 'Access denied.'], $body['error'] ?? null);
     }
 }

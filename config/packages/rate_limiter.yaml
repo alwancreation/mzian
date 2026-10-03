@@ -42,3 +42,5 @@ when@test:
                 policy: no_limit
             chat_message:
                 policy: no_limit
+            api:
+                policy: no_limit

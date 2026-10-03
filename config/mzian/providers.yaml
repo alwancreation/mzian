@@ -149,4 +149,4 @@ providers:
     provisioning_method: mock
     enabled: true
     default: true
-    capabilities: [deploy, rollback]
+    capabilities: [deploy]

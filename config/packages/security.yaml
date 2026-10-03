@@ -32,9 +32,12 @@ security:
             stateless: true
             provider: app_user_provider
             user_checker: App\Security\UserChecker
+            entry_point: App\Api\Security\ApiSecurityResponder
+            access_denied_handler: App\Api\Security\ApiSecurityResponder
             access_token:
                 token_handler: App\Security\ApiTokenHandler
                 token_extractors: header
+                failure_handler: App\Api\Security\ApiSecurityResponder
 
         main:
             lazy: true
