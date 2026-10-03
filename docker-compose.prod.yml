@@ -11,7 +11,6 @@ x-php-prod: &php-prod
     context: .
     target: php_prod
   image: ${MZIAN_IMAGE:-mzian-php}:${MZIAN_IMAGE_TAG:-latest}
-  volumes: !reset []
   # Optional provider keys and selections (OPENAI_API_KEY, STRIPE_SECRET_KEY,
   # MZIAN_AI_PROVIDER...), chmod 600, never committed. Prefer Admin > Providers
   # (encrypted credentials). The database root password is not given to PHP.
@@ -22,6 +21,9 @@ x-php-prod: &php-prod
 services:
   php:
     <<: *php-prod
+    # Declared on the service, not in the anchor: Compose v2 ignores !reset in a merged anchor
+    # and would keep the development bind mount of the sources.
+    volumes: !reset []
     environment:
       APP_ENV: prod
       APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}
@@ -33,6 +35,9 @@ services:
 
   worker:
     <<: *php-prod
+    # Declared on the service, not in the anchor: Compose v2 ignores !reset in a merged anchor
+    # and would keep the development bind mount of the sources.
+    volumes: !reset []
     environment:
       APP_ENV: prod
       APP_SECRET: ${APP_SECRET:?APP_SECRET must be set}

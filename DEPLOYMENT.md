@@ -29,7 +29,7 @@ missing, waits for MySQL, runs the migrations and `mzian:setup --demo` on every 
 
 ### Server
 
-- Linux with Docker Engine and Compose v2, 2 vCPU / 4 GB RAM to start;
+- Linux with Docker Engine and Docker Compose 2.24 or later (v2 or v5), 2 vCPU / 4 GB RAM to start;
 - a DNS name for the platform and TLS termination in front of the `nginx` container
   (Caddy, Traefik, a cloud load balancer…) that sets `X-Forwarded-Proto/For/Host`;
 - outbound HTTPS to your providers (AI, payments, GitHub, hosting/registrar APIs), SMTP.
@@ -122,11 +122,21 @@ disable the mocks, review Pricing and Settings, create the other administrators.
    (a dedicated key pair; the user only needs Docker access), `DEPLOY_KNOWN_HOSTS`
    (`ssh-keyscan -t ed25519 <host>`), `DEPLOY_PATH` (e.g. `/srv/mzian`) and the variable
    `DEPLOY_URL` (e.g. `https://mzian.net`).
-3. Prepare the server as in [Production](#production) (`.env`, `app.env`, TLS proxy).
-4. Release: merge `develop` into `main`, tag `vX.Y.Z`, push the tag → Build → Deploy (waits
+3. Prepare the server: Docker + Compose, the `DEPLOY_PATH` directory writable by
+   `DEPLOY_USER`, a TLS proxy, optionally `app.env`. If `DEPLOY_PATH/.env` does not exist,
+   the **first deployment generates it on the server** with random secrets (never sent to
+   GitHub, never printed; `MZIAN_PUBLIC_BASE_URL` = `DEPLOY_URL`, `MAILER_DSN=null://null`):
+   back it up and set `MAILER_DSN` afterwards. A missing `.env` next to an existing
+   database volume is refused (its passwords cannot be regenerated).
+4. Images must exist: the `Build` workflow publishes them for `main` (`main`,
+   `sha-<commit>`), `develop` and `v*` tags. Deploy manually with one of these tags, or
+   release: merge `develop` into `main`, tag `vX.Y.Z`, push the tag → Build → Deploy (waits
    for approval) → health check.
 
-Application secrets never transit through GitHub; the workflows only hold deployment access.
+Application secrets never transit through GitHub; the workflows only hold deployment
+access. The server logs in to GHCR with the job's short-lived token in a temporary, private
+Docker configuration that is deleted at the end of the job (nothing is written to
+`~/.docker/config.json`).
 
 ## Troubleshooting
 
