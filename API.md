@@ -100,7 +100,7 @@ creates no quote. Use a conversation (below) to get a quote.
 | `POST` | `/api/v1/conversations/{token}/messages` | `{ "content": "Oui" }` |
 
 ```json
-{ "token": "e65d0a29393ede3ace9567306a4ba411", "locale": "fr", "ready": false,
+{ "token": "<conversation-token>", "locale": "fr", "ready": false,
   "messages": [ { "role": "assistant", "content": "Bonjour ! Je suis l'assistant Mzian…" },
                 { "role": "user", "content": "Restaurant à Fès, menu en ligne et réservations" },
                 { "role": "assistant", "content": "Noté : restaurant / Café, à Fes… Voulez-vous recevoir des réservations de table ?" } ],
@@ -117,13 +117,13 @@ private.
 ### `POST /api/v1/quotes` (authenticated)
 
 ```json
-{ "conversation": "e65d0a29393ede3ace9567306a4ba411" }
+{ "conversation": "<conversation-token>" }
 ```
 
 `201 Created`:
 
 ```json
-{ "token": "0dbde5405fbee6ef107421f0c35ebedb", "number": "Q-2610-MR68F8", "status": "issued",
+{ "token": "<quote-token>", "number": "Q-2610-MR68F8", "status": "issued",
   "expired": false, "valid_until": "2026-11-01T21:49:17+00:00", "project": "MZ-2610-5GVMG6",
   "solution": { "code": "restaurant_website", "name": "Site Restaurant" },
   "features": ["menu", "reservation_requests", "gallery", "opening_hours", "contact_form"],
@@ -144,7 +144,7 @@ private.
 ### `POST /api/v1/orders` (authenticated)
 
 ```json
-{ "quote": "0dbde5405fbee6ef107421f0c35ebedb", "payment_provider": "mock_payment",
+{ "quote": "<quote-token>", "payment_provider": "mock_payment",
   "subscription": "starter", "accept_terms": true }
 ```
 
