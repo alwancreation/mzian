@@ -1,5 +1,2 @@
-{# Mzian logo: gradient mark + wordmark. #}
-<span class="inline-flex items-center gap-2 font-bold tracking-tight {{ class|default('text-ink') }}">
-    <svg class="size-8 shrink-0" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mz-logo-{{ variant|default('a') }}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5f5cf3"/><stop offset="1" stop-color="#06c4b0"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#mz-logo-{{ variant|default('a') }})"/><path d="M16 46V18h6l10 14 10-14h6v28h-7V30l-9 12-9-12v16z" fill="#fff"/></svg>
-    <span class="text-xl">Mzian<span class="text-brand-500">.net</span></span>
-</span>
+{# Mzian.net logo (mark + wordmark), derived from assets/brand/mzian-logo.webp. on_dark: white wordmark for dark backgrounds. #}
+<img src="{{ asset(on_dark|default(false) ? 'images/brand/logo-horizontal-light.webp' : 'images/brand/logo-horizontal.webp') }}" alt="Mzian.net" width="240" height="40" class="{{ class|default('h-9') }} w-auto shrink-0">

@@ -113,6 +113,8 @@ jobs:
           check http://localhost/ar/ 200
           check http://localhost/fr/tarifs 200
           check http://localhost/sitemap.xml 200
+          check http://localhost/favicon.ico 200
+          check http://localhost/images/brand/logo-horizontal.webp 200
           check http://localhost/api/v1/solutions 200
           check http://localhost/admin 302
           check http://localhost:8081/healthz 200

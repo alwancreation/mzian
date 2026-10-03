@@ -7,7 +7,7 @@
 {% block account_content %}
 <article class="card card-body mx-auto max-w-3xl">
     <header class="flex flex-wrap items-start justify-between gap-6">
-        {% include 'components/_logo.html.twig' with {variant: 'invoice'} %}
+        {% include 'components/_logo.html.twig' %}
         <div class="text-end text-sm">
             <p class="text-lg font-bold">{{ invoice.number }}</p>
             <p class="text-slate-500">{{ 'invoice.date'|trans }}: {{ invoice.issuedAt|format_date('long', locale: app.request.locale) }}</p>
