@@ -47,6 +47,7 @@ MYSQL_ROOT_PASSWORD=<openssl rand -hex 24>
 MZIAN_PUBLIC_BASE_URL=https://mzian.net
 MAILER_DSN=smtp://user:password@smtp.example.com:587
 HTTP_PORT=8080                       # the TLS proxy forwards to it
+HTTP_BIND=127.0.0.1                  # only the proxy can reach the container
 ```
 
 `/srv/mzian/app.env` — optional, passed to the `php` and `worker` containers only (the
@@ -88,6 +89,57 @@ disable the mocks, review Pricing and Settings, create the other administrators.
 
 `apps` (the demo hosting of `local_apps`) is not started in production; enable it with
 `--profile demo` only for a demonstration environment.
+
+### Domain and HTTPS
+
+The containers only listen on the server (`HTTP_PORT`, 80 by default). Making
+`https://mzian.net` reach them takes two things outside the platform:
+
+1. **DNS**: `A` records (and `AAAA` for IPv6) for `mzian.net` and `www.mzian.net` pointing
+   to the server. Check: `dig +short mzian.net` must print the server's public IP
+   (`curl -4 ifconfig.me` on the server).
+2. **Ports 80/443 → the container**. See what already listens on the server:
+   `sudo ss -ltnp '( sport = :80 or sport = :443 )'`.
+   - **Nothing** (dedicated server): the simplest is [Caddy](https://caddyserver.com) on the
+     host, which also obtains and renews the TLS certificate. In `.env`: `HTTP_PORT=8080`,
+     `HTTP_BIND=127.0.0.1`; `/etc/caddy/Caddyfile`:
+     ```
+     mzian.net, www.mzian.net {
+         reverse_proxy 127.0.0.1:8080
+     }
+     ```
+   - **An existing nginx** (other websites on the server): same `.env`, a virtual host, then
+     `sudo certbot --nginx -d mzian.net -d www.mzian.net` for HTTPS:
+     ```nginx
+     server {
+         listen 80;
+         server_name mzian.net www.mzian.net;
+         client_max_body_size 12m;
+         location / {
+             proxy_pass http://127.0.0.1:8080;
+             proxy_set_header Host $host;
+             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_set_header X-Forwarded-Proto $scheme;
+             proxy_set_header X-Forwarded-Host $host;
+             proxy_set_header X-Forwarded-Port $server_port;
+         }
+     }
+     ```
+   - **An existing Apache** (or a Plesk/cPanel panel): a virtual host for the domain with
+     `ProxyPreserveHost On`, `ProxyPass / http://127.0.0.1:8080/`,
+     `ProxyPassReverse / http://127.0.0.1:8080/` and
+     `RequestHeader set X-Forwarded-Proto "https"` on the HTTPS host (in a panel: the
+     domain's proxy / "additional directives" settings).
+
+   `HTTP_BIND=127.0.0.1` keeps the container unreachable from outside except through the
+   proxy. With a proxy, also set `TRUSTED_PROXIES=private_ranges` in `app.env`, and use the
+   final address (`https://mzian.net`) for `MZIAN_PUBLIC_BASE_URL` (`.env`) and the
+   `DEPLOY_URL` variable.
+
+`GET /healthz` answers `{"app":"mzian","status":"ok"}` when the platform and its database
+are up. The deployment checks it on the server itself (`127.0.0.1:HTTP_PORT`, this decides
+success or rollback), then on `DEPLOY_URL`: if the public address does not reach Mzian
+(DNS or proxy not configured, another site answering), the job shows a warning.
 
 ### Scaling and operations
 
@@ -149,3 +201,4 @@ Docker configuration that is deleted at the end of the job (nothing is written t
 | Payment stays pending | webhook URL reachable from the provider, webhook secret matches, `webhook_event` table, logs `invalid_signature` |
 | E-mails not sent | `MAILER_DSN`, `messenger:failed:show` (notifications transport) |
 | Wrong scheme/host in links | `MZIAN_PUBLIC_BASE_URL`, `TRUSTED_PROXIES`, proxy headers |
+| Deployment OK but the domain shows another site / nothing | [Domain and HTTPS](#domain-and-https): DNS records, reverse proxy to `HTTP_PORT` |

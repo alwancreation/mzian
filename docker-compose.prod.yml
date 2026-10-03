@@ -53,6 +53,10 @@ services:
       target: nginx
     image: ${MZIAN_NGINX_IMAGE:-mzian-nginx}:${MZIAN_IMAGE_TAG:-latest}
     volumes: !reset []
+    # HTTP_BIND=127.0.0.1 when a reverse proxy on the host (TLS) forwards to HTTP_PORT:
+    # the container is then not reachable directly from outside.
+    ports: !override
+      - "${HTTP_BIND:-0.0.0.0}:${HTTP_PORT:-80}:80"
 
   # No default password in production.
   database:

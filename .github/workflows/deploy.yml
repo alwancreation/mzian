@@ -124,8 +124,10 @@ jobs:
           if ! printf '%s' "$REGISTRY_TOKEN" | ssh target "DOCKER_CONFIG='$remote_docker_config' docker login ghcr.io -u '$REGISTRY_USER' --password-stdin" >/dev/null 2>&1; then
             echo "::error::The server could not log in to ghcr.io."; exit 1
           fi
-          # shellcheck disable=SC2029
-          ssh target "REGISTRY_CONFIG='$remote_docker_config' DEPLOY_PATH='$DEPLOY_PATH' IMAGE='$IMAGE' TAG='$TAG' DEPLOY_URL='$DEPLOY_URL' bash -s" <<'REMOTE'
+          # The server-side script is uploaded and run from a file with stdin closed (ssh -n).
+          # Piped on stdin instead, a command reading stdin (e.g. `docker compose run`) would
+          # swallow the rest of the script, which would then "succeed" without deploying.
+          cat > deploy-remote.sh <<'REMOTE'
           set -euo pipefail
           cd "$DEPLOY_PATH"
           umask 077
@@ -178,21 +180,39 @@ jobs:
             fi
           done
           # Refuses missing or development secrets before anything changes.
-          MZIAN_IMAGE_TAG="$TAG" compose run --rm --no-deps --entrypoint php php bin/console mzian:security:check
+          MZIAN_IMAGE_TAG="$TAG" compose run --rm -T --no-deps --entrypoint php php bin/console mzian:security:check </dev/null
 
+          # Health is checked on the container itself (the port published on this server):
+          # the public URL may still point elsewhere (DNS, reverse proxy), which must not
+          # make another site look like a successful deployment.
+          http_port="$(sed -n 's/^HTTP_PORT=//p' .env | tail -n 1 | tr -d "\"' \r")"
+          http_port="${http_port:-80}"
+          local_ok() {
+            body="$(curl -s --max-time 5 "http://127.0.0.1:$http_port/healthz" || true)"
+            case "$body" in *'"app":"mzian"'*'"status":"ok"'*) return 0 ;; esac
+            # Images built before /healthz existed: the home page of our own container.
+            [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:$http_port/healthz" || true)" = "404" ] \
+              && [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:$http_port/fr/" || true)" = "200" ]
+          }
           healthy() {
             for i in $(seq 1 30); do
-              code="$(curl -s -o /dev/null -w '%{http_code}' "$DEPLOY_URL/fr/" || true)"
-              [ "$code" = "200" ] && return 0
+              local_ok && return 0
               sleep 5
             done
             return 1
+          }
+          public_check() {
+            case "$(curl -s -L --max-time 10 "$DEPLOY_URL/healthz" || true)" in
+              *'"app":"mzian"'*) echo "Public URL OK: $DEPLOY_URL" ;;
+              *) echo "::warning::Mzian is running on the server (port $http_port), but $DEPLOY_URL does not reach it: point the DNS records of the domain to this server and route ports 80/443 to port $http_port (see DEPLOYMENT.md, 'Domain and HTTPS')." ;;
+            esac
           }
 
           # The php container runs the migrations and mzian:setup on start-up.
           if MZIAN_IMAGE_TAG="$TAG" compose up -d --no-build --remove-orphans --wait --wait-timeout 300 && healthy; then
             echo "$TAG" > .deployed-tag
             echo "Deployed $TAG"
+            public_check
             docker image prune -f >/dev/null
             exit 0
           fi
@@ -206,12 +226,15 @@ jobs:
           fi
           exit 1
           REMOTE
+          scp -q deploy-remote.sh "target:$DEPLOY_PATH/.mzian-deploy.sh"
+          # shellcheck disable=SC2029
+          ssh -n target "REGISTRY_CONFIG='$remote_docker_config' DEPLOY_PATH='$DEPLOY_PATH' IMAGE='$IMAGE' TAG='$TAG' DEPLOY_URL='$DEPLOY_URL' bash '$DEPLOY_PATH/.mzian-deploy.sh'"
 
       - name: Clean up
         if: always()
         run: |
           if [ -n "${REMOTE_DOCKER_CONFIG:-}" ]; then
             # shellcheck disable=SC2029
-            ssh target "rm -rf '$REMOTE_DOCKER_CONFIG'" >/dev/null 2>&1 || true
+            ssh -n target "rm -rf '$REMOTE_DOCKER_CONFIG' '$DEPLOY_PATH/.mzian-deploy.sh'" >/dev/null 2>&1 || true
           fi
           rm -f ~/.ssh/deploy_key
